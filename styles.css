@@ -144,7 +144,7 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
     display: grid;
     /* Sarakkeet: Nimi | Arvo | Yksikkö | Viite | Nappi */
     /* Lisätty viimeinen 'auto'-sarake napille */
-    grid-template-columns: 110px 65px 60px 1fr auto;
+    grid-template-columns: 100px 60px 50px 1.5fr auto;
     gap: 0 8px; /* Riviväli 0, sarakkeiden väli 8px */
     align-items: baseline;
     margin-bottom: 3px; /* Tiheä riviväli */
@@ -160,7 +160,6 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
   text-align: left;
   font-weight: 400;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 4px;
   font-family: 'Courier New', Courier, monospace; /* Varmistus */
