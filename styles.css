@@ -201,7 +201,7 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
   padding-left: 10px;
   font-family: 'Courier New', Courier, monospace; /* Varmistus */
   vertical-align: baseline;
-  display: none;
+  
 }
 .receipt-row .apuva-button {
     grid-column: 5; /* Asetetaan viidenteen sarakkeeseen */
