@@ -130,7 +130,7 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
 /* Ryhmäotsikko (esim. Happo-emäs-tila) */
 .receipt-heading {
     font-weight: 700; /* Lihavoitu */
-    font-size: 0.95em;
+    font-size: 0.85em;
     margin-top: 8px; /* Tilaa edellisestä */
     margin-bottom: 4px; /* Tilaa seuraavaan riviin */
     color: var(--receipt-text);
@@ -162,7 +162,7 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 5px;
+  padding-right: 4px;
   font-family: 'Courier New', Courier, monospace; /* Varmistus */
 }
 
@@ -201,6 +201,7 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
   padding-left: 10px;
   font-family: 'Courier New', Courier, monospace; /* Varmistus */
   vertical-align: baseline;
+  display: none;
 }
 .receipt-row .apuva-button {
     grid-column: 5; /* Asetetaan viidenteen sarakkeeseen */
@@ -222,6 +223,11 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
     background-color: rgba(0, 0, 0, 0.08); /* Hyvin kevyt tumma korostus */
     color: #333; /* Hieman tummempi tekstin väri */
     border-color: #999; /* Hieman tummempi reunus */
+    grid-template-columns: auto auto auto 1fr;
+    gap: 0 5px; /* Pienempi sarakkeiden väli */
+    font-size: 0.9em; /* Hieman pienempi fonttikoko riveillä */
+    margin-bottom: 1px; /* Vielä tiheämpi riviväli */
+    line-height: 1.2;
 }
 
 /* Kuitin Footer (Tulostusaika) */
@@ -390,8 +396,8 @@ feedback-section p {
 .modal-close-button { display: block; margin: 0 auto 0; padding: 10px 25px; background-color: var(--button-bg); color: white; border-color: var(--button-border); font-weight: bold; flex-shrink: 0; }
 .modal-close-button:hover { background-color: var(--button-hover-bg); border-color: #555; }
 /* === Responsiivisuus === */
-@media (max-width: 768px) { main { width: 95%; margin: 10px auto; } .container { padding: 15px 20px; } #score-root { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 10px; } .score-display { order: 1;} .unit-selector { order: 2; text-align: left; margin-top: 5px;} h1 { font-size: 1.4em; margin-bottom: 20px;} }
-@media (max-width: 480px) { body { padding: 10px; } main { width: 100%; margin: 5px auto; } .container { padding: 15px 10px; border-radius: 4px;} h1 { font-size: 1.3em; } h2 { font-size: 1.1em; margin-top: 30px; margin-bottom: 10px;} .options-grid, .compensation-grid { gap: 10px; grid-template-columns: 1fr; } .abg-values { padding: 10px 12px; } .abg-values p { font-size: 1.0em; grid-template-columns: 55px auto 1fr auto; gap: 5px 8px; padding: 3px 0; } .abg-values strong { font-size: 0.85em; text-align: right; } .abg-values .value-text { font-size: 1.05em; } .abg-values .value-text span.hypoxemia-class { display: block; margin-left: 0; margin-top: 3px; font-size: 0.75em; } /* Siirrä luokitus omalle riville pienellä näytöllä */ .abg-values .ref { font-size: 0.75em; white-space: normal; } .apuva-button { font-size: 0.7em; padding: 0 4px; } button.option, button.compensation { padding: 12px 10px; font-size: 0.9em; } .feedback { font-size: 0.95em; padding: 12px 15px; } .feedback-summary { font-size: 1em; } .feedback-correct-answer { font-size: 0.9em; padding: 8px;} .feedback-explanation { font-size: 0.9em;} .feedback-differential ul { font-size: 0.85em; } .new-question { font-size: 1em; padding: 10px 20px; } .modal-content { padding: 15px 20px; width: 95%; } .modal-content h2 { font-size: 1.2em; margin-bottom: 15px;} .modal-body { margin-bottom: 15px; } .modal-close-button { padding: 8px 20px; } .help-button-general { top: 10px; right: 10px; width: 25px; height: 25px; font-size: 1em;} }
+@media (max-width: 768px) { main { width: 95%; margin: 10px auto; } .container { padding: 15px 20px; } #score-root { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 10px; } .score-display { order: 1;} .unit-selector { order: 2; text-align: left; margin-top: 5px;} h1 { font-size: 1.4em; margin-bottom: 20px; .abg-values { max-width: none; }} }
+@media (max-width: 480px) { body { padding: 10px; } main { width: 100%; margin: 5px auto; } .container { padding: 10px; border-radius: 4px;} h1 { font-size: 1.3em; } h2 { font-size: 1.1em; margin-top: 30px; margin-bottom: 10px;} .options-grid, .compensation-grid { gap: 10px; grid-template-columns: 1fr; } .abg-values { padding: 15px 8px 15px 8px; } .abg-values p { font-size: 1.0em; grid-template-columns: 55px auto 1fr auto; gap: 5px 8px; padding: 3px 0; } .abg-values strong { font-size: 0.85em; text-align: right; } .abg-values .value-text { font-size: 1.05em; } .abg-values .value-text span.hypoxemia-class { display: block; margin-left: 0; margin-top: 3px; font-size: 0.75em; } /* Siirrä luokitus omalle riville pienellä näytöllä */ .abg-values .ref { font-size: 0.75em; white-space: normal; } .apuva-button { font-size: 0.7em; padding: 0 4px; } button.option, button.compensation { padding: 12px 10px; font-size: 0.9em; } .feedback { font-size: 0.95em; padding: 12px 15px; } .feedback-summary { font-size: 1em; } .feedback-correct-answer { font-size: 0.9em; padding: 8px;} .feedback-explanation { font-size: 0.9em;} .feedback-differential ul { font-size: 0.85em; } .new-question { font-size: 1em; padding: 10px 20px; } .modal-content { padding: 15px 20px; width: 95%; } .modal-content h2 { font-size: 1.2em; margin-bottom: 15px;} .modal-body { margin-bottom: 15px; } .modal-close-button { padding: 8px 20px; } .help-button-general { top: 10px; right: 10px; width: 25px; height: 25px; font-size: 1em;} }
 /* Korjaus Tapaus-tekstin katkeamiseen */
 .case-context p {
     /* Aiemmat tyylit säilyvät... */
