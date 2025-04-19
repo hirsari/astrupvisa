@@ -1,0 +1,793 @@
+/* styles.css (Dark Mode v5 - Potilastapaukset + PaO2/BE) */
+
+/* === Väripaletti === */
+:root {
+    --bg-color: #212529; --surface-color: #343a40; --text-color: #f8f9fa;
+    --text-muted: #adb5bd; --border-color: #495057; --accent-color: #0d6efd;
+    --accent-darker: #0b5ed7; --success-bg: rgba(25, 135, 84, 0.2);
+    --success-text: #a3cfbb; --success-border: #198754; --error-bg: rgba(220, 53, 69, 0.15);
+    --error-text: #f1aeb5; --error-border: #dc3545; --button-bg: #495057;
+    --button-hover-bg: #6c757d; --button-text: #ffffff; --button-border: #6c757d;
+    --button-focus-shadow: rgba(13, 110, 253, 0.35); --selected-bg: var(--accent-color);
+    --selected-text: #ffffff; --selected-border: var(--accent-darker); --code-bg: #495057;
+    --link-color: #6ea8fe;
+    --highlight-issue-border: #ffca2c; --highlight-compensation-bg: rgba(110, 168, 254, 0.1);
+    --highlight-compensation-border: #6ea8fe;
+    --abnormal-red: #e74c3c; /* Kirkas punainen */
+    --receipt-bg: #fdfdfd;
+    --receipt-border: #cccccc;
+    --receipt-text: #2c3e50;
+    --receipt-text-muted: #555555;
+    --receipt-shadow: rgba(0, 0, 0, 0.1);
+}
+/* === Perus- ja layout-tyylit === */
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; line-height: 1.5; transition: background-color 0.5s ease; }
+main { max-width: 750px; margin: 20px auto; }
+.container { position: relative; background-color: var(--surface-color); color: var(--text-color); padding: 20px 30px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); }
+/* Virhetilat */
+.container.loading, .container.error-state { text-align: center; padding: 40px 20px; font-size: 1.2em; color: var(--text-muted); }
+.container.error-state p { color: var(--error-text); font-weight: bold; }
+.case-display.error-state .case-context p { color: var(--error-text); font-weight: bold; text-align: center; }
+.abg-values.error-state p { grid-column: 1 / -1; text-align: center; color: var(--error-text); font-weight: bold; }
+/* === Otsikot, pistelasku, yksikkövalitsin === */
+h1 { text-align: center; color: #ffffff; margin-top: 10px; margin-bottom: 25px; }
+.help-button-general { position: absolute; top: 15px; right: 15px; background-color: var(--button-bg); color: var(--button-text); border: 1px solid var(--button-border); border-radius: 50%; width: 30px; height: 30px; font-size: 1.1em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; padding: 0; line-height: 1; transition: background-color 0.2s, transform 0.1s; }
+.help-button-general:hover { background-color: var(--button-hover-bg); transform: scale(1.1); }
+.help-button-general:focus { outline: none; box-shadow: 0 0 0 3px var(--button-focus-shadow); }
+#score-root { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 8px 15px; background-color: var(--surface-color); border: 1px solid var(--border-color);
+    border-radius: 6px; color: var(--text-muted); font-size: 0.95em; position: sticky; /* Aseta elementti "tahmeaksi" */
+    top: 0;           /* Kiinnitä yläreunaan, kun scrollaus osuu kohdalle */
+    z-index: 100;     /* Varmista, että se pysyy muiden elementtien päällä */
+    /* Voit lisätä/muokata varjoa korostamaan kiinnittymistä */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);}
+.score-display { font-weight: 500; color: var(--text-color); display: flex; /* Asetetaan elementit vierekkäin */
+    align-items: center;
+    gap: 8px; /* Pieni väli pisteiden ja yritysten välille */
+}
+.score-display span { margin-right: 0px; }
+.score-number {
+    font-weight: 700; /* Lihavampi */
+    color: var(--success-text); /* Vihreä väri pisteille */
+    font-size: 1.1em; /* Hieman suurempi */
+    padding: 2px 6px; /* Pieni tausta */
+    background-color: rgba(var(--success-border), 0.2); /* Läpikuultava vihreä tausta */
+    border-radius: 3px;
+    display: inline-block; /* Jotta padding toimii oikein */
+    transition: transform 0.2s ease-out, background-color 0.2s ease-out; /* Perussiirtymä */
+}
+.score-number.score-animated {
+    /* Käytetään keyframes-animaatiota */
+    animation: score-bump 0.6s ease-out forwards;
+}
+@keyframes score-bump {
+    0% {
+        transform: scale(1);
+        background-color: rgba(var(--success-border), 0.2);
+        color: var(--success-text);
+    }
+    30% {
+        transform: scale(1.4); /* Suurenee */
+        background-color: var(--success-border); /* Täysi väri */
+        color: #ffffff; /* Valkoinen teksti */
+        box-shadow: 0 0 10px var(--success-border); /* Hehku */
+    }
+    100% {
+        transform: scale(1); /* Palaa normaaliksi */
+        background-color: rgba(var(--success-border), 0.2);
+        color: var(--success-text);
+        box-shadow: none;
+    }
+}
+.unit-selector { text-align: right; }
+.unit-selector span { margin-right: 10px; font-weight: 500; color: var(--text-muted); }
+.unit-selector label { margin-left: 5px; cursor: pointer; color: var(--text-color); }
+.unit-selector input[type="radio"] { margin-right: 4px; vertical-align: middle; accent-color: var(--accent-color); transform: scale(1.1); }
+h2 { display: flex; justify-content: center; align-items: center; text-align: center; color: var(--text-color); font-size: 1.3em; margin-top: 30px; margin-bottom: 15px; }
+.options-grid h2, .compensation-grid h2 { border-bottom: none; grid-column: 1 / -1; margin-bottom: 10px; }
+/* === "Apuva"-napit === */
+.apuva-button { background: none; border: 1px solid var(--text-muted); color: var(--link-color); border-radius: 4px; padding: 1px 5px; font-size: 0.75em; font-weight: bold; cursor: pointer; line-height: 1.2; transition: background-color 0.2s, color 0.2s, transform 0.1s; vertical-align: middle; white-space: nowrap; justify-self: end; margin-top: 2px;}
+.apuva-button:hover { background-color: rgba(255, 255, 255, 0.1); color: #8ecae6; transform: translateY(-1px); }
+.apuva-button:focus { outline: none; box-shadow: 0 0 0 3px var(--button-focus-shadow); border-color: var(--accent-color); }
+/* === Visuaalinen erotin === */
+hr { border: none; height: 1px; background-color: var(--border-color); margin-top: 30px; margin-bottom: 30px; }
+/* === Potilaskonteksti ja ABG-arvot === */
+.case-display { margin-bottom: 20px; }
+.case-context { padding: 15px 25px; background-color: var(--bg-color); border: 1px solid var(--border-color); border-bottom: none; border-radius: 6px 6px 0 0; margin-bottom: 0; color: var(--text-color); }
+.case-context p { margin: 0; line-height: 1.6; font-size: 1em; white-space: normal !important;
+    overflow-wrap: break-word;
+    height: auto;
+    overflow: visible;}
+.case-context strong { color: var(--accent-color); margin-right: 10px; font-weight: 700;}
+.abg-values {
+    background-color: var(--receipt-bg);
+    border-radius: 3px;
+    box-shadow: 2px 2px 5px var(--receipt-shadow);
+    position: relative;
+    /* Säädetty padding: Ylä/ala 15px, Oikea 10px, Vasen 15px */
+    padding: 15px 35px 15px 15px;
+    font-family: 'Courier New', Courier, monospace;
+    max-width: 450px; /* Hieman leveämpi uusille sarakkeille ja ref. */
+    margin: 20px auto;
+    color: var(--receipt-text);
+    transition: none;
+    overflow: hidden; /* Piilottaa sahalaitamaskien ylitykset */
+}
+.receipt-header {
+    display: flex;
+    justify-content: space-between; /* Elementit reunoille */
+    font-size: 0.9em;
+    color: var(--receipt-text-muted);
+    margin-bottom: 8px;
+    padding: 0 5px; /* Pieni sivuttaispadding */
+}
+
+/* Erotinviiva */
+.receipt-separator {
+    border: none;
+    border-top: 1px dashed var(--receipt-border); /* Katkoviiva */
+    margin: 8px 0; /* Tilaa ylä- ja alapuolelle */
+}
+/* Ryhmäotsikko (esim. Happo-emäs-tila) */
+.receipt-heading {
+    font-weight: 700; /* Lihavoitu */
+    font-size: 0.95em;
+    margin-top: 8px; /* Tilaa edellisestä */
+    margin-bottom: 4px; /* Tilaa seuraavaan riviin */
+    color: var(--receipt-text);
+    /* Voit lisätä alleviivauksen jos haluat */
+    /* border-bottom: 1px solid var(--receipt-border); */
+    /* padding-bottom: 2px; */
+}
+
+/* Yksi arvorivi kuitissa */
+.receipt-row {
+    display: grid;
+    /* Sarakkeet: Nimi | Arvo | Yksikkö | Viite | Nappi */
+    /* Lisätty viimeinen 'auto'-sarake napille */
+    grid-template-columns: 110px 65px 60px 1fr auto;
+    gap: 0 8px; /* Riviväli 0, sarakkeiden väli 8px */
+    align-items: baseline;
+    margin-bottom: 3px; /* Tiheä riviväli */
+    padding: 0;
+    font-size: 1.0em;
+    line-height: 1.3;
+    color: var(--receipt-text);
+  }
+
+/* Parametrin nimi (esim. pH(T)) */
+.receipt-row .param-name {
+  grid-column: 1;
+  text-align: left;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 5px;
+  font-family: 'Courier New', Courier, monospace; /* Varmistus */
+}
+
+/* Parametrin arvo (numero) */
+.receipt-row .param-value {
+  grid-column: 2;
+  text-align: right;
+  font-weight: 700; /* Lihavoitu */
+  white-space: nowrap;
+  font-family: 'Courier New', Courier, monospace; /* Varmistus */
+}
+
+/* Poikkeavan arvon väritys */
+.receipt-row .param-value.abnormal-value {
+    color: var(--abnormal-red) !important;
+}
+
+/* Parametrin yksikkö */
+.receipt-row .param-unit {
+  grid-column: 3;
+  text-align: left;
+  font-weight: 400;
+  white-space: nowrap;
+  padding-left: 3px;
+  font-family: 'Courier New', Courier, monospace; /* Varmistus */
+}
+
+/* Viitearvojen teksti */
+.receipt-row .param-ref {
+  grid-column: 4;
+  text-align: left;
+  font-weight: 400;
+  font-size: 0.85em;
+  color: var(--receipt-text-muted);
+  white-space: nowrap;
+  padding-left: 10px;
+  font-family: 'Courier New', Courier, monospace; /* Varmistus */
+  vertical-align: baseline;
+}
+.receipt-row .apuva-button {
+    grid-column: 5; /* Asetetaan viidenteen sarakkeeseen */
+    justify-self: center; /* Keskitä nappi sarakkeessaan */
+    align-self: center; /* Keskitä myös pystysuunnassa */
+    /* Säilytetään vanhat tyylit (koko, väri jne.) */
+    border-color: #bbb;
+    color: #666;
+    padding: 0px 4px;
+    font-size: 0.7em;
+    line-height: 1.1;
+    font-family: inherit;
+    background: none;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    margin-left: 5px; /* Pieni lisäväli vasemmalle puolelle nappia */
+  }
+  .receipt-row .apuva-button:hover {
+    background-color: rgba(0, 0, 0, 0.08); /* Hyvin kevyt tumma korostus */
+    color: #333; /* Hieman tummempi tekstin väri */
+    border-color: #999; /* Hieman tummempi reunus */
+}
+
+/* Kuitin Footer (Tulostusaika) */
+.receipt-footer {
+    font-size: 0.9em;
+    color: var(--receipt-text-muted);
+    margin-top: 8px;
+    padding: 0 5px;
+    text-align: left;
+}
+.abg-values::before,
+.abg-values::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 15px; /* Sahalaidan korkeus */
+  background: var(--surface-color); /* Tumma tausta */
+  -webkit-mask-size: 20px 15px; /* Hampaan koko */
+  mask-size: 20px 15px;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-position: center top; /* Kohdistus yläreunaan */
+   mask-position: center top;
+}
+
+/* Yläreunan maski (tummat kolmiot osoittavat ALAS) */
+.abg-values::before {
+  top: 0;
+  /* VAIHDETTU: Käytä alaspäin osoittavaa SVG:tä */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,0 20,0 10,15' fill='black'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,0 20,0 10,15' fill='black'/%3E%3C/svg%3E");
+  -webkit-mask-position: center top; /* Säilytä kohdistus */
+   mask-position: center top;
+}
+
+/* Alareunan maski (tummat kolmiot osoittavat YLÖS) */
+.abg-values::after {
+  bottom: 0;
+   /* VAIHDETTU: Käytä ylöspäin osoittavaa SVG:tä */
+   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,15 10,0 20,15' fill='black'/%3E%3C/svg%3E");
+   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,15 10,0 20,15' fill='black'/%3E%3C/svg%3E");
+   -webkit-mask-position: center bottom; /* Säilytä kohdistus */
+    mask-position: center bottom;
+}
+
+
+.abg-values p {
+    color: var(--receipt-text);
+    font-size: 1.1em;
+    background-color: transparent;
+    grid-template-columns: 90px 1fr auto;
+    gap: 5px 10px;
+    align-items: baseline;
+    margin-bottom: 8px;
+    padding: 2px 0;
+}
+
+.abg-values p:last-child { margin-bottom: 0; }
+.abg-values strong {
+    color: var(--receipt-text-muted);
+    font-weight: 400; /* Tai normal */
+    text-align: right;
+    font-size: 1em;
+    font-family: 'Courier New', Courier, monospace;
+
+}
+
+.abg-values .ref {
+    color: var(--receipt-text-muted);
+    /* Kokeile suurentaa fonttikokoa lähemmäs pääarvoa (1em = sama kuin label) */
+    font-size: 1em; /* Tai kokeile 1em tai inherit */
+    font-style: normal;
+    white-space: nowrap;
+    justify-self: start;
+    padding-left: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    /* Lisätään varmuuden vuoksi baseline-tasaus */
+    vertical-align: baseline;
+}
+.abg-values .apuva-button {
+    border-color: #bbb;
+    color: #666;
+    padding: 0px 4px;
+    font-size: 0.7em;
+    line-height: 1.1;
+    align-self: center; /* Keskitä nappi pystysuunnassa riville */
+    font-family: 'Courier New', Courier, monospace;
+
+}
+.abg-values .apuva-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+.abg-values .value-text.abnormal-value { /* Lisätty .abg-values alkuun */
+    color: var(--abnormal-red) !important;  /* Käytetään punaista väriä, lisätty !important varmuudeksi */
+    /* Muut mahdolliset tyylit tähän, mutta color on tärkein */
+  }
+/* Hypoksemialuokitus */
+/* Korostustyylit */
+.abg-values p.highlight-issue { background-color: var(--highlight-issue-bg); }
+.abg-values p.highlight-compensation { background-color: var(--highlight-compensation-bg); }
+/* === Valintojen grid === */
+.options-grid, .compensation-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 0px; }
+/* === Napit (Yleiset) === */
+button.option, button.compensation, button.new-question, .modal-close-button { padding: 12px 15px; font-size: 1em; border: 1px solid var(--button-border); border-radius: 6px; cursor: pointer; background-color: var(--button-bg); transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s; text-align: center; word-wrap: break-word; color: var(--button-text); font-weight: 500; min-height: 50px; display: flex; justify-content: center; align-items: center; }
+button.option:hover, button.compensation:hover, .modal-close-button:hover { background-color: var(--button-hover-bg); border-color: #888888; }
+button.option:focus, button.compensation:focus, button.new-question:focus, .modal-close-button:focus, .apuva-button:focus, .help-button-general:focus { outline: none; box-shadow: 0 0 0 3px var(--button-focus-shadow); border-color: var(--accent-color); }
+button.option.selected, button.compensation.selected { background-color: var(--selected-bg); color: var(--selected-text); border-color: var(--selected-border); font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+button:active:not(:disabled) { transform: translateY(1px); }
+button:disabled { opacity: 0.6; cursor: not-allowed; background-color: var(--button-bg); border-color: var(--button-border); box-shadow: none; color: var(--text-muted); transform: none !important; }
+/* === Palaute === */
+.feedback { margin-top: 25px; padding: 15px 20px; font-size: 1.05em; text-align: left; border-radius: 6px; line-height: 1.6; border: 1px solid; }
+.feedback.correct { background-color: var(--success-bg); color: var(--success-text); border-color: var(--success-border); }
+.feedback.incorrect { background-color: var(--error-bg); color: var(--error-text); border-color: var(--error-border); }
+.feedback-summary { font-weight: bold; font-size: 1.1em; text-align: center; margin-bottom: 15px; color: var(--text-color); }
+.feedback-summary span { margin-right: 8px; font-size: 1.2em; }
+.feedback-correct-answer { margin-bottom: 15px; padding: 10px; background-color: rgba(255, 255, 255, 0.05); border-radius: 4px; font-size: 0.95em; }
+.feedback-correct-answer p { margin: 5px 0; color: var(--text-color); }
+.feedback-correct-answer strong { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; text-transform: uppercase; }
+.feedback-correct-answer em { font-style: normal; color: var(--text-muted); margin-right: 8px; }
+.feedback-divider { border: none; height: 1px; background-color: var(--border-color); opacity: 0.5; margin: 15px 0; }
+/* Erotusdiagnostiikka palautteessa */
+.feedback-differential { margin-top: 15px; padding-top: 0; /* Poista yläpadding, koska divider hoitaa */ }
+.feedback-differential p { margin-bottom: 8px; font-weight: bold; color: var(--text-muted); font-size: 0.9em; text-transform: uppercase; }
+.feedback-differential ul { margin: 0; padding-left: 20px; list-style: disc; font-size: 0.9em; color: var(--error-text); }
+.feedback-differential li { margin-bottom: 6px; }
+feedback-section {
+    margin-top: 15px; /* Lisää tilaa edelliseen osioon */
+}
+.feedback-section h4 {
+    /* Otsikoiden tyyli (Selitys:, Hoito:) */
+    font-size: 1em; /* Sama koko kuin leipäteksti tai hieman isompi */
+    color: var(--text-muted); /* Harmaampi väri otsikolle */
+    margin-bottom: 5px; /* Pieni väli otsikon ja tekstin väliin */
+    font-weight: 600;
+    text-transform: uppercase; /* Isot kirjaimet (valinnainen) */
+}
+feedback-section p {
+    /* Itse tekstin tyyli */
+    margin: 0;
+    font-size: 0.95em;
+    color: var(--text-color); /* Kirkas teksti */
+    line-height: 1.6;
+}
+.feedback-treatment {
+    margin-top: 20px;
+}
+/* === Uusi kysymys -nappi === */
+.new-question { margin: 30px auto 10px; display: block; padding: 12px 25px; font-size: 1.1em; border: none; background-color: #27ae60; color: #fff; font-weight: bold; }
+.new-question:hover { background-color: #229954; }
+/* === Ohje-ikkunan (Modaali) tyylit === */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
+.modal-overlay.visible { opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
+.modal-content { background: var(--surface-color); color: var(--text-color); padding: 25px 30px; border-radius: 8px; max-width: 650px; width: 90%; box-shadow: 0 5px 20px rgba(0,0,0,0.4); max-height: 85vh; display: flex; flex-direction: column; transform: scale(0.95) translateY(-10px); transition: transform 0.3s ease; border: 1px solid var(--border-color); }
+.modal-overlay.visible .modal-content { transform: scale(1) translateY(0); }
+.modal-content h2 { margin-top: 0; margin-bottom: 20px; text-align: left; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 1.4em; color: #ffffff; flex-shrink: 0; }
+.modal-body { overflow-y: auto; margin-bottom: 20px; flex-grow: 1; }
+.modal-body ol, .modal-body ul { padding-left: 25px; margin-top: 15px; margin-bottom: 15px; }
+.modal-body li { margin-bottom: 12px; line-height: 1.6; }
+.modal-body ul li { margin-bottom: 8px; }
+.modal-body p { margin-bottom: 15px; line-height: 1.6; }
+.modal-body strong { color: #f1c40f; font-weight: 600; }
+.modal-body code { background-color: var(--code-bg); color: var(--text-color); padding: 3px 6px; border-radius: 4px; font-family: monospace; font-size: 0.95em; }
+.modal-body small { display: block; margin-top: 15px; font-style: italic; color: var(--text-muted); text-align: left; font-size: 0.9em; }
+.modal-close-button { display: block; margin: 0 auto 0; padding: 10px 25px; background-color: var(--button-bg); color: white; border-color: var(--button-border); font-weight: bold; flex-shrink: 0; }
+.modal-close-button:hover { background-color: var(--button-hover-bg); border-color: #555; }
+/* === Responsiivisuus === */
+@media (max-width: 768px) { main { width: 95%; margin: 10px auto; } .container { padding: 15px 20px; } #score-root { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 10px; } .score-display { order: 1;} .unit-selector { order: 2; text-align: left; margin-top: 5px;} h1 { font-size: 1.4em; margin-bottom: 20px;} }
+@media (max-width: 480px) { body { padding: 10px; } main { width: 100%; margin: 5px auto; } .container { padding: 15px 10px; border-radius: 4px;} h1 { font-size: 1.3em; } h2 { font-size: 1.1em; margin-top: 30px; margin-bottom: 10px;} .options-grid, .compensation-grid { gap: 10px; grid-template-columns: 1fr; } .abg-values { padding: 10px 12px; } .abg-values p { font-size: 1.0em; grid-template-columns: 55px auto 1fr auto; gap: 5px 8px; padding: 3px 0; } .abg-values strong { font-size: 0.85em; text-align: right; } .abg-values .value-text { font-size: 1.05em; } .abg-values .value-text span.hypoxemia-class { display: block; margin-left: 0; margin-top: 3px; font-size: 0.75em; } /* Siirrä luokitus omalle riville pienellä näytöllä */ .abg-values .ref { font-size: 0.75em; white-space: normal; } .apuva-button { font-size: 0.7em; padding: 0 4px; } button.option, button.compensation { padding: 12px 10px; font-size: 0.9em; } .feedback { font-size: 0.95em; padding: 12px 15px; } .feedback-summary { font-size: 1em; } .feedback-correct-answer { font-size: 0.9em; padding: 8px;} .feedback-explanation { font-size: 0.9em;} .feedback-differential ul { font-size: 0.85em; } .new-question { font-size: 1em; padding: 10px 20px; } .modal-content { padding: 15px 20px; width: 95%; } .modal-content h2 { font-size: 1.2em; margin-bottom: 15px;} .modal-body { margin-bottom: 15px; } .modal-close-button { padding: 8px 20px; } .help-button-general { top: 10px; right: 10px; width: 25px; height: 25px; font-size: 1em;} }
+/* Korjaus Tapaus-tekstin katkeamiseen */
+.case-context p {
+    /* Aiemmat tyylit säilyvät... */
+    margin: 0;
+    line-height: 1.5;
+    font-size: 0.95em;
+    /* LISÄYKSET: Varmistetaan rivitys ja normaali korkeus */
+    white-space: normal !important; /* Salli tekstin rivittyä (important varmistaa yliajon) */
+    overflow-wrap: break-word; /* Salli pitkien sanojen katkaisu */
+    height: auto; /* Varmista, että korkeus mukautuu sisältöön */
+    overflow: visible; /* Varmista, ettei sisältöä leikata */
+    color: var(--text-color); /* Varmista tekstin väri */
+
+}
+
+/* Korjaus/varmistus palautetekstin katkeamiseen */
+.feedback {
+    /* Aiemmat tyylit säilyvät... */
+    margin-top: 25px; padding: 15px 20px; font-size: 1.05em;
+    text-align: left; border-radius: 6px; line-height: 1.6; border: 1px solid;
+    /* LISÄYKSET: Varmistetaan korkeuden mukautuminen ja näkyvyys */
+    height: auto;
+    overflow: visible;
+}
+
+/* Varmistus myös palautteen sisäosille */
+.feedback-explanation p,
+.feedback-differential ul,
+.feedback-differential li {
+    height: auto;
+    overflow: visible;
+    white-space: normal; /* Varmistetaan rivitys myös listan osissa */
+    overflow-wrap: break-word;
+}
+/* === Sivupaneeli Tapauslistalle === */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6); /* Hieman läpinäkyvämpi kuin modaalissa */
+    z-index: 1050; /* Päällimmäisenä (paitsi ehkä modaali) */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+.sidebar-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0; /* Paneeli tulee oikeaan reunaan */
+    width: 350px; /* Paneelin leveys */
+    max-width: 90%; /* Varmistus pienillä näytöillä */
+    height: 100%;
+    background-color: var(--surface-color);
+    border-left: 1px solid var(--border-color);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    z-index: 1060; /* Vielä overlayn päällä */
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%); /* Piilotettu oikealle */
+    transition: transform 0.3s ease-in-out;
+}
+.sidebar.open {
+    transform: translateX(0); /* Liukuu näkyviin */
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0; /* Estä headeria kutistumasta */
+}
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: var(--text-color);
+}
+.sidebar-close-button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 2em;
+    line-height: 1;
+    padding: 0 5px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.sidebar-close-button:hover {
+    color: var(--text-color);
+}
+
+.sidebar-content {
+    padding: 10px 20px 20px 20px;
+    overflow-y: auto; /* Salli vieritys, jos lista pitkä */
+    flex-grow: 1; /* Vie loput tilasta */
+}
+.sidebar-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar-content li {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed var(--border-color);
+}
+.sidebar-content li:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.sidebar-content p {
+    margin: 0;
+    font-size: 0.9em;
+    line-height: 1.5;
+    color: var(--text-muted);
+    white-space: normal !important; /* Varmistetaan rivitys */
+    overflow-wrap: break-word !important;
+}
+
+/* Paneelin avausnapin tyyli (sijoita sopivaan paikkaan) */
+.case-list-toggle-button {
+    /* Esimerkkityylit - voit muokata */
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-border);
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    margin-left: 15px; /* Tilaa ?-napin jälkeen */
+    transition: background-color 0.2s;
+    vertical-align: middle; /* Kohdista muiden yläpalkin elementtien kanssa */
+}
+.case-list-toggle-button:hover {
+    background-color: var(--button-hover-bg);
+}
+.case-list-toggle-button:focus {
+     outline: none;
+     box-shadow: 0 0 0 3px var(--button-focus-shadow);
+     border-color: var(--accent-color);
+}
+
+/* Varmista, ettei overlay estä modaalin klikkausta (jos molemmat auki) */
+.modal-overlay { z-index: 1000; }
+.modal-content { z-index: 1010; }
+/* === Sivupaneelin tapausnapit === */
+.sidebar-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar-content li {
+    margin: 0; /* Poista marginaali listan alkiosta */
+    padding: 0; /* Poista padding listan alkiosta */
+    border-bottom: 1px dashed var(--border-color);
+}
+.sidebar-content li:last-child {
+    border-bottom: none;
+}
+
+.sidebar-case-button {
+    /* Tyylit, jotta näyttää enemmän tekstiltä, mutta on klikattava */
+    display: block; /* Vie koko leveyden */
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 12px 0; /* Pystysuuntainen väli */
+    margin: 0;
+    text-align: left;
+    font-family: inherit; /* Käytä sivun oletusfonttia */
+    font-size: 0.9em;
+    line-height: 1.5;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+    white-space: normal !important; /* Varmista rivitys */
+    overflow-wrap: break-word !important;
+}
+
+.sidebar-case-button:hover,
+.sidebar-case-button:focus {
+    background-color: rgba(255, 255, 255, 0.08); /* Hento korostus hoverissa/focuksessa */
+    color: var(--text-color); /* Kirkkaampi teksti */
+    outline: none; /* Poista oletus focus-reunus */
+}
+
+.sidebar-case-button:active {
+    background-color: rgba(255, 255, 255, 0.12); /* Tummempi korostus klikatessa */
+}
+/* === Päivitetty: Paneelin avausnapin keskitys ja väli === */
+.case-list-toggle-button {
+    /* Vanhat tyylit säilyvät pohjalla (värit, reunat jne.)... */
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-border);
+    padding: 6px 12px; /* Hieman isompi padding */
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em; /* Voit säätää fonttikokoa */
+    transition: background-color 0.2s;
+
+    /* UUDET TYYLIT KESKITYSTÄ JA VÄLIÄ VARTEN: */
+    display: block;       /* Tekee napista lohkoelementin (oma rivi) */
+    width: fit-content;   /* Leveys määräytyy sisällön (tekstin) mukaan */
+    margin-top: 10px;     /* Tilaa yläpuolella olevaan elementtiin (esim. otsikko) */
+    margin-bottom: 25px;  /* Tilaa napin ALLE (tämä lisää pyytämäsi tilan) */
+    margin-left: auto;    /* Automaattinen vasen marginaali -> */
+    margin-right: auto;   /* Automaattinen oikea marginaali -> Yhdessä keskittävät */
+
+    /* Poistetaan aiemmat sijaintiin vaikuttaneet tyylit, jos ne olivat käytössä */
+    /* vertical-align: middle; */ /* Ei tarvita display:block kanssa */
+    /* margin-left: 15px; */ /* Korvattu auto-marginaalilla */
+}
+
+/* Voit säätää myös otsikon alamarginaalia, jos haluat napin lähemmäs/kauemmas */
+h1 {
+    /* ... muut h1-tyylit ... */
+    margin-bottom: 15px; /* Esim. hieman vähemmän, koska nappi tuo omaa marginaaliaan */
+}
+
+/* Tarkista myös ?-napin (yleisohje) sijainti. Jos se oli aiemmin tämän napin vieressä, */
+/* se jää nyt yksin ylös. Absoluuttinen asemointi oikeaan yläkulmaan toimii edelleen. */
+.help-button-general {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    /* ... muut tyylit ... */
+    z-index: 10; /* Varmista, että se pysyy päällä */
+}
+
+/* Hover ja focus kuten aiemmin */
+.case-list-toggle-button:hover {
+    background-color: var(--button-hover-bg);
+}
+.case-list-toggle-button:focus {
+     outline: none;
+     box-shadow: 0 0 0 3px var(--button-focus-shadow);
+     border-color: var(--accent-color);
+}
+/* Lisää tämä :root lohkoon muiden värien joukkoon */
+
+
+/* Tyyli poikkeaville arvoille */
+.value-text.abnormal-value {
+    color: var(--abnormal-red);
+    font-weight: 700; /* Lihavoidaan hieman enemmän kuin normaali arvo */
+    /* Jos haluat kokeilla "outlinea" tekstivarjolla: */
+  /* text-shadow: 0 0 2px rgba(0, 0, 0, 0.7); */ /* Tumma hehku */
+}
+
+/* Varmista oletusarvon normaali paino */
+.abg-values .value-text {
+    color: var(--receipt-text); /* Oletusväri */
+    font-weight: 700;
+    text-shadow: none;
+    white-space: nowrap;
+    font-family: 'Courier New', Courier, monospace;
+
+}
+
+
+
+/* Poistetaan aiemmat palautteeseen liittyvät korostusluokat, jos ne ovat vielä olemassa */
+/* } */
+
+
+/* Mobiiliresponsiivisuus nuolelle (jos layout muuttuu) */
+
+/* === Kompensaatioruudukon ilmestymisanimaatio === */
+
+/* Määritellään animaatio */
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+      /* Voit lisätä pienen liikkeen, esim. */
+      /* transform: translateY(10px); */
+    }
+    to {
+      opacity: 1;
+      /* transform: translateY(0); */
+    }
+  }
+  
+  /* Luokka, joka käynnistää animaation */
+  .fade-in-effect {
+    /* Käytetään fadeIn-animaatiota, kesto 0.4s, ease-out-ajoitus */
+    animation: fadeIn 0.4s ease-out forwards;
+    /* 'forwards' pitää lopputilan (opacity: 1) päällä animaation jälkeen */
+  }
+  /* styles.css (LISÄTTY suodatustyylit) */
+
+/* ... (kaikki aiemmat tyylit säilyvät) ... */
+
+/* === Sivupaneeli Tapauslistalle (olemassa olevat tyylit) === */
+.sidebar-overlay {
+    /* ... */
+}
+.sidebar {
+    /* ... */
+}
+.sidebar.open {
+    /* ... */
+}
+.sidebar-header {
+    /* ... */
+}
+.sidebar-header h3 {
+    /* ... */
+}
+.sidebar-close-button {
+    /* ... */
+}
+
+/* === UUDET TYYLIT SUODATUKSELLE === */
+.sidebar-filter-controls {
+    padding: 10px 15px; /* Pieni väli reunoihin ja headeriin/sisältöön */
+    border-bottom: 1px solid var(--border-color); /* Erotin listasta */
+    display: flex; /* Aseta napit vierekkäin */
+    flex-wrap: wrap; /* Salli rivitys, jos ei mahdu */
+    gap: 8px; /* Väli nappien välille */
+    margin-bottom: 10px; /* Tilaa ennen listaa */
+}
+
+.filter-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-border);
+    padding: 5px 10px;
+    border-radius: 15px; /* Pyöristetyt reunat */
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    white-space: nowrap; /* Estä tekstin rivitys napin sisällä */
+}
+
+.filter-button:hover {
+    background-color: var(--button-hover-bg);
+    border-color: var(--text-muted);
+}
+
+.filter-button.active {
+    background-color: var(--accent-color); /* Korosta aktiivista */
+    border-color: var(--accent-darker);
+    color: var(--selected-text);
+    font-weight: bold;
+}
+
+.filter-button:focus {
+     outline: none;
+     box-shadow: 0 0 0 2px var(--button-focus-shadow); /* Pienempi focus-kehys */
+}
+
+/* Viesti jos suodatus ei tuota tuloksia */
+.no-cases-message {
+    padding: 15px;
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+}
+/* === /UUDET TYYLIT SUODATUKSELLE === */
+
+
+.sidebar-content {
+    /* ... (olemassa olevat tyylit) ... */
+    padding: 10px 20px 20px 20px; /* Varmista padding */
+}
+.sidebar-content ul {
+    /* ... */
+}
+.sidebar-content li {
+    /* ... */
+}
+.sidebar-case-button {
+    /* ... */
+}
+.sidebar-case-button:hover,
+.sidebar-case-button:focus {
+    /* ... */
+}
+.sidebar-case-button:active {
+    /* ... */
+}
+
+/* ... (kaikki loput tyylit säilyvät) ... */
+
+/* Esim. Abnormal value tyyli (säilyy ennallaan) */
+
+
+
+/* ... (muut tyylit) ... */
