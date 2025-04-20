@@ -93,10 +93,6 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
 /* === Potilaskonteksti ja ABG-arvot === */
 .case-display { margin-bottom: 20px; }
 .case-context { padding: 15px 25px; background-color: var(--bg-color); border: 1px solid var(--border-color); border-bottom: none; border-radius: 6px 6px 0 0; margin-bottom: 0; color: var(--text-color); }
-.case-context p { margin: 0; line-height: 1.6; font-size: 1em; white-space: normal !important;
-    overflow-wrap: break-word;
-    height: auto;
-    overflow: visible;}
 .case-context strong { color: var(--accent-color); margin-right: 10px; font-weight: 700;}
 .receipt-scroll-wrapper {
     overflow-x: auto; /* Salli vaakavieritys jos sisältö leveämpi */
@@ -375,7 +371,7 @@ feedback-section p {
     line-height: 1.5;
     font-size: 0.95em;
     /* LISÄYKSET: Varmistetaan rivitys ja normaali korkeus */
-    white-space: normal !important; /* Salli tekstin rivittyä (important varmistaa yliajon) */
+    white-space: normal;/* Salli tekstin rivittyä (important varmistaa yliajon) */
     overflow-wrap: break-word; /* Salli pitkien sanojen katkaisu */
     height: auto; /* Varmista, että korkeus mukautuu sisältöön */
     overflow: visible; /* Varmista, ettei sisältöä leikata */
