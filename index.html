@@ -359,7 +359,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
             treatment: "COPD:n perushoito (avaavat, kortikosteroidit inh.), tupakoinnin lopetus, happihoito (tavoitesaturaatio matalampi, esim. 88-92%), NIV-hoidon harkinta (jos pahenemisvaiheita).",
         },
         { // Tapaus 9
-            id: "RespAcidAcuteExac01", context: "Tapaus 9: 65v COPD-potilas päivystyksessä keuhkokuumeen ja lisääntyneen hengenahdistuksen vuoksi.",
+            id: "RespAcidAcuteExac01", context: "Tapaus 9: Sama 65v COPD-potilas (Tapaus 8) nyt päivystyksessä keuhkokuumeen ja lisääntyneen hengenahdistuksen vuoksi.",
             values: { pH: 7.26, pCO2_kPa: 9.5, HCO3: 38, PaO2_kPa: 6.5, BE: 8, Na: 141, Cl: 95, Lac: 2.1, K: 4.6, Temp: 38.5, Hb: 138, MetHb: 1.2, Ca2: 1.14, Glu: 7.8}, // AG = 8
             correctPrimary: texts.respiratoryAcidosis, // OK
             correctCompensation: texts.partiallyCompensated, // OK
@@ -596,6 +596,8 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         const clClass = isValueAbnormal(Cl, REF_CL) ? 'abnormal-value' : '';
         const gluClass = isValueAbnormal(Glu, REF_GLU) ? 'abnormal-value' : '';
         const lacClass = isValueAbnormal(Lac, REF_LAC) ? 'abnormal-value' : '';
+        const tempClass = isValueAbnormal(Temp, REF_TEMP) ? 'abnormal-value' : '';
+
         // --- /LISÄTTY PUUTTUVAT LUOKAT ---
 
 
