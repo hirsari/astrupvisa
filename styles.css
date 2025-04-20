@@ -96,14 +96,14 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
 .case-context strong { color: var(--accent-color); margin-right: 10px; font-weight: 700;}
 .receipt-scroll-wrapper {
     overflow-x: auto; /* Salli vaakavieritys jos sisältö leveämpi */
-    margin-left: -10px; /* Kompensoi containerin paddingia */
-    margin-right: -10px;/* Kompensoi containerin paddingia */
-    padding-left: 10px; /* Lisää padding takaisin wrapperin sisälle */
-    padding-right: 10px;
+    
+    
 }
 /* Lisätään pieni visuaalinen vihje, että voi vierittää (valinnainen) */
 .receipt-scroll-wrapper::-webkit-scrollbar {
     height: 5px; /* Vierityspalkin korkeus */
+    display: flex;
+    justify-content: center; /* Keskitä sisältö (kuitti) vaakasuunnassa */
 }
 .receipt-scroll-wrapper::-webkit-scrollbar-thumb {
     background: var(--border-color); /* Palkin väri */
@@ -119,8 +119,7 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
     font-family: 'Courier New', Courier, monospace;
     min-width: 430px; 
     max-width: 450px; /* Hieman leveämpi uusille sarakkeille ja ref. */
-    margin-left: auto;
-    margin-right: auto;
+    flex-shrink: 0;
     margin-top: 0; /* Pidä kiinni yläpuolisessa kontekstissa */
     margin-bottom: 20px; /* Lisää tilaa alle */
     color: var(--receipt-text);
