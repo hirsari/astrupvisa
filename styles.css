@@ -164,7 +164,13 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
 
 /* Poikkeavan arvon väritys */
 .receipt-row .param-value.abnormal-value {
-    color: var(--abnormal-red) !important;
+    color: var(--abnormal-red);
+}
+
+.receipt-header .abnormal-value {
+    color: var(--abnormal-red);
+    /* Voit lisätä lihavoinnin myös poikkeavalle lämpötilalle, jos haluat */
+    font-weight: 700;
 }
 
 /* Yksi arvorivi kuitissa (GRID MÄÄRITYS) */
