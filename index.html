@@ -630,7 +630,10 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
                 {/* Header Info */}
                 <div className="receipt-header">
                      <span>{texts.sampleTypeLabel}: {texts.sampleTypeValue}</span>
-                     <span>{texts.tempLabel}={Temp?.toFixed(1)}{texts.tempUnit}</span>
+                     <span>
+                                 {texts.tempLabel}=
+                                 <span className={tempClass}>{Temp?.toFixed(1)}{texts.tempUnit}</span>
+                             </span>
                  </div>
                  <hr className="receipt-separator" />
 
