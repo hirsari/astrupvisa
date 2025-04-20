@@ -96,14 +96,13 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
 .case-context strong { color: var(--accent-color); margin-right: 10px; font-weight: 700;}
 .receipt-scroll-wrapper {
     overflow-x: auto; /* Salli vaakavieritys jos sisältö leveämpi */
-    
+    display: flex;
+    justify-content: center; /* Keskitä sisältö (kuitti) vaakasuunnassa */
     
 }
 /* Lisätään pieni visuaalinen vihje, että voi vierittää (valinnainen) */
 .receipt-scroll-wrapper::-webkit-scrollbar {
     height: 5px; /* Vierityspalkin korkeus */
-    display: flex;
-    justify-content: center; /* Keskitä sisältö (kuitti) vaakasuunnassa */
 }
 .receipt-scroll-wrapper::-webkit-scrollbar-thumb {
     background: var(--border-color); /* Palkin väri */
