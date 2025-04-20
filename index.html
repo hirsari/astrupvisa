@@ -101,6 +101,7 @@
         helpTitleAG: "Anionivaje (AG)",
         helpTitleLac: "Laktaatti (Lac)",
         helpTitleK: "Kalium (K⁺)",
+        helpTitleCl: "Kloridi (Cl⁻) ja Asidoosi", // Otsikko modaalille
         helpContentGeneral: (
             <Fragment>
                 <h4>Systemaattinen tulkintamalli:</h4>
@@ -257,6 +258,30 @@
                     <li><strong>Alkaloosi:</strong> Vetyionit (H⁺) siirtyvät soluista ulos ja kaliumionit (K⁺) siirtyvät soluihin → **hypokalemia**.</li>
                 </ul>
                 <p>Tämä on tärkeä muistaa esim. DKA:n hoidossa, jossa asidoosin korjaantuessa insuliinilla kalium voi laskea vaarallisen alas.</p>
+            </Fragment>
+        ),
+        helpContentCl: (             // Sisältö modaalille
+            <Fragment>
+                <p>Kloridi (Cl⁻) on tärkein solunulkoinen anioni. Sen pitoisuus veressä vaikuttaa happo-emästasapainoon ja anionivajeeseen.</p>
+                <ul>
+                    <li>Normaali P-Cl: 96 – 111 mmol/l (uusien viitearvojen mukaan).</li>
+                </ul>
+                <p><strong>Yhteys metaboliseen asidoosiin:</strong></p>
+                <ul>
+                    <li><strong>Normaalin anionivajeen metabolinen asidoosi (NAGMA)</strong> on usein **hyperkloreeminen**. Tämä tarkoittaa, että kloridipitoisuus on koholla (tai ylärajoilla).</li>
+                    <li>Tämä johtuu siitä, että kun elimistö menettää bikarbonaattia (HCO₃⁻, emäs), munuaiset pyrkivät kompensoimaan anionivajetta lisäämällä kloridin takaisinottoa.</li>
+                    <li>Tyypillisiä syitä hyperkloreemiselle NAGMA:lle ovat:
+                        <ul>
+                            <li><strong>Ripuli:</strong> Menetetään paljon HCO₃⁻-pitoista nestettä suolistosta.</li>
+                            <li><strong>Renaalinen tubulaarinen asidoosi (RTA):</strong> Munuaisten kyky erittää happoja tai ottaa takaisin HCO₃⁻ on häiriintynyt.</li>
+                            <li><strong>Liiallinen NaCl 0.9% ("fysiologinen suola") -infuusio:</strong> Suuri kloridikuorma voi laimentaa HCO₃⁻:a ja aiheuttaa asidoosin.</li>
+                            <li>Jotkin lääkkeet (esim. asetatsoliamidi).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Korkean anionivajeen metabolisessa asidoosissa (HAGMA)</strong> kloridipitoisuus on yleensä normaali, koska anionivajeen aiheuttaa jokin muu (mittaamaton) anioni (esim. laktaatti, ketoaine).</li>
+                </ul>
+                <p>Kloridin arvo auttaa siis erottamaan NAGMA:n ja HAGMA:n syitä yhdessä anionivajeen kanssa.</p>
+                 <p><em>Huom:</em> Myös metabolinen alkaloosi (esim. oksentelu) voi aiheuttaa matalan kloridin (hypokloremia), kun menetetään HCl:a.</p>
             </Fragment>
         ),
     }; // texts-objekti päättyy
@@ -746,6 +771,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
                         <span className={`param-value ${clClass}`}>{Cl?.toFixed(0)}</span> {/* Käyttää clClass */}
                         <span className="param-unit">mmol/L</span>
                         <span className="param-ref">{formatRef(REF_CL, 'mmol/L', 0)}</span>
+                        <button className="apuva-button" onClick={() => onOpenHelp('Cl')} aria-label={`Apua ${texts.clLabel}`}>{texts.helpButtonLabel}</button>
                     </div>
                  ) : null}
 
@@ -1149,6 +1175,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
                 // LISÄTTY UUDET TOPICIT
                 case 'Lac': title = texts.helpTitleLac; content = texts.helpContentLac; break;
                 case 'K': title = texts.helpTitleK; content = texts.helpContentK; break;
+                case 'Cl': title = texts.helpTitleCl; content = texts.helpContentCl; break;
                 default: title = texts.helpTitleGeneral; content = texts.helpContentGeneral;
             }
             setModalContent({ title, content });
