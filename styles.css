@@ -98,7 +98,10 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
     overflow-x: auto; /* Salli vaakavieritys jos sisältö leveämpi */
     display: flex;
     justify-content: center; /* Keskitä sisältö (kuitti) vaakasuunnassa */
-    
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
 }
 /* Lisätään pieni visuaalinen vihje, että voi vierittää (valinnainen) */
 .receipt-scroll-wrapper::-webkit-scrollbar {
@@ -119,6 +122,8 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
     min-width: 430px; 
     max-width: 450px; /* Hieman leveämpi uusille sarakkeille ja ref. */
     flex-shrink: 0;
+    margin-left: 0;
+    margin-right: 0;
     margin-top: 0; /* Pidä kiinni yläpuolisessa kontekstissa */
     margin-bottom: 20px; /* Lisää tilaa alle */
     color: var(--receipt-text);
@@ -430,7 +435,10 @@ feedback-section p {
 @media (max-width: 768px) { main { width: 95%; margin: 10px auto; } .container { padding: 15px 20px; } #score-root { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 10px; } .score-display { order: 1;} .unit-selector { order: 2; text-align: left; margin-top: 5px;} h1 { font-size: 1.4em; margin-bottom: 20px; .abg-values { max-width: none; }} }
 @media (max-width: 480px) { body { padding: 10px; } main { width: 100%; margin: 5px auto; } .container { padding: 10px; border-radius: 4px;} h1 { font-size: 1.3em; } h2 { font-size: 1.1em; margin-top: 30px; margin-bottom: 10px;} .options-grid, .compensation-grid { gap: 10px; grid-template-columns: 1fr; } .abg-values { padding: 15px 8px 15px 8px; margin-left: 0;  /* Asettaa vasempaan reunaan */
     margin-right: 0; /* Asettaa vasempaan reunaan */; margin-top: 0;
-    margin-bottom: 15px; /* Esim. */}  .abg-values strong { font-size: 0.85em; text-align: right; } .abg-values .value-text { font-size: 1.05em; } .abg-values .value-text span.hypoxemia-class { display: block; margin-left: 0; margin-top: 3px; font-size: 0.75em; } /* Siirrä luokitus omalle riville pienellä näytöllä */ .abg-values .ref { font-size: 0.75em; white-space: normal; } .apuva-button { font-size: 0.7em; padding: 0 4px; } button.option, button.compensation { padding: 12px 10px; font-size: 0.9em; } .feedback { font-size: 0.95em; padding: 12px 15px; } .feedback-summary { font-size: 1em; } .feedback-correct-answer { font-size: 0.9em; padding: 8px;} .feedback-explanation { font-size: 0.9em;} .feedback-differential ul { font-size: 0.85em; } .new-question { font-size: 1em; padding: 10px 20px; } .modal-content { padding: 15px 20px; width: 95%; } .modal-content h2 { font-size: 1.2em; margin-bottom: 15px;} .modal-body { margin-bottom: 15px; } .modal-close-button { padding: 8px 20px; } .help-button-general { top: 10px; right: 10px; width: 25px; height: 25px; font-size: 1em;} }
+    margin-bottom: 15px; /* Esim. */}  .abg-values strong { font-size: 0.85em; text-align: right; } .abg-values .value-text { font-size: 1.05em; } .abg-values .value-text span.hypoxemia-class { display: block; margin-left: 0; margin-top: 3px; font-size: 0.75em; } /* Siirrä luokitus omalle riville pienellä näytöllä */ .abg-values .ref { font-size: 0.75em; white-space: normal; } .apuva-button { font-size: 0.7em; padding: 0 4px; } button.option, button.compensation { padding: 12px 10px; font-size: 0.9em; } .feedback { font-size: 0.95em; padding: 12px 15px; } .feedback-summary { font-size: 1em; } .feedback-correct-answer { font-size: 0.9em; padding: 8px;} .feedback-explanation { font-size: 0.9em;} .feedback-differential ul { font-size: 0.85em; } .new-question { font-size: 1em; padding: 10px 20px; } .modal-content { padding: 15px 20px; width: 95%; } .modal-content h2 { font-size: 1.2em; margin-bottom: 15px;} .modal-body { margin-bottom: 15px; } .modal-close-button { padding: 8px 20px; } .help-button-general { top: 10px; right: 10px; width: 25px; height: 25px; font-size: 1em;} .receipt-scroll-wrapper {
+        justify-content: flex-start; /* MUUTA KESKITYS VASEMMALLE TASAUKSEKSI */
+    }.receipt-row .param-ref {
+        display: inline-block;}}
 /* Korjaus Tapaus-tekstin katkeamiseen */
 .case-context p {
     /* Aiemmat tyylit säilyvät... */
