@@ -98,6 +98,21 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
     height: auto;
     overflow: visible;}
 .case-context strong { color: var(--accent-color); margin-right: 10px; font-weight: 700;}
+.receipt-scroll-wrapper {
+    overflow-x: auto; /* Salli vaakavieritys jos sisältö leveämpi */
+    margin-left: -10px; /* Kompensoi containerin paddingia */
+    margin-right: -10px;/* Kompensoi containerin paddingia */
+    padding-left: 10px; /* Lisää padding takaisin wrapperin sisälle */
+    padding-right: 10px;
+}
+/* Lisätään pieni visuaalinen vihje, että voi vierittää (valinnainen) */
+.receipt-scroll-wrapper::-webkit-scrollbar {
+    height: 5px; /* Vierityspalkin korkeus */
+}
+.receipt-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border-color); /* Palkin väri */
+    border-radius: 3px;
+}
 .abg-values {
     background-color: var(--receipt-bg);
     border-radius: 3px;
@@ -106,11 +121,12 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
     /* Säädetty padding: Ylä/ala 15px, Oikea 10px, Vasen 15px */
     padding: 15px 35px 15px 15px;
     font-family: 'Courier New', Courier, monospace;
+    min-width: 430px; 
     max-width: 450px; /* Hieman leveämpi uusille sarakkeille ja ref. */
-    margin: 20px auto;
+    margin: 0;
     color: var(--receipt-text);
     transition: none;
-    overflow: hidden; /* Piilottaa sahalaitamaskien ylitykset */
+    overflow: visible; /* Piilottaa sahalaitamaskien ylitykset */
 }
 .receipt-header {
     display: flex;
@@ -140,39 +156,13 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
 }
 
 /* Yksi arvorivi kuitissa */
-.receipt-row {
-    display: grid;
-    /* Sarakkeet: Nimi | Arvo | Yksikkö | Viite | Nappi */
-    /* Lisätty viimeinen 'auto'-sarake napille */
-    grid-template-columns: 100px 60px 50px 1.5fr auto;
-    gap: 0 8px; /* Riviväli 0, sarakkeiden väli 8px */
-    align-items: baseline;
-    margin-bottom: 3px; /* Tiheä riviväli */
-    padding: 0;
-    font-size: 1.0em;
-    line-height: 1.3;
-    color: var(--receipt-text);
-  }
+
 
 /* Parametrin nimi (esim. pH(T)) */
-.receipt-row .param-name {
-  grid-column: 1;
-  text-align: left;
-  font-weight: 400;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding-right: 4px;
-  font-family: 'Courier New', Courier, monospace; /* Varmistus */
-}
+
 
 /* Parametrin arvo (numero) */
-.receipt-row .param-value {
-  grid-column: 2;
-  text-align: right;
-  font-weight: 700; /* Lihavoitu */
-  white-space: nowrap;
-  font-family: 'Courier New', Courier, monospace; /* Varmistus */
-}
+
 
 /* Poikkeavan arvon väritys */
 .receipt-row .param-value.abnormal-value {
@@ -180,28 +170,9 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
 }
 
 /* Parametrin yksikkö */
-.receipt-row .param-unit {
-  grid-column: 3;
-  text-align: left;
-  font-weight: 400;
-  white-space: nowrap;
-  padding-left: 3px;
-  font-family: 'Courier New', Courier, monospace; /* Varmistus */
-}
 
-/* Viitearvojen teksti */
-.receipt-row .param-ref {
-  grid-column: 4;
-  text-align: left;
-  font-weight: 400;
-  font-size: 0.85em;
-  color: var(--receipt-text-muted);
-  white-space: nowrap;
-  padding-left: 10px;
-  font-family: 'Courier New', Courier, monospace; /* Varmistus */
-  vertical-align: baseline;
-  
-}
+
+
 .receipt-row .apuva-button {
     grid-column: 5; /* Asetetaan viidenteen sarakkeeseen */
     justify-self: center; /* Keskitä nappi sarakkeessaan */
