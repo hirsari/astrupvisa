@@ -119,7 +119,10 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
     font-family: 'Courier New', Courier, monospace;
     min-width: 430px; 
     max-width: 450px; /* Hieman leveämpi uusille sarakkeille ja ref. */
-    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0; /* Pidä kiinni yläpuolisessa kontekstissa */
+    margin-bottom: 20px; /* Lisää tilaa alle */
     color: var(--receipt-text);
     transition: none;
     overflow: visible; /* Piilottaa sahalaitamaskien ylitykset */
