@@ -651,7 +651,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
                      <span className="param-name">{texts.pco2Label.replace(':','')}</span>
                      <span className={`param-value ${pco2Class}`}>{displayPCO2?.toFixed(2)}</span>
                      <span className="param-unit">{gasUnitLabel}</span>
-                     <span className="param-ref">{formatRef(pco2Unit === 'kPa' ? REF_PCO2_KPA, 'kPa' : REF_PCO2_MMHG, 'mmHg', pco2Unit === 'kPa' ? 1 : 0)}</span>
+                     <span className="param-ref">{formatRef(pco2Unit === 'kPa' ? REF_PCO2_KPA : REF_PCO2_MMHG, gasUnitLabel, pco2Unit === 'kPa' ? 1 : 0)}</span>
                      <button className="apuva-button" onClick={() => onOpenHelp('pCO2')} aria-label={`Apua ${texts.pco2Label}`}>{texts.helpButtonLabel}</button>
 
                  </div>
@@ -659,7 +659,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
                      <span className="param-name">{texts.paO2Label.replace(':','')}</span>
                      <span className={`param-value ${po2Class}`}>{displayPaO2?.toFixed(1)}</span>
                      <span className="param-unit">{gasUnitLabel}</span>
-                     <span className="param-ref">{formatRef(pco2Unit === 'kPa' ? REF_PAO2_KPA, 'kPa' : REF_PAO2_MMHG, 'mmHg', 1)}</span>
+                     <span className="param-ref">{formatRef(pco2Unit === 'kPa' ? REF_PAO2_KPA : REF_PAO2_MMHG, gasUnitLabel, 1)}</span>
                      <button className="apuva-button" onClick={() => onOpenHelp('PaO2')} aria-label={`Apua ${texts.paO2Label}`}>{texts.helpButtonLabel}</button>
 
                  </div>
