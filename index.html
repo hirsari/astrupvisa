@@ -627,6 +627,16 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
     }
     return false; // Jos ei rajoja
 };
+const getAbnormalDirection = (value, ref) => {
+         if (value === null || value === undefined || !ref || isNaN(value)) return '';
+         const lowExists = ref.low !== null && ref.low !== undefined;
+         const highExists = ref.high !== null && ref.high !== undefined;
+         const low = lowExists ? ref.low : -Infinity;
+         const high = highExists ? ref.high : Infinity;
+         if (highExists && value > high) return '↑';
+         if (lowExists && value < low) return '↓';
+         return '';
+    };
 
         // Lasketaan kaikki luokat TÄSSÄ, ennen returnia
         const phClass = isValueAbnormal(pH, REF_PH) ? 'abnormal-value' : '';
@@ -680,19 +690,6 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
              else if (lowExists) { return `(>${lowStr}${unit ? ' ' + unit : ''})`; }
              return '';
          };
-         const getAbnormalDirection = (value, ref) => {
-            if (value === null || value === undefined || !ref || isNaN(value)) return '';
-            // Käytetään null/undefined turvallisia alarajoja
-            const low = ref.low ?? -Infinity;
-            const high = ref.high ?? Infinity;
-             // Erityistapaus BE:lle +/-3 (ei tarvita erikseen, jos vertailu toimii)
-             // Erityistapaus Lac: 0.5-1.6
-             // Erityistapaus MetHb < 2.0 (high=2.0, low=0)
-
-            if (value > high) return '↑'; // Yli ylärajan
-            if (value < low) return '↓'; // Alle alarajan
-            return ''; // Normaali
-        };
          return (
             <Fragment>
                 {/* TAPAUSSELOSTE LISÄTTY TAKAISIN TÄHÄN */}
