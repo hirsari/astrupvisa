@@ -339,12 +339,29 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         }
         return arr;
     }
+    function getPao2RefKpa(age) {
+        // Käytetään vanhaa kiinteää arvoa, jos ikä puuttuu tai on virheellinen
+        const fallbackRef = { low: 10.6, high: 13.3 };
+        if (age === null || age === undefined || isNaN(age)) {
+            console.warn("Potilaan ikä puuttuu tai virheellinen, käytetään oletus pO2-viitearvoa.");
+            return fallbackRef;
+        }
+        // Palautetaan oikea väli kuvan perusteella
+        if (age < 18) return { low: 12.0, high: 14.0 };
+        if (age <= 30) return { low: 11.0, high: 14.0 };
+        if (age <= 50) return { low: 10.3, high: 13.0 };
+        if (age <= 60) return { low: 9.7, high: 12.7 };
+        if (age <= 70) return { low: 9.3, high: 12.3 };
+        if (age <= 80) return { low: 8.8, high: 11.9 };
+        // Yli 80v
+        return { low: 8.3, high: 11.4 };
+    }
 
     // --- Potilastapaukset (KORJATTU correctPrimary JA Tapaus 20) ---
     const patientCases = [
         { // Tapaus 1
             id: "DKA01", context: "Tapaus 1: 25v nainen, T1DM. Insuliinipumppu lakannut toimimasta. Vatsakipua, oksentelua, tihentynyttä hengitystä.",
-            values: { pH: 7.18, pCO2_kPa: 2.8, HCO3: 9, PaO2_kPa: 12.5, BE: -18, Na: 136, Cl: 98, Lac: 1.8, K: 5.2, Temp: 37.0, Hb: 145, MetHb: 0.8, Ca2: 1.10, Glu: 25.5}, // AG=29 (Korkea)
+            values: { age: 25, pH: 7.18, pCO2_kPa: 2.8, HCO3: 9, PaO2_kPa: 12.5, BE: -18, Na: 136, Cl: 98, Lac: 1.8, K: 5.2, Temp: 37.0, Hb: 145, MetHb: 0.8, Ca2: 1.10, Glu: 25.5}, // AG=29 (Korkea)
             correctPrimary: texts.metabolicAcidosisHAGMA, // <-- Muutettu HAGMAksi
             correctCompensation: texts.partiallyCompensated,
             explanation: "Potilaalla on vaikea metabolinen asidoosi (matala pH, HCO3- ja BE). Anionivaje on selvästi koholla (29), sopien diabeettiseen ketoasidoosiin. Hengitys kompensoi voimakkaasti (matala pCO2), mutta kompensaatio on osittainen (pH poikkeava). Myös laktaatti (1.8) on lievästi koholla. Kalium (5.2) on korkea ja kalsium (1.10) matala. Natrium (136) on normaali. Verensokeri erittäin korkea.",            
@@ -352,7 +369,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 2
             id: "Lactic01", context: "Tapaus 2: 60v mies, septinen sokki teho-osastolla. Korkea kuume, matala verenpaine, oliguria.",
-            values: { pH: 7.25, pCO2_kPa: 3.5, HCO3: 15, PaO2_kPa: 7.8, BE: -12, Na: 140, Cl: 105,  Lac: 6.5, K: 4.8, Temp: 39.1, Hb: 110, MetHb: 1.0, Ca2: 1.05, Glu: 8.1 }, // AG=20 (Korkea)
+            values: { age: 60, pH: 7.25, pCO2_kPa: 3.5, HCO3: 15, PaO2_kPa: 7.8, BE: -12, Na: 140, Cl: 105,  Lac: 6.5, K: 4.8, Temp: 39.1, Hb: 110, MetHb: 1.0, Ca2: 1.05, Glu: 8.1 }, // AG=20 (Korkea)
             correctPrimary: texts.metabolicAcidosisHAGMA, // <-- Muutettu HAGMAksi
             correctCompensation: texts.partiallyCompensated,
             explanation: "Potilaalla on metabolinen asidoosi (matala pH, HCO3-, BE) ja kohonnut anionivaje (20). Sepsiksen aiheuttama sokki ja kudoshypoperfuusio johtavat anaerobiseen metaboliaan ja laktaatin kertymiseen (laktaattiasidoosi). Hengityskompensaatio (pCO2 3.5 kPa) on osittainen. Potilaalla myös kohtalainen hypoksemia (matala PaO2) johtuen todennäköisesti ARDS:stä tai keuhkokuumeesta.",
@@ -360,7 +377,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 3
             id: "Renal01", context: "Tapaus 3: 72v mies, krooninen munuaisten vajaatoiminta (GFR 20 ml/min). Väsymystä, yleistä huonovointisuutta.",
-            values: { pH: 7.31, pCO2_kPa: 4.2, HCO3: 18, PaO2_kPa: 11.0, BE: -7, Na: 138, Cl: 102,  Lac: 1.2, K: 5.4, Temp: 36.8, Hb: 95, MetHb: 0.7, Ca2: 1.12, Glu: 5.8}, // AG=16 (Korkea)
+            values: { age: 72, pH: 7.31, pCO2_kPa: 4.2, HCO3: 18, PaO2_kPa: 11.0, BE: -7, Na: 138, Cl: 102,  Lac: 1.2, K: 5.4, Temp: 36.8, Hb: 95, MetHb: 0.7, Ca2: 1.12, Glu: 5.8}, // AG=16 (Korkea)
             correctPrimary: texts.metabolicAcidosisHAGMA, // <-- Muutettu HAGMAksi
             correctCompensation: texts.partiallyCompensated,
             explanation: "Krooninen munuaisten vajaatoiminta heikentää happojen (mm. fosfaatti, sulfaatti) eritystä ja bikarbonaatin takaisinottoa, johtaen metaboliseen asidoosiin (matala pH, HCO3-, BE). Anionivaje on usein koholla (18) näiden kertyvien happojen vuoksi. Hengitys kompensoi (matala pCO2), mutta pH jää usein hieman matalaksi. Happeutuminen normaali.",
@@ -368,7 +385,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 4
             id: "NAGMA01", context: "Tapaus 4: 45v nainen, vaikea ripuli (gastroenteriitti) kestänyt 3 päivää.",
-            values: { pH: 7.29, pCO2_kPa: 3.8, HCO3: 14, PaO2_kPa: 13.0, BE: -11, Na: 137, Cl: 111,  Lac: 1.5, K: 3.2, Temp: 37.2, Hb: 130, MetHb: 0.6, Ca2: 1.18, Glu: 6.0}, // AG=12 (Normaali)
+            values: { age: 45, pH: 7.29, pCO2_kPa: 3.8, HCO3: 14, PaO2_kPa: 13.0, BE: -11, Na: 137, Cl: 111,  Lac: 1.5, K: 3.2, Temp: 37.2, Hb: 130, MetHb: 0.6, Ca2: 1.18, Glu: 6.0}, // AG=12 (Normaali)
             correctPrimary: texts.metabolicAcidosisNAGMA, // <-- Muutettu NAGMAksi
             correctCompensation: texts.partiallyCompensated,
             explanation: "Ripuli aiheuttaa bikarbonaatin menetystä ja metabolisen asidoosin (matala pH, HCO3-, BE). Anionivaje (12) on normaali (NAGMA), ja kloridi (111) on normaali (ylärajalla). Hengitys kompensoi (matala pCO2), mutta kompensaatio on osittainen (pH matala). Kalium (3.2) on nyt matala (<3.3), mikä on tyypillistä ripulissa. Natrium (137), laktaatti (1.5) ja glukoosi (6.0) ovat normaaleja (raja-arvoilla).",
@@ -376,7 +393,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 5
             id: "Salicylate01", context: "Tapaus 5: 19v opiskelija, ottanut yliannoksen aspiriinia itsetuhoisesti. Sekava, hengittää tiheästi, tinnitusta.",
-            values: { pH: 7.48, pCO2_kPa: 2.5, HCO3: 14, PaO2_kPa: 14.0, BE: -8, Na: 142, Cl: 104,  Lac: 3.5, K: 3.8, Temp: 38.0, Hb: 135, MetHb: 1.1, Ca2: 1.15, Glu: 7.5}, // AG=24 (Korkea)
+            values: { age: 19, pH: 7.48, pCO2_kPa: 2.5, HCO3: 14, PaO2_kPa: 14.0, BE: -8, Na: 142, Cl: 104,  Lac: 3.5, K: 3.8, Temp: 38.0, Hb: 135, MetHb: 1.1, Ca2: 1.15, Glu: 7.5}, // AG=24 (Korkea)
             correctPrimary: texts.mixedMetAcidRespAlk, // Pysyy ennallaan (sekahäiriö, resp.alk. dominoi pH:ta)
             correctCompensation: "N/A", // Kompensoidaan metabolisella asidoosilla
             explanation: "Salisylaattimyrkytys aiheuttaa tyypillisen sekahäiriön: respiratorisen alkaloosin (matala pCO2) JA korkean anionivajeen metabolisen asidoosin (matala HCO3-, matala BE, korkea AG=24). pH (7.48) on alkalinen, joten respiratorinen komponentti dominoi. Myös laktaatti (3.5) ja glukoosi (7.5) ovat koholla. Kalsium (1.15) ja kalium (3.8) ovat normaalit.",            
@@ -384,7 +401,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 6
             id: "Vomiting01", context: "Tapaus 6: 50v mies, voimakasta oksentelua 2 päivää. Kuiva, väsynyt.",
-            values: { pH: 7.52, pCO2_kPa: 6.4, HCO3: 38, PaO2_kPa: 9.5, BE: 13, Na: 135, Cl: 85,  Lac: 1.1, K: 3.0, Temp: 36.5, Hb: 150, MetHb: 0.5, Ca2: 1.25, Glu: 5.9},
+            values: { age: 50, pH: 7.52, pCO2_kPa: 6.4, HCO3: 38, PaO2_kPa: 9.5, BE: 13, Na: 135, Cl: 85,  Lac: 1.1, K: 3.0, Temp: 36.5, Hb: 150, MetHb: 0.5, Ca2: 1.25, Glu: 5.9},
             correctPrimary: texts.metabolicAlkalosis, // OK
             correctCompensation: texts.partiallyCompensated, // OK
             explanation: "Oksentelu aiheuttaa metabolisen alkaloosin (korkea pH, HCO3-, BE) happojen menetyksen vuoksi. Hengitys kompensoi osittain (kohonnut pCO2). Tyypillisesti nähdään myös matala kalium (3.0), matala kloridi (85) ja nyt myös matala natrium (135). Laktaatti ja glukoosi normaalit.",
@@ -392,7 +409,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 7
             id: "Diuretics01", context: "Tapaus 7: 75v nainen, sydämen vajaatoiminta. Käyttää suurta annosta furosemidia. Lihasheikkoutta, kouristelua.",
-            values: { pH: 7.49, pCO2_kPa: 6.1, HCO3: 35, PaO2_kPa: 10.0, BE: 10, Na: 138, Cl: 92, Lac: 1.3, K: 3.3, Temp: 36.9, Hb: 125, MetHb: 0.8, Ca2: 1.16, Glu: 6.2},
+            values: { age: 75, pH: 7.49, pCO2_kPa: 6.1, HCO3: 35, PaO2_kPa: 10.0, BE: 10, Na: 138, Cl: 92, Lac: 1.3, K: 3.3, Temp: 36.9, Hb: 125, MetHb: 0.8, Ca2: 1.16, Glu: 6.2},
             correctPrimary: texts.metabolicAlkalosis, // OK
             correctCompensation: texts.partiallyCompensated, // OK
             explanation: "Loop-diureetit aiheuttavat metabolisen alkaloosin (korkea pH, HCO3-, BE). Hengityskompensaatio (kohonnut pCO2) on osittainen. Kalium (3.3) on normaali (juuri alarajalla), mutta usein nähdään hypokalemia. Kloridi (92) on matala. Glukoosi (6.2) on lievästi koholla (>6.0).",            
@@ -400,7 +417,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 8
             id: "RespAcidChronic01", context: "Tapaus 8: 65v mies, vaikea COPD vakaassa vaiheessa. Kotihappi käytössä.",
-            values: { pH: 7.37, pCO2_kPa: 7.8, HCO3: 36, PaO2_kPa: 8.8, BE: 7, Na: 140, Cl: 96, Lac: 1.4, K: 4.2, Temp: 36.6, Hb: 140, MetHb: 0.9, Ca2: 1.20, Glu: 6.5}, // AG = 8
+            values: { age: 65, pH: 7.37, pCO2_kPa: 7.8, HCO3: 36, PaO2_kPa: 8.8, BE: 7, Na: 140, Cl: 96, Lac: 1.4, K: 4.2, Temp: 36.6, Hb: 140, MetHb: 0.9, Ca2: 1.20, Glu: 6.5}, // AG = 8
             correctPrimary: texts.respiratoryAcidosis, // OK
             correctCompensation: texts.compensated, // OK
             explanation: "Potilaalla on krooninen respiratorinen asidoosi (korkea pCO2), jonka munuaiset ovat täysin kompensoineet (pH normaali 7.37, koholla oleva HCO3- ja BE). Anionivaje (8) ja kloridi (96) ovat normaalit. Glukoosi (6.5) on koholla (>6.0).",            
@@ -408,7 +425,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 9
             id: "RespAcidAcuteExac01", context: "Tapaus 9: Sama 65v COPD-potilas (Tapaus 8) nyt päivystyksessä kuumeen ja lisääntyneen hengenahdistuksen vuoksi.",
-            values: { pH: 7.26, pCO2_kPa: 9.5, HCO3: 38, PaO2_kPa: 6.5, BE: 8, Na: 141, Cl: 95, Lac: 2.1, K: 4.6, Temp: 38.5, Hb: 138, MetHb: 1.2, Ca2: 1.14, Glu: 7.8}, // AG = 8
+            values: { age: 65, pH: 7.26, pCO2_kPa: 9.5, HCO3: 38, PaO2_kPa: 6.5, BE: 8, Na: 141, Cl: 95, Lac: 2.1, K: 4.6, Temp: 38.5, Hb: 138, MetHb: 1.2, Ca2: 1.14, Glu: 7.8}, // AG = 8
             correctPrimary: texts.respiratoryAcidosis, // OK
             correctCompensation: texts.partiallyCompensated, // OK
             explanation: "Akuutti pahenemisvaihe kroonisessa respiratorisessa asidoosissa (erittäin korkea pCO2, matala pH). Metabolinen kompensaatio (korkea HCO3-/BE) on olemassa, mutta riittämätön akuuttiin pahenemiseen nähden (osittain kompensoitu). Anionivaje (8) normaali. Laktaatti (2.1) ja glukoosi (7.8) koholla. Kloridi (95) ja kalsium (1.14) ovat matalat. Kohtalainen hypoksemia.",            
@@ -416,7 +433,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 10
             id: "RespAcidAcuteOpioid01", context: "Tapaus 10: 30v mies, löydetty tajuttomana, hidas pinnallinen hengitys. Vieressä tyhjä purkki jossa teksti ¨Tippa¨.",
-            values: { pH: 7.15, pCO2_kPa: 10.5, HCO3: 25, PaO2_kPa: 5.5, BE: -1, Na: 139, Cl: 103, Lac: 1.6, K: 4.7, Temp: 35.8, Hb: 155, MetHb: 0.6, Ca2: 1.19, Glu: 6.1}, // AG = 11
+            values: { age: 30, pH: 7.15, pCO2_kPa: 10.5, HCO3: 25, PaO2_kPa: 5.5, BE: -1, Na: 139, Cl: 103, Lac: 1.6, K: 4.7, Temp: 35.8, Hb: 155, MetHb: 0.6, Ca2: 1.19, Glu: 6.1}, // AG = 11
             correctPrimary: texts.respiratoryAcidosis, // OK
             correctCompensation: texts.nonCompensated, // OK
             explanation: "Opioidien aiheuttama hengityskeskuksen inhiboituminen ja hengityslama, josta seuraa akuutti kompensoitumaton respiratorinen asidoosi (erittäin korkea pCO2, matala pH, normaalit HCO3- ja BE). Anionivaje (11) ja laktaatti (1.6) ovat normaalit. Glukoosi (6.1) on lievästi koholla. Vaikea hypoksemia.",            
@@ -424,7 +441,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 11
             id: "RespAlkAcuteAnxiety01", context: "Tapaus 11: 28v nainen, paniikkikohtaus. Hyperventiloi, tuntee pistelyä sormissa ja suun ympärillä.",
-            values: { pH: 7.53, pCO2_kPa: 3.5, HCO3: 23, PaO2_kPa: 13.5, BE: 1, Na: 140, Cl: 105, Lac: 1.0, K: 3.4, Temp: 37.1, Hb: 133, MetHb: 0.7, Ca2: 1.10, Glu: 5.5}, // AG = 12
+            values: { age: 28, pH: 7.53, pCO2_kPa: 3.5, HCO3: 23, PaO2_kPa: 13.5, BE: 1, Na: 140, Cl: 105, Lac: 1.0, K: 3.4, Temp: 37.1, Hb: 133, MetHb: 0.7, Ca2: 1.10, Glu: 5.5}, // AG = 12
             correctPrimary: texts.respiratoryAlkalosis, // OK
             correctCompensation: texts.nonCompensated, // OK
             explanation: "Ahdistuksen aiheuttama hyperventilaatio johtaa liialliseen hiilidioksidin poistumiseen ja akuuttiin kompensoimattomaan respiratoriseen alkaloosiin (matala pCO2, korkea pH, normaalit HCO3- ja BE). Anionivaje (12) ja laktaatti normaalit. Kalium (3.4) normaali. Matala kalsium (1.10) selittää pistelyoireet.",            
@@ -432,7 +449,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 12
             id: "RespAlkChronicAltitude01", context: "Tapaus 12: 62v mies, alkoholimaksakirroosi. Tulee päivystykseen lisääntyneen sekavuuden ja väsymyksen vuoksi. Lievästi ikteerinen, vatsa turvonnut.",
-            values: { pH: 7.44, pCO2_kPa: 4.0, HCO3: 19, PaO2_kPa: 7.5, BE: -4, Na: 137, Cl: 106, Lac: 1.9, K: 3.6, Temp: 37.0, Hb: 105, MetHb: 0.9, Ca2: 1.13, Glu: 5.2}, // AG = 12
+            values: { age: 62, pH: 7.44, pCO2_kPa: 4.0, HCO3: 19, PaO2_kPa: 7.5, BE: -4, Na: 137, Cl: 106, Lac: 1.9, K: 3.6, Temp: 37.0, Hb: 105, MetHb: 0.9, Ca2: 1.13, Glu: 5.2}, // AG = 12
             correctPrimary: texts.respiratoryAlkalosis, // OK
             correctCompensation: texts.compensated, // OK
             explanation: "Maksakirroosiin liittyvä krooninen respiratorinen alkaloosi (matala pCO2), jonka munuaiset ovat täysin kompensoineet (pH normaali 7.44, matala HCO3-, matala BE). Anionivaje (12) normaali. Laktaatti (1.9) koholla. Kalium (3.6) ja natrium (137) normaalit. Kalsium (1.13) matala. Lievä hypoksemia.",            
@@ -440,7 +457,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 13
            id: "PE01", context: "Tapaus 13: 55v mies, äkillinen hengenahdistus ja rintakipu palattuaan pitkältä lennolta.",
-           values: { pH: 7.49, pCO2_kPa: 3.8, HCO3: 24, PaO2_kPa: 7.0, BE: 2, Na: 141, Cl: 104, Lac: 1.7, K: 3.7, Temp: 37.3, Hb: 142, MetHb: 0.8, Ca2: 1.17, Glu: 6.8}, // AG = 13
+           values: { age: 55, pH: 7.49, pCO2_kPa: 3.8, HCO3: 24, PaO2_kPa: 7.0, BE: 2, Na: 141, Cl: 104, Lac: 1.7, K: 3.7, Temp: 37.3, Hb: 142, MetHb: 0.8, Ca2: 1.17, Glu: 6.8}, // AG = 13
            correctPrimary: texts.respiratoryAlkalosis, // OK
            correctCompensation: texts.nonCompensated, // OK
            explanation: "Potilaalla on akuutti kompensoitumaton respiratorinen alkaloosi (matala pCO2, korkea pH, normaalit HCO3- ja BE), joka johtuu todennäköisesti keuhkoembolian aiheuttamasta hyperventilaatiosta. Lisäksi potilaalla on korkea anionivaje (AG=13), kohonnut laktaatti (1.7) ja kohonnut glukoosi (6.8), mitkä voivat viitata samanaikaiseen stressireaktioon tai alkavaan kudoshypoksiaan. Kohtalainen hypoksemia.",           
@@ -448,7 +465,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
        },
        { // Tapaus 14
             id: "Normal01", context: "Tapaus 14: 35v terve mies, kandi harjoitellut astrupin ottoa.",
-            values: { pH: 7.41, pCO2_kPa: 5.5, HCO3: 25, PaO2_kPa: 12.8, BE: 0, Na: 139, Cl: 104, Lac: 1.1, K: 4.1, Temp: 36.9, Hb: 150, MetHb: 0.7, Ca2: 1.22, Glu: 5.1}, // AG = 10
+            values: { age: 35, pH: 7.41, pCO2_kPa: 5.5, HCO3: 25, PaO2_kPa: 12.8, BE: 0, Na: 139, Cl: 104, Lac: 1.1, K: 4.1, Temp: 36.9, Hb: 150, MetHb: 0.7, Ca2: 1.22, Glu: 5.1}, // AG = 10
             correctPrimary: texts.normal, // OK
             correctCompensation: "N/A", // OK
             explanation: "Kaikki Astrup-arvot (pH, PaCO2, HCO3-, PaO₂, BE) ja laskettu anionivaje (10) ovat normaaleita. Ei merkkejä happo-emästasapainon häiriöstä tai hypoksemiasta.",
@@ -456,7 +473,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         },
         { // Tapaus 15
            id: "Normal02", context: "Tapaus 15: 50v nainen, COPD, kontrollikäynnillä.",
-           values: { pH: 7.38, pCO2_kPa: 5.9, HCO3: 26, PaO2_kPa: 11.5, BE: 1, Na: 142, Cl: 105, Lac: 1.3, K: 4.0, Temp: 37.0, Hb: 135, MetHb: 0.8, Ca2: 1.20, Glu: 6.3}, // AG = 11
+           values: { age: 50, pH: 7.38, pCO2_kPa: 5.9, HCO3: 26, PaO2_kPa: 11.5, BE: 1, Na: 142, Cl: 105, Lac: 1.3, K: 4.0, Temp: 37.0, Hb: 135, MetHb: 0.8, Ca2: 1.20, Glu: 6.3}, // AG = 11
            correctPrimary: texts.normal, // OK
            correctCompensation: "N/A", // OK
            explanation: "Happo-emästasapaino on normaali (pH, pCO2, HCO3-, BE viitealueilla). Anionivaje (11) ja laktaatti normaalit. Glukoosi (6.3) on kuitenkin lievästi koholla.",           
@@ -466,7 +483,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         { // Tapaus 16
             id: "PostOpRespDep01",
             context: "Tapaus 16: 68v mies laparotomian jälkeen heräämössä. Saanut spinaalipuudutuksen lisäksi kipuun reippaasti oksikodonia. Hoitaja löytää potilaan voimakkaasti väsyneenä, hengitystaajuus 6/min.",
-            values: { pH: 7.20, pCO2_kPa: 9.0, HCO3: 26, PaO2_kPa: 8.0, BE: 0, Na: 140, Cl: 104, Lac: 1.8, K: 4.9, Temp: 36.2, Hb: 148, MetHb: 0.9, Ca2: 1.19, Glu: 7.0}, // AG = 10
+            values: { age: 68, pH: 7.20, pCO2_kPa: 9.0, HCO3: 26, PaO2_kPa: 8.0, BE: 0, Na: 140, Cl: 104, Lac: 1.8, K: 4.9, Temp: 36.2, Hb: 148, MetHb: 0.9, Ca2: 1.19, Glu: 7.0}, // AG = 10
             correctPrimary: texts.respiratoryAcidosis, // Käyttää texts. -muuttujaa
             correctCompensation: texts.nonCompensated,
             explanation: "Potilaalla on akuutti, kompensoimaton respiratorinen asidoosi (korkea pCO2, matala pH, normaalit HCO3-/BE) opioidien aiheuttaman hengityslaman vuoksi. Anionivaje (10) on normaali. Kalium (4.9) on korkea. Myös laktaatti (1.8) ja glukoosi (7.0) ovat koholla. Kohtalainen hypoksemia.",            
@@ -475,7 +492,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         { // Tapaus 17
             id: "AnxietyHypervent01",
             context: "Tapaus 17: 22v nainen tulossa polvileikkaukseen. Esilääkityksestä huolimatta voimakkaan jännittynyt ja ahdistunut leikkaussalin odotustilassa. Hengittää silminnähden tiheästi ja syvään, valittaa käsien ja suun ympäryksen pistelyä.",
-            values: { pH: 7.55, pCO2_kPa: 3.2, HCO3: 24, PaO2_kPa: 14.0, BE: 2, Na: 138, Cl: 103, Lac: 1.2, K: 3.3, Temp: 37.0, Hb: 130, MetHb: 0.6, Ca2: 1.08, Glu: 5.7}, // AG = 11
+            values: { age: 22, pH: 7.55, pCO2_kPa: 3.2, HCO3: 24, PaO2_kPa: 14.0, BE: 2, Na: 138, Cl: 103, Lac: 1.2, K: 3.3, Temp: 37.0, Hb: 130, MetHb: 0.6, Ca2: 1.08, Glu: 5.7}, // AG = 11
             correctPrimary: texts.respiratoryAlkalosis, // Käyttää texts. -muuttujaa
             correctCompensation: texts.nonCompensated,
             explanation: "Akuutti, kompensoimaton respiratorinen alkaloosi (matala pCO2, korkea pH, normaalit HCO3-/BE) hyperventilaation vuoksi. Anionivaje (11) ja laktaatti normaalit. Kalium (3.3) on normaali (alarajalla). Matala kalsium (1.08) selittää pistelyoireet.",            
@@ -484,7 +501,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         { // Tapaus 18
             id: "ESRDpreOp01",
             context: "Tapaus 18: 58v mies, krooninen munuaisten vajaatoiminta, dialyysihoidossa 3 krt/vko. Tulossa AV-fistelin korjausleikkaukseen. Edellinen dialyysikerta jäi väliin flunssan vuoksi. Vointi hieman väsynyt.",
-            values: { pH: 7.30, pCO2_kPa: 4.5, HCO3: 17, PaO2_kPa: 11.5, BE: -8, Na: 138, Cl: 100, Lac: 1.4, K: 5.8, Temp: 36.7, Hb: 98, MetHb: 0.8, Ca2: 1.05, Glu: 6.4}, // AG = 21 (Korkea)
+            values: { age: 58, pH: 7.30, pCO2_kPa: 4.5, HCO3: 17, PaO2_kPa: 11.5, BE: -8, Na: 138, Cl: 100, Lac: 1.4, K: 5.8, Temp: 36.7, Hb: 98, MetHb: 0.8, Ca2: 1.05, Glu: 6.4}, // AG = 21 (Korkea)
             correctPrimary: texts.metabolicAcidosisHAGMA, // <-- Muutettu HAGMAksi
             correctCompensation: texts.nonCompensated,
             explanation: "Potilaalla on tyypillinen krooniseen munuaisten vajaatoimintaan liittyvä metabolinen asidoosi (matala pH, HCO3-, BE), joka on pahentunut väliin jääneen dialyysin vuoksi. Anionivaje on koholla (AG=21) elimistöön kertyneiden happamien aineenvaihduntatuotteiden (ureemiset toksiinit, fosfaatti, sulfaatti) vuoksi. Hengitys kompensoi osittain (PaCO2 laskenut viitealueen alarajalle/alle), mutta ei riittävästi normalisoimaan pH:ta. Elektrolyyttitasapaino (erityisesti kalium!) on myös tarkistettava ennen anestesiaa.",
@@ -493,7 +510,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         { // Tapaus 19
             id: "MassiveTransfusionShock01",
             context: "Tapaus 19: 45v mies, polytrauma (putoaminen). Leikkaussalissa menettänyt runsaasti verta, saanut 12 yksikköä punasoluja ja muita verituotteita. Nyt matala verenpaine (MAP 55 mmHg), periferia viileä.",
-            values: { pH: 7.15, pCO2_kPa: 5.0, HCO3: 12, PaO2_kPa: 7.5, BE: -15, Na: 142, Cl: 105, Lac: 8.0, K: 3.2, Temp: 35.1, Hb: 75, MetHb: 1.3, Ca2: 0.95, Glu: 9.0}, // AG = 25 (Korkea)
+            values: { age: 45, pH: 7.15, pCO2_kPa: 5.0, HCO3: 12, PaO2_kPa: 7.5, BE: -15, Na: 142, Cl: 105, Lac: 8.0, K: 3.2, Temp: 35.1, Hb: 75, MetHb: 1.3, Ca2: 0.95, Glu: 9.0}, // AG = 25 (Korkea)
             correctPrimary: texts.metabolicAcidosisHAGMA, // <-- Muutettu HAGMAksi
             correctCompensation: texts.nonCompensated,
             explanation: "Potilaalla on vaikea, korkean anionivajeen metabolinen asidoosi (matala pH, HCO3-, BE; korkea AG=25), joka johtuu sokin aiheuttamasta laktaattiasidoosista (Lac=8.0). Hengityskompensaatiota ei ole (pCO2 normaali), joten tila on kompensoitumaton. Huomionarvoista on matala kalium (3.2). Myös kalsium matala ja glukoosi korkea. Vaikea hypoksemia.",            
@@ -502,7 +519,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         { // Tapaus 20 - MUOKATTU
             id: "MH01",
             context: "Tapaus 20: 30v terve mies, elektiivisessä tyräleikkauksessa yleisanestesiassa (sevofluraani, suksinyylikoliini). Induktion jälkeen kehittyy nopeasti sinustaky (140/min), hypertensio, voimakas EtCO₂ nousu (>8 kPa) ja leukojen jäykkyys.",
-            values: { pH: 7.05, pCO2_kPa: 11.0, HCO3: 15, PaO2_kPa: 7.0, BE: -14, Na: 145, Cl: 103, Lac: 9.5, K: 6.5, Temp: 40.5, Hb: 150, MetHb: 1.8, Ca2: 1.30, Glu: 8.5}, // AG = 27 (Korkea)
+            values: { age: 30, pH: 7.05, pCO2_kPa: 11.0, HCO3: 15, PaO2_kPa: 7.0, BE: -14, Na: 145, Cl: 103, Lac: 9.5, K: 6.5, Temp: 40.5, Hb: 150, MetHb: 1.8, Ca2: 1.30, Glu: 8.5}, // AG = 27 (Korkea)
             correctPrimary: texts.mixedMetAcidRespAcid, // YKSINKERTAISTETTU tähän visaan
             correctCompensation: "N/A",
             explanation: "Maligniin hypertermiaan sopiva sekamuotoinen asidoosi (Respiratorinen: erittäin korkea pCO2; Metabolinen HAGMA: matala HCO3-, matala BE, korkea AG=27, korkea Lac=9.5). pH on erittäin matala. Hyperkalemia (6.5) on vaikea johtuen rabdomyolyysistä. Myös natrium (145) on korkea (>144). Kalsium (1.30) ja MetHb (1.8) ovat normaalit.",            
@@ -511,7 +528,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         { // Tapaus 21
             id: "NGsuctionDiuretics01",
             context: "Tapaus 21: 70v nainen, hemikolektomian jälkeen teho-osastolla. Nenämahaletkuun jatkuva imu (-20 mmHg). Saanut myös furosemidia i.v. nesteen kertymisen vuoksi. Väsähtänyt, lievää sekavuutta.",
-            values: { pH: 7.54, pCO2_kPa: 6.5, HCO3: 39, PaO2_kPa: 9.8, BE: 14, Na: 136, Cl: 88, Lac: 1.0, K: 3.1, Temp: 36.8, Hb: 115, MetHb: 0.7, Ca2: 1.22, Glu: 6.6}, // AG = 9 (Normaali)
+            values: { age: 70, pH: 7.54, pCO2_kPa: 6.5, HCO3: 39, PaO2_kPa: 9.8, BE: 14, Na: 136, Cl: 88, Lac: 1.0, K: 3.1, Temp: 36.8, Hb: 115, MetHb: 0.7, Ca2: 1.22, Glu: 6.6}, // AG = 9 (Normaali)
             correctPrimary: texts.metabolicAlkalosis, // Käyttää texts. -muuttujaa
             correctCompensation: texts.partiallyCompensated,
             explanation: "Potilaalla on metabolinen alkaloosi (korkea pH, HCO3-, BE). Sitä aiheuttaa sekä mahahapon (HCl) menetys nenämahaletkun kautta että diureetin (furosemidi) vaikutus, joka lisää H+-ionien eritystä munuaisissa. Hypokloremia (matala Cl-) on tyypillistä. Hengitys kompensoi osittain hidastumalla (PaCO2 noussut), mikä voi johtaa lievään PaO2:n laskuun. Tilanteen korjaaminen vaatii syiden hoitoa ja usein neste- sekä kloridikorvausta.",
@@ -521,7 +538,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
             id: "COPD_Vomiting01",
             context: "Tapaus 22: 70v COPD-potilas. Nyt 2 päivää oksennellut ja syönyt huonosti.",
             // Odotetaan: Korkea PaCO2 (COPD), korkea HCO3 (krooninen komp + uusi met alk), pH voi olla lähellä normaalia tai alkalinen
-            values: { pH: 7.46, pCO2_kPa: 8.0, HCO3: 42, PaO2_kPa: 8.5, BE: 15, Na: 138, Cl: 85, Lac: 1.2, K: 3.4, Temp: 36.9, Hb: 130, MetHb: 0.9, Ca2: 1.18, Glu: 6.9}, // Matala Cl sopii oksenteluun, AG normaali
+            values: { age: 70, pH: 7.46, pCO2_kPa: 8.0, HCO3: 42, PaO2_kPa: 8.5, BE: 15, Na: 138, Cl: 85, Lac: 1.2, K: 3.4, Temp: 36.9, Hb: 130, MetHb: 0.9, Ca2: 1.18, Glu: 6.9}, // Matala Cl sopii oksenteluun, AG normaali
             correctPrimary: texts.mixedMetAlkRespAcid, // <-- UUSI TYYPPI
             correctCompensation: "N/A", // Sekahäiriö
             explanation: "Tämä on vaikea! Näyttää ensikatsomalta osittain kompensoidulta metaboliselta alkaloosilta, mutta potilaalla on kaksi primääristä häiriötä johtuen COPD:stä että oksentelusta. Kyseessä on siis sekahäiriö, jossa krooninen respiratorinen asidoosi (korkea pCO2) ja akuutti metabolinen alkaloosi (oksennus -> korkea HCO3-/BE, matala Cl). Nämä vastakkaiset häiriöt johtavat miltei normaaliin pH-arvoon (7.46). Anionivaje (11) normaali. Kalium (3.4) normaali. Glukoosi (6.9) korkea. Aina ei voi jäykästi katsoa suoraan arvoja, vaan on mietittävä potilaan taustasairauksia ja niiden vaikutuksia.",            
@@ -597,7 +614,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         }
 
         // Destrukturoidaan arvot
-        const { pH, pCO2_kPa, PaO2_kPa, HCO3, BE, Na, K, Ca2, Cl, Lac, Hb, MetHb, Glu, Temp } = scenario.values;
+        const { age, pH, pCO2_kPa, PaO2_kPa, HCO3, BE, Na, K, Ca2, Cl, Lac, Hb, MetHb, Glu, Temp } = scenario.values;
 
         // AG:n laskenta
         let anionGap = null;
@@ -611,6 +628,13 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         const pco2Ref = pco2Unit === 'mmHg' ? REF_PCO2_MMHG : REF_PCO2_KPA;
         const po2Ref = pco2Unit === 'mmHg' ? REF_PAO2_MMHG : REF_PAO2_KPA;
         const gasUnitLabel = pco2Unit === 'mmHg' ? 'mmHg' : 'kPa';
+        const currentPao2RefKpa = getPao2RefKpa(age);
+        const currentPao2RefMmhg = {
+            low: Math.round(currentPao2RefKpa.low * KPA_TO_MMHG),
+            high: Math.round(currentPao2RefKpa.high * KPA_TO_MMHG)
+        };
+        // Valitaan käytettävä viite riippuen yksiköstä
+        const currentPo2Ref = pco2Unit === 'mmHg' ? currentPao2RefMmhg : currentPao2RefKpa;
 
         // Luokkien määrittely poikkeaville arvoille
         const isValueAbnormal = (value, ref) => {
@@ -641,8 +665,9 @@ const getAbnormalDirection = (value, ref) => {
         // Lasketaan kaikki luokat TÄSSÄ, ennen returnia
         const phClass = isValueAbnormal(pH, REF_PH) ? 'abnormal-value' : '';
         const pco2Class = isValueAbnormal(pCO2_kPa, REF_PCO2_KPA) ? 'abnormal-value' : '';
-        const po2Class = isValueAbnormal(PaO2_kPa, REF_PAO2_KPA) ? 'abnormal-value' : '';
         const hco3Class = isValueAbnormal(HCO3, REF_HCO3) ? 'abnormal-value' : '';
+        const po2Class = isValueAbnormal(PaO2_kPa, currentPao2RefKpa) ? 'abnormal-value' : '';
+        const po2Indicator = getAbnormalDirection(PaO2_kPa, currentPao2RefKpa);
         const beClass = isValueAbnormal(BE, REF_BE) ? 'abnormal-value' : '';
         const agClass = (anionGap !== null && isValueAbnormal(anionGap, REF_AG)) ? 'abnormal-value' : '';
         // --- LISÄTTY PUUTTUVAT LUOKAT ---
@@ -657,7 +682,6 @@ const getAbnormalDirection = (value, ref) => {
         const tempClass = isValueAbnormal(Temp, REF_TEMP) ? 'abnormal-value' : '';
         const phIndicator = getAbnormalDirection(pH, REF_PH);
         const pco2Indicator = getAbnormalDirection(pCO2_kPa, REF_PCO2_KPA);
-        const po2Indicator = getAbnormalDirection(PaO2_kPa, REF_PAO2_KPA);
         const hco3Indicator = getAbnormalDirection(HCO3, REF_HCO3);
         const beIndicator = getAbnormalDirection(BE, REF_BE);
         const agIndicator = anionGap !== null ? getAbnormalDirection(anionGap, REF_AG) : '';
@@ -729,12 +753,13 @@ const getAbnormalDirection = (value, ref) => {
                              <button className="apuva-button" onClick={() => onOpenHelp('pCO2')} aria-label={`Apua ${texts.pco2Label}`}>{texts.helpButtonLabel}</button>
                          </div>
                          <div className="receipt-row">
-                             <span className="param-name">{po2Indicator} pO<sub>2</sub>(T)</span>
-                             <span className={`param-value ${po2Class}`}>{displayPaO2?.toFixed(1)}</span>
-                             <span className="param-unit">{gasUnitLabel}</span>
-                             <span className="param-ref">{formatRef(pco2Unit === 'kPa' ? REF_PAO2_KPA : REF_PAO2_MMHG, gasUnitLabel, 1)}</span>
-                              <button className="apuva-button" onClick={() => onOpenHelp('PaO2')} aria-label={`Apua ${texts.paO2Label}`}>{texts.helpButtonLabel}</button>
-                         </div>
+                            <span className="param-name">{po2Indicator} pO<sub>2</sub>(T)</span>
+                            <span className={`param-value ${po2Class}`}>{displayPaO2?.toFixed(1)}</span> {/* Arvo näytetään kuten ennen */}
+                            <span className="param-unit">{gasUnitLabel}</span>
+                             {/* Viite käyttää nyt laskettua, ikään perustuvaa arvoa */}
+                            <span className="param-ref">{formatRef(currentPo2Ref, gasUnitLabel, 1)}</span>
+                             <button className="apuva-button" onClick={() => onOpenHelp('PaO2')} aria-label={`Apua ${texts.paO2Label}`}>{texts.helpButtonLabel}</button>
+                        </div>
 
                  {/* Happo-emäs-tila (LISÄTTY NUOLET) */}
                  <h4 className="receipt-heading">{texts.headingAcidBase}</h4>
