@@ -181,7 +181,7 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
 .receipt-row {
     display: grid;
     /* Sarakkeet: Nimi | Arvo | Yksikkö | Viite | Nappi */
-    grid-template-columns: 130px 65px 60px 1fr auto; /* Säädä tarvittaessa */
+    grid-template-columns: 125px 65px 60px 1fr auto; /* Säädä tarvittaessa */
     gap: 0 8px; /* Ei riviväliä, sarakkeiden väli 8px */
     align-items: baseline;
     margin-bottom: 3px; /* Tiheä riviväli */
@@ -427,15 +427,14 @@ feedback-section p {
 .modal-body ul li { margin-bottom: 8px; }
 .modal-body p { margin-bottom: 15px; line-height: 1.6; }
 modal-body a {
-    
-    
-    color: #80caff;
-    text-decoration: underline; /* Lisätään alleviivaus, jotta erottuu paremmin linkiksi */
+    color: #8ecae6; /* Aseta haluamasi perusväri tähän */
+    text-decoration: underline; /* Lisää alleviivaus selkeyden vuoksi */
+    transition: color 0.2s; /* Pehmeä siirtymä hover-värille */
 }
 
 /* Valinnainen: Muuta väriä hieman, kun hiiri viedään linkin päälle */
 .modal-body a:hover {
-    color: #a8d8ff; /* Hieman kirkkaampi sininen */
+    color: #a8d8ff; /* Esimerkki hover-väri (vaaleampi) */
     text-decoration: none; /* Poista alleviivaus hoverissa (valinnainen) */
 }
 .modal-body strong { color: #f1c40f; font-weight: 600; }
