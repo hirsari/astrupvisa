@@ -429,8 +429,8 @@ feedback-section p {
 modal-body a {
     color: var(--link-color); /* Käytä :rootissa määriteltyä vaaleansinistä */
     /* Voit myös kokeilla jotain muuta kirkasta väriä, esim: */
-    /* color: #f1c40f; */ /* Keltainen kuten strong-tagit */
-    /* color: #80caff; */ /* Toinen vaaleansininen */
+    
+    color: #80caff;
     text-decoration: underline; /* Lisätään alleviivaus, jotta erottuu paremmin linkiksi */
 }
 
