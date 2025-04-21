@@ -28,7 +28,7 @@
         title: "Laurin astrup-arvoitukset",
         scoreLabel: "Pisteet:",
         attemptsLabel: "Yritykset:",
-        selectUnit: "Valitse PaCO₂/PaO₂ yksikkö:",
+        selectUnit: "Valitse PaCO2/PaO2 yksikkö:",
         kpa: "kPa",
         mmhg: "mmHg",
         selectPrimary: "Valitse ensisijainen häiriö:",
@@ -94,14 +94,14 @@
         filterMixedLabel: "Sekahäiriöt", // UUSI
         helpTitleGeneral: "Astrup Tulkinta - Apua",
         helpTitlePH: "pH - Happamuus",
-        helpTitlePCO2: "PaCO₂ - Hiilidioksidi",
-        helpTitleHCO3: "HCO₃⁻ - Bikarbonaatti",
-        helpTitlePaO2: "PaO₂ - Happiosapaine",
+        helpTitlePCO2: "PaCO2 - Hiilidioksidi",
+        helpTitleHCO3: "HCO3- - Bikarbonaatti",
+        helpTitlePaO2: "PaO2 - Happiosapaine",
         helpTitleBE: "BE - Emäsylimäärä",
         helpTitleAG: "Anionivaje (AG)",
         helpTitleLac: "Laktaatti (Lac)",
-        helpTitleK: "Kalium (K⁺)",
-        helpTitleCl: "Kloridi (Cl⁻) ja Asidoosi", // Otsikko modaalille
+        helpTitleK: "Kalium (K+)",
+        helpTitleCl: "Kloridi (-) ja Asidoosi", // Otsikko modaalille
         helpTitleMetHb: "Methemoglobiini (MetHb)",
         helpContentGeneral: (
             <Fragment>
@@ -114,21 +114,21 @@
                     <li>
                         <strong>Määritä primäärihäiriö (jos pH poikkeava):</strong>
                         <ul>
-                            <li>Jos asidoosi (pH &lt; 7.35): Onko PaCO₂ koholla (&gt; 6.0 kPa / 45 mmHg) vai HCO₃⁻ matala (&lt; 22 mmol/L)? Ensimmäinen viittaa respiratoriseen, jälkimmäinen metaboliseen asidoosiin.</li>
-                            <li>Jos alkaloosi (pH &gt; 7.45): Onko PaCO₂ matala (&lt; 4.7 kPa / 35 mmHg) vai HCO₃⁻ koholla (&gt; 26 mmol/L)? Ensimmäinen viittaa respiratoriseen, jälkimmäinen metaboliseen alkaloosiin.</li>
-                             <li><strong>Käytännössä siis katso kumpi (PaCO₂ vai HCO₃⁻) mätsää häiriöön, se on primäärinen syy</strong></li>
+                            <li>Jos asidoosi (pH &lt; 7.35): Onko PaCO2 koholla (&gt; 6.0 kPa / 45 mmHg) vai HCO3- matala (&lt; 22 mmol/L)? Ensimmäinen viittaa respiratoriseen, jälkimmäinen metaboliseen asidoosiin.</li>
+                            <li>Jos alkaloosi (pH &gt; 7.45): Onko PaCO2 matala (&lt; 4.7 kPa / 35 mmHg) vai HCO3- koholla (&gt; 26 mmol/L)? Ensimmäinen viittaa respiratoriseen, jälkimmäinen metaboliseen alkaloosiin.</li>
+                             <li><strong>Käytännössä siis katso kumpi (PaCO2 vai HCO3-) mätsää häiriöön, se on primäärinen syy</strong></li>
                         </ul>
                     </li>
                     <li>
                         <strong>Arvioi kompensaatio:</strong> Onko toinen parametri (joka ei selitä primäärihäiriötä) muuttunut vastakkaiseen suuntaan?
                         <ul>
-                            <li>Respiratorisessa häiriössä HCO₃⁻ kompensoi (muuttuu samaan suuntaan kuin PaCO₂:n poikkeama normaalista).</li>
-                            <li>Metabolisessa häiriössä PaCO₂ kompensoi (muuttuu samaan suuntaan kuin HCO₃⁻:n poikkeama normaalista).</li>
+                            <li>Respiratorisessa häiriössä HCO3- kompensoi (muuttuu samaan suuntaan kuin PaCO2:n poikkeama normaalista).</li>
+                            <li>Metabolisessa häiriössä PaCO2 kompensoi (muuttuu samaan suuntaan kuin HCO3-:n poikkeama normaalista).</li>
                             <li><strong>Luokitus:</strong>
                                 <ul>
                                     <li>Jos pH on poikkeava JA kompensaatiota näkyy (toinen parametri poikkeava odotettuun suuntaan) → <strong>Osittain Kompensoitu</strong>.</li>
                                     <li>Jos pH on poikkeava JA kompensaatiota EI näy (toinen parametri normaali) → <strong>Kompensoitumaton</strong> (akuutti tila).</li>
-                                    <li>Jos pH on normaali (7.35-7.45) JA kompensaatiota näkyy (molemmat PaCO₂ ja HCO₃⁻ poikkeavia) → <strong>Täysin Kompensoitu</strong> (katso kohta 4).</li>
+                                    <li>Jos pH on normaali (7.35-7.45) JA kompensaatiota näkyy (molemmat PaCO2 ja HCO3- poikkeavia) → <strong>Täysin Kompensoitu</strong> (katso kohta 4).</li>
                                 </ul>
                             </li>
                         </ul>
@@ -136,19 +136,19 @@
                      <li>
                         <strong>Erityistilanne: Kompensoitu häiriö (pH 7.35-7.45):</strong>
                         <ul>
-                             <li>Jos pH on normaali, mutta SEKÄ PaCO₂ että HCO₃⁻ ovat poikkeavia, kyseessä on täysin kompensoitu häiriö.</li>
+                             <li>Jos pH on normaali, mutta SEKÄ PaCO2 että HCO3- ovat poikkeavia, kyseessä on täysin kompensoitu häiriö.</li>
                              <li>Määritä tällöin primäärihäiriö vertaamalla pH:ta arvoon <strong>7.40</strong>: eli pH:n keskikohtaan.
                                 <ul>
-                                    <li>Jos pH on keskipisteen alle eli <strong>7.35 - 7.39</strong> → Taustalla on <strong>kompensoitu asidoosi</strong>. Katso kumpi (korkea PaCO₂ vai matala HCO₃⁻) selittää tämän.</li>
-                                    <li>Jos pH on keskipisteen yli eli <strong>7.41 - 7.45</strong> → Taustalla on <strong>kompensoitu alkaloosi</strong>. Katso kumpi (matala PaCO₂ vai korkea HCO₃⁻) selittää tämän.</li>
+                                    <li>Jos pH on keskipisteen alle eli <strong>7.35 - 7.39</strong> → Taustalla on <strong>kompensoitu asidoosi</strong>. Katso kumpi (korkea PaCO2 vai matala HCO3-) selittää tämän.</li>
+                                    <li>Jos pH on keskipisteen yli eli <strong>7.41 - 7.45</strong> → Taustalla on <strong>kompensoitu alkaloosi</strong>. Katso kumpi (matala PaCO2 vai korkea HCO3-) selittää tämän.</li>
                                      <li>(Jos pH tasan <strong>7.40</strong>, tilanne voi olla normaali tai täysin kompensoitu sekahäiriö - harvinainen).</li>
                                 </ul>
                              </li>
                         </ul>
                     </li>
-                    <li><strong>Arvioi happeutuminen:</strong> Onko PaO₂ normaali (yleensä &gt; 10.6 kPa / 80 mmHg)? Jos matala, kyseessä on hypoksemia.</li>
+                    <li><strong>Arvioi happeutuminen:</strong> Onko PaO2 normaali (yleensä &gt; 10.6 kPa / 80 mmHg)? Jos matala, kyseessä on hypoksemia.</li>
                     <li><strong>Arvioi Base Excess (BE):</strong> Heijastaa metabolista komponenttia. Viitearvo on -2 - +2 mmol/L. Negatiivinen BE viittaa metaboliseen asidoosiin tai respiratorisen alkaloosin kompensaatioon. Positiivinen BE viittaa metaboliseen alkaloosiin tai respiratorisen asidoosin kompensaatioon.</li>
-                    <li><strong>Laske Anionivaje (AG) metabolisessa asidoosissa:</strong> AG = Na⁺ - (Cl⁻ + HCO₃⁻). Auttaa erotusdiagnostiikassa (HAGMA vs. NAGMA).</li>
+                    <li><strong>Laske Anionivaje (AG) metabolisessa asidoosissa:</strong> AG = Na⁺ - (Cl- + HCO3-). Auttaa erotusdiagnostiikassa (HAGMA vs. NAGMA).</li>
                 </ol>
             </Fragment>
         ),
@@ -165,33 +165,33 @@
         ),
         helpContentPCO2: (unit) => (
             <Fragment>
-                <p>Valtimoveren hiilidioksidin osapaine (PaCO₂) heijastaa hengityksen tehokkuutta happo-emäs-tasapainon säätelyssä. Se on hengityksen "happokomponentti".</p>
+                <p>Valtimoveren hiilidioksidin osapaine (PaCO2) heijastaa hengityksen tehokkuutta happo-emäs-tasapainon säätelyssä. Se on hengityksen "happokomponentti".</p>
                 <ul>
-                     <li>Normaali PaCO₂: {unit === 'kPa' ? '4.7 - 6.0 kPa' : '35 - 45 mmHg'}</li>
-                     <li>Kohonnut PaCO₂ (hyperkapnia): Aiheuttaa respiratorista asidoosia (pH laskee), johtuu hypoventilaatiosta.</li>
-                     <li>Matala PaCO₂ (hypokapnia): Aiheuttaa respiratorista alkaloosia (pH nousee), johtuu hyperventilaatiosta.</li>
+                     <li>Normaali PaCO2: {unit === 'kPa' ? '4.7 - 6.0 kPa' : '35 - 45 mmHg'}</li>
+                     <li>Kohonnut PaCO2 (hyperkapnia): Aiheuttaa respiratorista asidoosia (pH laskee), johtuu hypoventilaatiosta.</li>
+                     <li>Matala PaCO2 (hypokapnia): Aiheuttaa respiratorista alkaloosia (pH nousee), johtuu hyperventilaatiosta.</li>
                 </ul>
-                <p>Muutokset PaCO₂:ssa voivat olla ensisijainen häiriö tai kompensaatiota metaboliseen häiriöön. Keuhkot voivat muuttaa PaCO₂:ta nopeasti (minuuteissa).</p>
+                <p>Muutokset PaCO2:ssa voivat olla ensisijainen häiriö tai kompensaatiota metaboliseen häiriöön. Keuhkot voivat muuttaa PaCO2:ta nopeasti (minuuteissa).</p>
                 {unit === 'kPa' && <small>Muunnos: 1 kPa ≈ 7.5 mmHg</small>}
                 {unit === 'mmHg' && <small>Muunnos: 1 mmHg ≈ 0.133 kPa</small>}
             </Fragment>
         ),
         helpContentHCO3: (
             <Fragment>
-                <p>Bikarbonaatti (HCO₃⁻) on tärkein veren puskuri ja heijastaa metabolista (munuaisten säätelemää) komponenttia happo-emäs-tasapainossa.</p>
+                <p>Bikarbonaatti (HCO3-) on tärkein veren puskuri ja heijastaa metabolista (munuaisten säätelemää) komponenttia happo-emäs-tasapainossa.</p>
                  <ul>
-                     <li>Normaali HCO₃⁻: 22 - 26 mmol/L</li>
-                     <li>Matala HCO₃⁻: Viittaa metaboliseen asidoosiin (emäksen menetys tai hapon lisäys) tai kompensaatioon respiratoriseen alkaloosiin.</li>
-                     <li>Kohonnut HCO₃⁻: Viittaa metaboliseen alkaloosiin (emäksen lisäys tai hapon menetys) tai kompensaatioon respiratoriseen asidoosiin.</li>
+                     <li>Normaali HCO3-: 22 - 26 mmol/L</li>
+                     <li>Matala HCO3-: Viittaa metaboliseen asidoosiin (emäksen menetys tai hapon lisäys) tai kompensaatioon respiratoriseen alkaloosiin.</li>
+                     <li>Kohonnut HCO3-: Viittaa metaboliseen alkaloosiin (emäksen lisäys tai hapon menetys) tai kompensaatioon respiratoriseen asidoosiin.</li>
                  </ul>
-                <p>Munuaiset säätelevät HCO₃⁻:n tasoa hitaammin (tunteja/päiviä) kuin keuhkot PaCO₂:ta.</p>
+                <p>Munuaiset säätelevät HCO3-:n tasoa hitaammin (tunteja/päiviä) kuin keuhkot PaCO2:ta.</p>
             </Fragment>
         ),
         helpContentPaO2: (unit) => ( // unit-parametri säilyy, jos sitä tarvitaan mmHg-muunnoksiin
             <Fragment>
-                <p>Valtimoveren happiosapaine (pO₂) kuvaa vereen fysikaalisesti liuennutta happea ja kertoo keuhkojen kyvystä hapettaa verta.</p>
+                <p>Valtimoveren happiosapaine (pO2) kuvaa vereen fysikaalisesti liuennutta happea ja kertoo keuhkojen kyvystä hapettaa verta.</p>
                 {/* UUSI OSA: Ikäriippuvuus */}
-                <p><strong>Normaali pO₂ on ikäriippuvainen ja laskee iän myötä (viitearvot kPa):</strong></p>
+                <p><strong>Normaali pO2 on ikäriippuvainen ja laskee iän myötä (viitearvot kPa):</strong></p>
                 {/* Käytetään taulukkoa tai listaa selkeyden vuoksi */}
                 <ul style={{ listStyle: 'none', paddingLeft: 0 }}> {/* Tyylit poistavat listamerkit */}
                     <li>alle 18 v: <strong>12.0 – 14.0 kPa</strong></li>
@@ -212,8 +212,8 @@
                     <li>Kohtalainen: {unit === 'kPa' ? '5.3 - 7.9 kPa' : '40 - 59 mmHg'}</li>
                     <li>Vaikea: &lt; {unit === 'kPa' ? '5.3 kPa' : '40 mmHg'}</li>
                 </ul>
-                <p>Matala pO₂ voi johtua esim. ventilaatio-perfuusioepäsuhdasta (V/Q mismatch), sunteista (oikovirtaus), diffuusiohäiriöstä tai hypoventilaatiosta.</p>
-                <p>Huom: Pulssioksimetrin SpO₂ mittaa hemoglobiinin happisaturaatiota prosentteina, EI hapen osapainetta. Vaikka ne korreloivat oksyhemoglobiinikäyrän mukaisesti, ne eivät ole sama asia ja käyrän muotoon vaikuttavat mm. pH ja lämpötila.</p>
+                <p>Matala pO2 voi johtua esim. ventilaatio-perfuusioepäsuhdasta (V/Q mismatch), sunteista (oikovirtaus), diffuusiohäiriöstä tai hypoventilaatiosta.</p>
+                <p>Huom: Pulssioksimetrin SpO2 mittaa hemoglobiinin happisaturaatiota prosentteina, EI hapen osapainetta. Vaikka ne korreloivat oksyhemoglobiinikäyrän mukaisesti, ne eivät ole sama asia ja käyrän muotoon vaikuttavat mm. pH ja lämpötila.</p>
                 {/* Yksikkömuunnoshuomautus voi säilyä */}
                 {unit === 'kPa' && <small>Muunnos: 1 kPa ≈ 7.5 mmHg</small>}
                 {unit === 'mmHg' && <small>Muunnos: 1 mmHg ≈ 0.133 kPa</small>}
@@ -227,13 +227,13 @@
                      <li>Negatiivinen BE (&lt; -2): Viittaa emäsvajaukseen eli **metaboliseen asidoosiin** tai kroonisen respiratorisen alkaloosin kompensaatioon. Mitä negatiivisempi, sitä pahempi metabolinen asidoosi.</li>
                      <li>Positiivinen BE (&gt; +2): Viittaa emäsylimäärään eli **metaboliseen alkaloosiin** tai kroonisen respiratorisen asidoosin kompensaatioon. Mitä positiivisempi, sitä pahempi metabolinen alkaloosi.</li>
                  </ul>
-                 <p>BE on siis "puhdas" metabolisen komponentin mittari, koska se on standardisoitu normaaliin PaCO₂-arvoon. Se auttaa erottamaan akuutin ja kroonisen respiratorisen häiriön kompensaatiota.</p>
+                 <p>BE on siis "puhdas" metabolisen komponentin mittari, koska se on standardisoitu normaaliin PaCO2-arvoon. Se auttaa erottamaan akuutin ja kroonisen respiratorisen häiriön kompensaatiota.</p>
              </Fragment>
          ),
         helpContentAG: (
             <Fragment>
                 <p>Anionivaje (Anion Gap, AG) lasketaan erityisesti **metabolisen asidoosin** syyn selvittämiseksi.</p>
-                <p>Kaava: <code>AG = Na⁺ - (Cl⁻ + HCO₃⁻)</code></p>
+                <p>Kaava: <code>AG = Na⁺ - (Cl- + HCO3-)</code></p>
                 <ul>
                     <li>Normaali AG: Noin 8 - 12 mmol/L (viitearvo voi vaihdella laboratoriosta riippuen).</li>
                     <li><strong>Kohonnut AG (HAGMA - High Anion Gap Metabolic Acidosis):</strong> Tarkoittaa, että asidoosin aiheuttaa jokin mittaamaton anioni (orgaaninen happo). Syitä ovat mm. laktaatti (laktaattiasidoosi), ketoaineet (diabeettinen ketoasidoosi, alkoholiketoasidoosi, nälkiintyminen), munuaisten vajaatoiminta (ureemiset hapot), myrkytykset (metanoli, etyleeniglykoli, salisylaatit). Käytä muistisääntöä kuten MUDPILES.</li>
@@ -260,35 +260,35 @@
         // UUSI: Kaliumin ohjeteksti
         helpContentK: (
             <Fragment>
-                <p>Kalium (K⁺) on solunsisäinen pääkationi, mutta sen pitoisuus solunulkoisessa nesteessä (plasmassa) on tarkasti säädelty ja kriittinen hermo- ja lihassolujen normaalille toiminnalle, erityisesti sydämessä.</p>
+                <p>Kalium (K+) on solunsisäinen pääkationi, mutta sen pitoisuus solunulkoisessa nesteessä (plasmassa) on tarkasti säädelty ja kriittinen hermo- ja lihassolujen normaalille toiminnalle, erityisesti sydämessä.</p>
                 <ul>
                     <li>Normaali plasman kalium: Noin 3.5 - 5.0 mmol/L (viitearvot voivat vaihdella).</li>
-                    <li><strong>Hypokalemia (matala K⁺):</strong> Voi johtua lisääntyneestä menetyksestä (diureetit, ripuli, oksentelu, hyperaldosteronismi) tai siirtymisestä soluihin (alkaloosi, insuliini, beeta-agonistit). Aiheuttaa lihasheikkoutta, rytmihäiriöitä, EKG-muutoksia (U-aalto, T-inversio).</li>
-                    <li><strong>Hyperkalemia (korkea K⁺):</strong> Voi johtua vähentyneestä erityksestä (munuaisten vajaatoiminta, ACE-estäjät, spironolaktoni), liiallisesta saannista tai siirtymisestä soluista ulos (asidoosi, solutuho esim. rabdomyolyysi, insuliinin puute). Aiheuttaa EKG-muutoksia (korkea T-aalto, QRS-levenemä), rytmihäiriöitä ja pahimmillaan sydänpysähdyksen.</li>
+                    <li><strong>Hypokalemia (matala K+):</strong> Voi johtua lisääntyneestä menetyksestä (diureetit, ripuli, oksentelu, hyperaldosteronismi) tai siirtymisestä soluihin (alkaloosi, insuliini, beeta-agonistit). Aiheuttaa lihasheikkoutta, rytmihäiriöitä, EKG-muutoksia (U-aalto, T-inversio).</li>
+                    <li><strong>Hyperkalemia (korkea K+):</strong> Voi johtua vähentyneestä erityksestä (munuaisten vajaatoiminta, ACE-estäjät, spironolaktoni), liiallisesta saannista tai siirtymisestä soluista ulos (asidoosi, solutuho esim. rabdomyolyysi, insuliinin puute). Aiheuttaa EKG-muutoksia (korkea T-aalto, QRS-levenemä), rytmihäiriöitä ja pahimmillaan sydänpysähdyksen.</li>
                 </ul>
                 <p><strong>Yhteys happo-emästasapainoon:</strong></p>
                 <ul>
-                    <li><strong>Asidoosi:</strong> Vetyionit (H⁺) siirtyvät soluihin ja kaliumionit (K⁺) siirtyvät soluista ulos → **hyperkalemia**.</li>
-                    <li><strong>Alkaloosi:</strong> Vetyionit (H⁺) siirtyvät soluista ulos ja kaliumionit (K⁺) siirtyvät soluihin → **hypokalemia**.</li>
+                    <li><strong>Asidoosi:</strong> Vetyionit (H⁺) siirtyvät soluihin ja kaliumionit (K+) siirtyvät soluista ulos → **hyperkalemia**.</li>
+                    <li><strong>Alkaloosi:</strong> Vetyionit (H⁺) siirtyvät soluista ulos ja kaliumionit (K+) siirtyvät soluihin → **hypokalemia**.</li>
                 </ul>
                 <p>Tämä on tärkeä muistaa esim. DKA:n hoidossa, jossa asidoosin korjaantuessa insuliinilla kalium voi laskea vaarallisen alas.</p>
             </Fragment>
         ),
         helpContentCl: (             // Sisältö modaalille
             <Fragment>
-                <p>Kloridi (Cl⁻) on tärkein solunulkoinen anioni. Sen pitoisuus veressä vaikuttaa happo-emästasapainoon ja anionivajeeseen.</p>
+                <p>Kloridi (Cl-) on tärkein solunulkoinen anioni. Sen pitoisuus veressä vaikuttaa happo-emästasapainoon ja anionivajeeseen.</p>
                 <ul>
                     <li>Normaali P-Cl: 96 – 111 mmol/l.</li>
                 </ul>
                 <p><strong>Yhteys metaboliseen asidoosiin:</strong></p>
                 <ul>
                     <li><strong>Normaalin anionivajeen metabolinen asidoosi (NAGMA)</strong> on usein **hyperkloreeminen**. Tämä tarkoittaa, että kloridipitoisuus on koholla (tai ylärajoilla).</li>
-                    <li>Tämä johtuu siitä, että kun elimistö menettää bikarbonaattia (HCO₃⁻, emäs), munuaiset pyrkivät kompensoimaan anionivajetta lisäämällä kloridin takaisinottoa.</li>
+                    <li>Tämä johtuu siitä, että kun elimistö menettää bikarbonaattia (HCO3-, emäs), munuaiset pyrkivät kompensoimaan anionivajetta lisäämällä kloridin takaisinottoa.</li>
                     <li>Tyypillisiä syitä hyperkloreemiselle NAGMA:lle ovat:
                         <ul>
-                            <li><strong>Ripuli:</strong> Menetetään paljon HCO₃⁻-pitoista nestettä suolistosta.</li>
-                            <li><strong>Renaalinen tubulaarinen asidoosi (RTA):</strong> Munuaisten kyky erittää happoja tai ottaa takaisin HCO₃⁻ on häiriintynyt.</li>
-                            <li><strong>Liiallinen NaCl 0.9% ("fysiologinen suola") -infuusio:</strong> Suuri kloridikuorma voi laimentaa HCO₃⁻:a ja aiheuttaa asidoosin.</li>
+                            <li><strong>Ripuli:</strong> Menetetään paljon HCO3- -pitoista nestettä suolistosta.</li>
+                            <li><strong>Renaalinen tubulaarinen asidoosi (RTA):</strong> Munuaisten kyky erittää happoja tai ottaa takaisin HCO3- on häiriintynyt.</li>
+                            <li><strong>Liiallinen NaCl 0.9% ("fysiologinen suola") -infuusio:</strong> Suuri kloridikuorma voi laimentaa HCO3-:a ja aiheuttaa asidoosin.</li>
                             <li>Jotkin lääkkeet (esim. asetatsoliamidi).</li>
                         </ul>
                     </li>
@@ -481,7 +481,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
             values: { age: 35, pH: 7.41, pCO2_kPa: 5.5, HCO3: 25, PaO2_kPa: 12.8, BE: 0, Na: 139, Cl: 104, Lac: 1.1, K: 4.1, Temp: 36.9, Hb: 150, MetHb: 0.7, Ca2: 1.22, Glu: 5.1}, // AG = 10
             correctPrimary: texts.normal, // OK
             correctCompensation: "N/A", // OK
-            explanation: "Kaikki Astrup-arvot (pH, PaCO2, HCO3-, PaO₂, BE) ja laskettu anionivaje (10) ovat normaaleita. Ei merkkejä happo-emästasapainon häiriöstä tai hypoksemiasta.",
+            explanation: "Kaikki Astrup-arvot (pH, PaCO2, HCO3-, PaO2, BE) ja laskettu anionivaje (10) ovat normaaleita. Ei merkkejä happo-emästasapainon häiriöstä tai hypoksemiasta.",
             treatment: "Psykologista tukea kandin runtelemisen jäljiltä.",
         },
         { // Tapaus 15
@@ -518,7 +518,7 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
             correctPrimary: texts.metabolicAcidosisHAGMA, // <-- Muutettu HAGMAksi
             correctCompensation: texts.nonCompensated,
             explanation: "Potilaalla on tyypillinen krooniseen munuaisten vajaatoimintaan liittyvä metabolinen asidoosi (matala pH, HCO3-, BE), joka on pahentunut väliin jääneen dialyysin vuoksi. Anionivaje on koholla (AG=21) elimistöön kertyneiden happamien aineenvaihduntatuotteiden (ureemiset toksiinit, fosfaatti, sulfaatti) vuoksi. Hengitys kompensoi osittain (PaCO2 laskenut viitealueen alarajalle/alle), mutta ei riittävästi normalisoimaan pH:ta. Elektrolyyttitasapaino (erityisesti kalium!) on myös tarkistettava ennen anestesiaa.",
-            treatment: "Dialyysi ennen leikkausta, elektrolyyttien (erityisesti K⁺) tarkistus/korjaus.",
+            treatment: "Dialyysi ennen leikkausta, elektrolyyttien (erityisesti K+) tarkistus/korjaus.",
         },
         { // Tapaus 19
             id: "MassiveTransfusionShock01",
@@ -893,14 +893,14 @@ const getAbnormalDirection = (value, ref) => {
 
             let compensatingParamValue, compensatingParamRef, compensatingParamName;
             if (correctPrimary === texts.respiratoryAcidosis || correctPrimary === texts.respiratoryAlkalosis) {
-                 compensatingParamValue = scenario.values.HCO3; compensatingParamRef = REF_HCO3; compensatingParamName = "HCO₃⁻";
-            } else { compensatingParamValue = scenario.values.pCO2_kPa; compensatingParamRef = REF_PCO2_KPA; compensatingParamName = "PaCO₂"; }
+                 compensatingParamValue = scenario.values.HCO3; compensatingParamRef = REF_HCO3; compensatingParamName = "HCO3-";
+            } else { compensatingParamValue = scenario.values.pCO2_kPa; compensatingParamRef = REF_PCO2_KPA; compensatingParamName = "PaCO2"; }
             const isCompensatingParamNormal = compensatingParamValue >= compensatingParamRef.low && compensatingParamValue <= compensatingParamRef.high;
-            const formatCompValue = (val) => val?.toFixed(compensatingParamName === 'PaCO₂' ? 1 : 0);
+            const formatCompValue = (val) => val?.toFixed(compensatingParamName === 'PaCO2' ? 1 : 0);
 
              if (primaryCorrectExact && !compensationCorrect && selectedCompensation) {
                  if (correctCompensation === texts.compensated) {
-                     return <>Primäärihäiriö oikein. Kompensaatio on kuitenkin <strong>{texts.compensated}</strong>, koska pH ({pHValue?.toFixed(2)}) on normaalialueella ({REF_PH.low}–{REF_PH.high}) ja sekä PaCO₂ että HCO₃⁻ ovat poikkeavia.</>;
+                     return <>Primäärihäiriö oikein. Kompensaatio on kuitenkin <strong>{texts.compensated}</strong>, koska pH ({pHValue?.toFixed(2)}) on normaalialueella ({REF_PH.low}–{REF_PH.high}) ja sekä PaCO2 että HCO3- ovat poikkeavia.</>;
                  } else if (correctCompensation === texts.partiallyCompensated) {
                      if(isCompensatingParamNormal) {
                           return <>Primäärihäiriö oikein. Kompensaatio on kuitenkin <strong>{texts.nonCompensated}</strong>, koska pH ({pHValue?.toFixed(2)}) on poikkeava, mutta {compensatingParamName} ({formatCompValue(compensatingParamValue)}) on vielä normaalialueella.</>;
@@ -944,17 +944,17 @@ const getAbnormalDirection = (value, ref) => {
             const detailedCompFeedback = getDetailedCompensationFeedback(); // Hae tarkempi palaute
 
             // 1. Valittu sekahäiriö, oikea EI ole sekahäiriö
-             if (isSelectedMixed && !isCorrectMixed) { let hint = ""; if (isCorrectMetAcid) { hint = `matala pH (${pH?.toFixed(2)}) ja matala HCO₃⁻ (${HCO3?.toFixed(0)}) viittaavat metaboliseen asidoosiin.`; } else if (correctPrimary === texts.respiratoryAcidosis) { hint = `matala pH (${pH?.toFixed(2)}) ja korkea PaCO₂ (${pCO2_kPa?.toFixed(1)} kPa) viittaavat respiratoriseen asidoosiin.`; } else if (correctPrimary === texts.metabolicAlkalosis) { hint = `korkea pH (${pH?.toFixed(2)}) ja korkea HCO₃⁻ (${HCO3?.toFixed(0)}) viittaavat metaboliseen alkaloosiin.`; } else if (correctPrimary === texts.respiratoryAlkalosis) { hint = `korkea pH (${pH?.toFixed(2)}) ja matala PaCO₂ (${pCO2_kPa?.toFixed(1)} kPa) viittaavat respiratoriseen alkaloosiin.`; } else if (correctPrimary === texts.normal) { hint = `kaikki arvot ovat viitealueella.`; } diffMessages.push(<>Valitsit sekamuotoisen häiriön, mutta arvot viittaavat selkeämmin yksittäiseen häiriöön: {hint}</>); }
+             if (isSelectedMixed && !isCorrectMixed) { let hint = ""; if (isCorrectMetAcid) { hint = `matala pH (${pH?.toFixed(2)}) ja matala HCO3- (${HCO3?.toFixed(0)}) viittaavat metaboliseen asidoosiin.`; } else if (correctPrimary === texts.respiratoryAcidosis) { hint = `matala pH (${pH?.toFixed(2)}) ja korkea PaCO2 (${pCO2_kPa?.toFixed(1)} kPa) viittaavat respiratoriseen asidoosiin.`; } else if (correctPrimary === texts.metabolicAlkalosis) { hint = `korkea pH (${pH?.toFixed(2)}) ja korkea HCO3- (${HCO3?.toFixed(0)}) viittaavat metaboliseen alkaloosiin.`; } else if (correctPrimary === texts.respiratoryAlkalosis) { hint = `korkea pH (${pH?.toFixed(2)}) ja matala PaCO2 (${pCO2_kPa?.toFixed(1)} kPa) viittaavat respiratoriseen alkaloosiin.`; } else if (correctPrimary === texts.normal) { hint = `kaikki arvot ovat viitealueella.`; } diffMessages.push(<>Valitsit sekamuotoisen häiriön, mutta arvot viittaavat selkeämmin yksittäiseen häiriöön: {hint}</>); }
             // 2. Valittu yksittäinen häiriö, oikea ON sekahäiriö
-             else if (!isSelectedMixed && isCorrectMixed && selectedPrimary) { if (selectedPrimary === texts.normal) { diffMessages.push(<>Valitsit 'Normaali', mutta arvot (esim. pH {pH?.toFixed(2)}) eivät ole viitealueella. Tämä tapaus edustaa sekamuotoista häiriötä ({correctPrimary}), jossa on sekä respiratorinen että metabolinen komponentti. Huomioi poikkeamat sekä PaCO₂:ssa että HCO₃⁻/BE:ssä.</>); } else { diffMessages.push(<>Valitsemasi {selectedPrimary} selittää osan löydöksistä, mutta tässä tapauksessa on kyseessä sekamuotoinen häiriö ({correctPrimary}). Huomioi poikkeamat sekä PaCO₂:ssa että HCO₃⁻/BE:ssä.</>); } }
+             else if (!isSelectedMixed && isCorrectMixed && selectedPrimary) { if (selectedPrimary === texts.normal) { diffMessages.push(<>Valitsit 'Normaali', mutta arvot (esim. pH {pH?.toFixed(2)}) eivät ole viitealueella. Tämä tapaus edustaa sekamuotoista häiriötä ({correctPrimary}), jossa on sekä respiratorinen että metabolinen komponentti. Huomioi poikkeamat sekä PaCO2:ssa että HCO3-/BE:ssä.</>); } else { diffMessages.push(<>Valitsemasi {selectedPrimary} selittää osan löydöksistä, mutta tässä tapauksessa on kyseessä sekamuotoinen häiriö ({correctPrimary}). Huomioi poikkeamat sekä PaCO2:ssa että HCO3-/BE:ssä.</>); } }
             // 3. Valittu väärä yksittäinen häiriö
              else if (!primaryCorrectExact && !isCorrectMixed && !isSelectedMixed && selectedPrimary) {
                  let primMsg = "";
-                 if (isCorrectMetAcid && !isSelectedMetAcid) { primMsg = <>Valitsit {selectedPrimary}, mutta matala pH ({pH?.toFixed(2)}) ja matala HCO₃⁻ ({HCO3?.toFixed(0)}) viittaavat metaboliseen asidoosiin.</>; }
+                 if (isCorrectMetAcid && !isSelectedMetAcid) { primMsg = <>Valitsit {selectedPrimary}, mutta matala pH ({pH?.toFixed(2)}) ja matala HCO3- ({HCO3?.toFixed(0)}) viittaavat metaboliseen asidoosiin.</>; }
                  else if (!isCorrectMetAcid && isSelectedMetAcid) { primMsg = <>Valitsit metabolisen asidoosin, mutta arvot viittaavat ennemmin häiriöön: {correctPrimary}.</>; }
-                 else if (correctPrimary === texts.respiratoryAcidosis) { primMsg = <>Valitsit {selectedPrimary}, mutta matala pH ({pH?.toFixed(2)}) ja korkea PaCO₂ ({pCO2_kPa?.toFixed(1)} kPa) viittaavat respiratoriseen asidoosiin.</>; }
-                 else if (correctPrimary === texts.metabolicAlkalosis) { primMsg = <>Valitsit {selectedPrimary}, mutta korkea pH ({pH?.toFixed(2)}) ja korkea HCO₃⁻ ({HCO3?.toFixed(0)}) viittaavat metaboliseen alkaloosiin.</>; }
-                 else if (correctPrimary === texts.respiratoryAlkalosis) { primMsg = <>Valitsit {selectedPrimary}, mutta korkea pH ({pH?.toFixed(2)}) ja matala PaCO₂ ({pCO2_kPa?.toFixed(1)} kPa) viittaavat respiratoriseen alkaloosiin.</>; }
+                 else if (correctPrimary === texts.respiratoryAcidosis) { primMsg = <>Valitsit {selectedPrimary}, mutta matala pH ({pH?.toFixed(2)}) ja korkea PaCO2 ({pCO2_kPa?.toFixed(1)} kPa) viittaavat respiratoriseen asidoosiin.</>; }
+                 else if (correctPrimary === texts.metabolicAlkalosis) { primMsg = <>Valitsit {selectedPrimary}, mutta korkea pH ({pH?.toFixed(2)}) ja korkea HCO3- ({HCO3?.toFixed(0)}) viittaavat metaboliseen alkaloosiin.</>; }
+                 else if (correctPrimary === texts.respiratoryAlkalosis) { primMsg = <>Valitsit {selectedPrimary}, mutta korkea pH ({pH?.toFixed(2)}) ja matala PaCO2 ({pCO2_kPa?.toFixed(1)} kPa) viittaavat respiratoriseen alkaloosiin.</>; }
                  else if (correctPrimary === texts.normal) { primMsg = <>Valitsit {selectedPrimary}, mutta arvot ovat normaalit.</>; }
                  diffMessages.push(primMsg);
                  if (detailedCompFeedback) { diffMessages.push(detailedCompFeedback); } // Lisää komp. palaute jos on
