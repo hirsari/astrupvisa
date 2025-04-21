@@ -187,21 +187,34 @@
                 <p>Munuaiset säätelevät HCO₃⁻:n tasoa hitaammin (tunteja/päiviä) kuin keuhkot PaCO₂:ta.</p>
             </Fragment>
         ),
-        helpContentPaO2: (unit) => (
+        helpContentPaO2: (unit) => ( // unit-parametri säilyy, jos sitä tarvitaan mmHg-muunnoksiin
             <Fragment>
-                <p>Valtimoveren happiosapaine (PaO₂) kuvaa vereen fysikaalisesti liuennutta happea ja kertoo keuhkojen kyvystä hapettaa verta.</p>
-                <ul>
-                    <li>Normaali PaO₂: {unit === 'kPa' ? '10.6 - 13.3 kPa' : '80 - 100 mmHg'} (Huoneilmalla hengitettäessä. Arvo voi laskea iän myötä).</li>
-                    <li>Hypoksemia (matala happitaso):
-                        <ul>
-                            <li>Lievä: {unit === 'kPa' ? '8.0 - 10.5 kPa' : '60 - 79 mmHg'}</li>
-                            <li>Kohtalainen: {unit === 'kPa' ? '5.3 - 7.9 kPa' : '40 - 59 mmHg'}</li>
-                            <li>Vaikea: &lt; {unit === 'kPa' ? '5.3 kPa' : '40 mmHg'}</li>
-                        </ul>
-                    </li>
+                <p>Valtimoveren happiosapaine (pO₂) kuvaa vereen fysikaalisesti liuennutta happea ja kertoo keuhkojen kyvystä hapettaa verta.</p>
+                {/* UUSI OSA: Ikäriippuvuus */}
+                <p><strong>Normaali pO₂ on ikäriippuvainen ja laskee iän myötä (viitearvot kPa):</strong></p>
+                {/* Käytetään taulukkoa tai listaa selkeyden vuoksi */}
+                <ul style={{ listStyle: 'none', paddingLeft: 0 }}> {/* Tyylit poistavat listamerkit */}
+                    <li>alle 18 v: <strong>12.0 – 14.0 kPa</strong></li>
+                    <li>18–30 v: <strong>11.0 – 14.0 kPa</strong></li>
+                    <li>31–50 v: <strong>10.3 – 13.0 kPa</strong></li>
+                    <li>51–60 v: <strong>9.7 – 12.7 kPa</strong></li>
+                    <li>61–70 v: <strong>9.3 – 12.3 kPa</strong></li>
+                    <li>71–80 v: <strong>8.8 – 11.9 kPa</strong></li>
+                    <li>yli 80 v: <strong>8.3 – 11.4 kPa</strong></li>
                 </ul>
-                <p>Matala PaO₂ voi johtua esim. ventilaatio-perfuusioepäsuhdasta (V/Q mismatch), sunteista (oikovirtaus), diffuusiohäiriöstä tai hypoventilaatiosta.</p>
+                {/* Vanha kiinteä viitearvo poistettu tästä */}
+
+                {/* Hypoksemian määrittely säilyy ennallaan */}
+                <p><strong>Hypoksemia (matala happitaso):</strong></p>
+                {/* Voit halutessasi näyttää nämä vain jos yksikkö on valittu */}
+                <ul>
+                    <li>Lievä: {unit === 'kPa' ? '8.0 - 10.5 kPa' : '60 - 79 mmHg'}</li>
+                    <li>Kohtalainen: {unit === 'kPa' ? '5.3 - 7.9 kPa' : '40 - 59 mmHg'}</li>
+                    <li>Vaikea: &lt; {unit === 'kPa' ? '5.3 kPa' : '40 mmHg'}</li>
+                </ul>
+                <p>Matala pO₂ voi johtua esim. ventilaatio-perfuusioepäsuhdasta (V/Q mismatch), sunteista (oikovirtaus), diffuusiohäiriöstä tai hypoventilaatiosta.</p>
                 <p>Huom: Pulssioksimetrin SpO₂ mittaa hemoglobiinin happisaturaatiota prosentteina, EI hapen osapainetta. Vaikka ne korreloivat oksyhemoglobiinikäyrän mukaisesti, ne eivät ole sama asia ja käyrän muotoon vaikuttavat mm. pH ja lämpötila.</p>
+                {/* Yksikkömuunnoshuomautus voi säilyä */}
                 {unit === 'kPa' && <small>Muunnos: 1 kPa ≈ 7.5 mmHg</small>}
                 {unit === 'mmHg' && <small>Muunnos: 1 mmHg ≈ 0.133 kPa</small>}
             </Fragment>
