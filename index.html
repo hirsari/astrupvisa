@@ -160,7 +160,7 @@
                     <li>Asidoosi: pH &lt; 7.35</li>
                     <li>Alkaloosi: pH &gt; 7.45</li>
                 </ul>
-                <p>Keho pyrkii pitämään pH:n tarkasti tällä välillä normaalin metabolian ylläpitämiseksi. Merkittävät poikkeamat (esim. alle 6.8 tai yli 7.8) ovat hengenvaarallisia.</p>
+                <p>Keho pyrkii pitämään pH:n tarkasti tällä välillä pääosin keuhkojen ja munuaisten kautta normaalin metabolian ylläpitämiseksi. Merkittävät poikkeamat (esim. alle 6.8 tai yli 7.8) ovat hengenvaarallisia.</p>
             </Fragment>
         ),
         helpContentPCO2: (unit) => (
@@ -178,7 +178,7 @@
         ),
         helpContentHCO3: (
             <Fragment>
-                <p>Bikarbonaatti (HCO3-) on tärkein veren puskuri ja heijastaa metabolista (munuaisten säätelemää) komponenttia happo-emäs-tasapainossa.</p>
+                <p>Bikarbonaatti (HCO3-) on tärkein veren puskuri ja heijastaa metabolista (eli munuaisten säätelemää) komponenttia happo-emäs-tasapainossa.</p>
                  <ul>
                      <li>Normaali HCO3-: 22 - 26 mmol/L</li>
                      <li>Matala HCO3-: Viittaa metaboliseen asidoosiin (emäksen menetys tai hapon lisäys) tai kompensaatioon respiratoriseen alkaloosiin.</li>
@@ -189,7 +189,7 @@
         ),
         helpContentPaO2: (unit) => ( // unit-parametri säilyy, jos sitä tarvitaan mmHg-muunnoksiin
             <Fragment>
-                <p>Valtimoveren happiosapaine (pO2) kuvaa vereen fysikaalisesti liuennutta happea ja kertoo keuhkojen kyvystä hapettaa verta.</p>
+                <p>Valtimoveren happiosapaine (pO2) kuvaa vereen liuennutta happea ja kertoo pääosin keuhkojen toiminnasta.</p>
                 {/* UUSI OSA: Ikäriippuvuus */}
                 <p><strong>Normaali pO2 on ikäriippuvainen ja laskee iän myötä (viitearvot kPa):</strong></p>
                 {/* Käytetään taulukkoa tai listaa selkeyden vuoksi */}
@@ -212,7 +212,7 @@
                     <li>Kohtalainen: {unit === 'kPa' ? '5.3 - 7.9 kPa' : '40 - 59 mmHg'}</li>
                     <li>Vaikea: &lt; {unit === 'kPa' ? '5.3 kPa' : '40 mmHg'}</li>
                 </ul>
-                <p>Matala pO2 voi johtua esim. ventilaatio-perfuusioepäsuhdasta (V/Q mismatch), sunteista (oikovirtaus), diffuusiohäiriöstä tai hypoventilaatiosta.</p>
+                <p>Matala pO2 voi johtua esim. ventilaatio-perfuusioepäsuhdasta (V/Q mismatch), shunteista (oikovirtaus), diffuusiohäiriöstä tai hypoventilaatiosta.</p>
                 <p>Huom: Pulssioksimetrin SpO2 mittaa hemoglobiinin happisaturaatiota prosentteina, EI hapen osapainetta. Vaikka ne korreloivat oksihemoglobiinikäyrän mukaisesti, ne eivät ole sama asia ja käyrän muotoon vaikuttavat mm. pH ja lämpötila.</p>
                 {/* Yksikkömuunnoshuomautus voi säilyä */}
                 {unit === 'kPa' && <small>Muunnos: 1 kPa ≈ 7.5 mmHg</small>}
@@ -236,7 +236,13 @@
                 <p>Kaava: <code>AG = Na⁺ - (Cl- + HCO3-)</code></p>
                 <ul>
                     <li>Normaali AG: Noin 8 - 12 mmol/L (viitearvo voi vaihdella laboratoriosta riippuen).</li>
-                    <li><strong>Kohonnut AG (HAGMA - High Anion Gap Metabolic Acidosis):</strong> Tarkoittaa, että asidoosin aiheuttaa jokin mittaamaton anioni (orgaaninen happo). Syitä ovat mm. laktaatti (laktaattiasidoosi), ketoaineet (diabeettinen ketoasidoosi, alkoholiketoasidoosi, nälkiintyminen), munuaisten vajaatoiminta (ureemiset hapot), myrkytykset (metanoli, etyleeniglykoli, salisylaatit). Käytä muistisääntöä kuten MUDPILES.</li>
+                    <li><strong>Kohonnut AG (HAGMA - High Anion Gap Metabolic Acidosis):</strong> Tarkoittaa, että asidoosin aiheuttaa jokin mittaamaton anioni (orgaaninen happo). Syitä ovat mm. laktaatti (laktaattiasidoosi), ketoaineet (diabeettinen ketoasidoosi, alkoholiketoasidoosi, nälkiintyminen), munuaisten vajaatoiminta (ureemiset hapot), myrkytykset (metanoli, etyleeniglykoli, salisylaatit). Käytä muistisääntöä kuten <a
+                          href="https://en.wikipedia.org/wiki/High_anion_gap_metabolic_acidosis#Mnemonics"
+                          target="_blank" // Avaa uuteen välilehteen
+                          rel="noopener noreferrer" // Turvallisuussyistä
+                        >
+                          MUDPILES
+                        </a>. {/* MUUTETTU OSA LOPPUU TÄHÄN */}</li>
                     <li><strong>Normaali AG (NAGMA - Normal Anion Gap Metabolic Acidosis):</strong> Johtuu yleensä bikarbonaatin menetyksestä (esim. ripuli, renaalinen tubulaarinen asidoosi RTA) tai liiallisesta kloridin saannista/retentiosta (hyperkloreeminen asidoosi, esim. NaCl-infuusiot).</li>
                 </ul>
             </Fragment>
