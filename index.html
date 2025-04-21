@@ -645,6 +645,22 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
         const gluClass = isValueAbnormal(Glu, REF_GLU) ? 'abnormal-value' : '';
         const lacClass = isValueAbnormal(Lac, REF_LAC) ? 'abnormal-value' : '';
         const tempClass = isValueAbnormal(Temp, REF_TEMP) ? 'abnormal-value' : '';
+        const phIndicator = getAbnormalDirection(pH, REF_PH);
+        const pco2Indicator = getAbnormalDirection(pCO2_kPa, REF_PCO2_KPA);
+        const po2Indicator = getAbnormalDirection(PaO2_kPa, REF_PAO2_KPA);
+        const hco3Indicator = getAbnormalDirection(HCO3, REF_HCO3);
+        const beIndicator = getAbnormalDirection(BE, REF_BE);
+        const agIndicator = anionGap !== null ? getAbnormalDirection(anionGap, REF_AG) : '';
+        const hbIndicator = getAbnormalDirection(Hb, REF_HB);
+        const methbIndicator = getAbnormalDirection(MetHb, REF_METHB);
+        const kIndicator = getAbnormalDirection(K, REF_K);
+        const naIndicator = getAbnormalDirection(Na, REF_NA);
+        const ca2Indicator = getAbnormalDirection(Ca2, REF_CA2);
+        const clIndicator = getAbnormalDirection(Cl, REF_CL);
+        const gluIndicator = getAbnormalDirection(Glu, REF_GLU);
+        const lacIndicator = getAbnormalDirection(Lac, REF_LAC);
+        const tempIndicator = getAbnormalDirection(Temp, REF_TEMP); // Lämpötilalle myös
+        // --- /LASKETAAN LUOKAT JA INDIKAATTORIT ---
 
         // --- /LISÄTTY PUUTTUVAT LUOKAT ---
 
@@ -664,6 +680,19 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
              else if (lowExists) { return `(>${lowStr}${unit ? ' ' + unit : ''})`; }
              return '';
          };
+         const getAbnormalDirection = (value, ref) => {
+            if (value === null || value === undefined || !ref || isNaN(value)) return '';
+            // Käytetään null/undefined turvallisia alarajoja
+            const low = ref.low ?? -Infinity;
+            const high = ref.high ?? Infinity;
+             // Erityistapaus BE:lle +/-3 (ei tarvita erikseen, jos vertailu toimii)
+             // Erityistapaus Lac: 0.5-1.6
+             // Erityistapaus MetHb < 2.0 (high=2.0, low=0)
+
+            if (value > high) return '↑'; // Yli ylärajan
+            if (value < low) return '↓'; // Alle alarajan
+            return ''; // Normaali
+        };
          return (
             <Fragment>
                 {/* TAPAUSSELOSTE LISÄTTY TAKAISIN TÄHÄN */}
@@ -677,154 +706,85 @@ const REF_GLU = { low: 4.0, high: 6.0 }; // MUUTETTU
             <section className="abg-values">
                 {/* Header Info */}
                 <div className="receipt-header">
-                     <span>{texts.sampleTypeLabel}: {texts.sampleTypeValue}</span>
-                     <span>
-                                 {texts.tempLabel}=
+                             <span>{texts.sampleTypeLabel}: {texts.sampleTypeValue}</span>
+                             <span>
+                                 {/* Lisätään välilyönti jos nuoli on olemassa */}
+                                 {tempIndicator} {texts.tempLabel}=
                                  <span className={tempClass}>{Temp?.toFixed(1)}{texts.tempUnit}</span>
                              </span>
-                 </div>
-                 <hr className="receipt-separator" />
+                         </div>
+                         <hr className="receipt-separator" />
 
                 {/* Lämpötilakorjatut arvot */}
-                 <h4 className="receipt-heading">{texts.headingTempCorrected}</h4>
-                 <div className="receipt-row">
-                     <span className="param-name">{texts.phLabel.replace(':','')}</span>
-                     <span className={`param-value ${phClass}`}>{pH?.toFixed(3)}</span>
-                     <span className="param-unit"></span>
-                     <span className="param-ref">{formatRef(REF_PH, '', 2)}</span>
-                     <button className="apuva-button" onClick={() => onOpenHelp('pH')} aria-label={`Apua ${texts.phLabel}`}>{texts.helpButtonLabel}</button>
+                <h4 className="receipt-heading">{texts.headingTempCorrected}</h4>
+                         <div className="receipt-row">
+                             <span className="param-name">{phIndicator} {texts.phLabel}</span>
+                             <span className={`param-value ${phClass}`}>{pH?.toFixed(3)}</span>
+                             <span className="param-unit"></span>
+                             <span className="param-ref">{formatRef(REF_PH, '', 2)}</span>
+                             <button className="apuva-button" onClick={() => onOpenHelp('pH')} aria-label={`Apua ${texts.phLabel}`}>{texts.helpButtonLabel}</button>
+                         </div>
+                         <div className="receipt-row">
+                             <span className="param-name">{pco2Indicator} pCO<sub>2</sub>(T)</span>
+                             <span className={`param-value ${pco2Class}`}>{displayPCO2?.toFixed(2)}</span>
+                             <span className="param-unit">{gasUnitLabel}</span>
+                             <span className="param-ref">{formatRef(pco2Unit === 'kPa' ? REF_PCO2_KPA : REF_PCO2_MMHG, gasUnitLabel, pco2Unit === 'kPa' ? 1 : 0)}</span>
+                             <button className="apuva-button" onClick={() => onOpenHelp('pCO2')} aria-label={`Apua ${texts.pco2Label}`}>{texts.helpButtonLabel}</button>
+                         </div>
+                         <div className="receipt-row">
+                             <span className="param-name">{po2Indicator} pO<sub>2</sub>(T)</span>
+                             <span className={`param-value ${po2Class}`}>{displayPaO2?.toFixed(1)}</span>
+                             <span className="param-unit">{gasUnitLabel}</span>
+                             <span className="param-ref">{formatRef(pco2Unit === 'kPa' ? REF_PAO2_KPA : REF_PAO2_MMHG, gasUnitLabel, 1)}</span>
+                              <button className="apuva-button" onClick={() => onOpenHelp('PaO2')} aria-label={`Apua ${texts.paO2Label}`}>{texts.helpButtonLabel}</button>
+                         </div>
 
-                 </div>
-                 <div className="receipt-row">
-                     <span className="param-name">{texts.pco2Label.replace(':','')}</span>
-                     <span className={`param-value ${pco2Class}`}>{displayPCO2?.toFixed(2)}</span>
-                     <span className="param-unit">{gasUnitLabel}</span>
-                     <span className="param-ref">{formatRef(pco2Unit === 'kPa' ? REF_PCO2_KPA : REF_PCO2_MMHG, gasUnitLabel, pco2Unit === 'kPa' ? 1 : 0)}</span>
-                     <button className="apuva-button" onClick={() => onOpenHelp('pCO2')} aria-label={`Apua ${texts.pco2Label}`}>{texts.helpButtonLabel}</button>
-
-                 </div>
-                 <div className="receipt-row">
-                     <span className="param-name">{texts.paO2Label.replace(':','')}</span>
-                     <span className={`param-value ${po2Class}`}>{displayPaO2?.toFixed(1)}</span>
-                     <span className="param-unit">{gasUnitLabel}</span>
-                     <span className="param-ref">{formatRef(pco2Unit === 'kPa' ? REF_PAO2_KPA : REF_PAO2_MMHG, gasUnitLabel, 1)}</span>
-                     <button className="apuva-button" onClick={() => onOpenHelp('PaO2')} aria-label={`Apua ${texts.paO2Label}`}>{texts.helpButtonLabel}</button>
-
-                 </div>
-
-                 {/* Happo-emäs-tila */}
+                 {/* Happo-emäs-tila (LISÄTTY NUOLET) */}
                  <h4 className="receipt-heading">{texts.headingAcidBase}</h4>
-                 <div className="receipt-row">
-                     <span className="param-name">{texts.hco3Label.replace(':','')}</span>
-                     <span className={`param-value ${hco3Class}`}>{HCO3?.toFixed(1)}</span>
-                     <span className="param-unit">mmol/L</span>
-                     <span className="param-ref">{formatRef(REF_HCO3, 'mmol/L', 0)}</span>
-                     <button className="apuva-button" onClick={() => onOpenHelp('HCO3')} aria-label={`Apua ${texts.hco3Label}`}>{texts.helpButtonLabel}</button>
-
-                 </div>
-                 <div className="receipt-row">
-                     <span className="param-name">{texts.beLabel.replace(':','')}</span>
-                     <span className={`param-value ${beClass}`}>{BE?.toFixed(1)}</span>
-                     <span className="param-unit">mmol/L</span>
-                     <span className="param-ref">{formatRef(REF_BE, 'mmol/L', 0)}</span>
-                     <button className="apuva-button" onClick={() => onOpenHelp('BE')} aria-label={`Apua ${texts.beLabel}`}>{texts.helpButtonLabel}</button>
-
-                 </div>
-                 {anionGap !== null ? (
-                    <div className="receipt-row">
-                        <span className="param-name">{texts.agLabel.replace(':','')}</span>
-                        <span className={`param-value ${agClass}`}>{anionGap?.toFixed(0)}</span>
-                        <span className="param-unit">mmol/L</span>
-                        <span className="param-ref">~{formatRef(REF_AG, 'mmol/L', 0)}</span>
-                        <button className="apuva-button" onClick={() => onOpenHelp('AG')} aria-label={`Apua ${texts.agLabel}`}>{texts.helpButtonLabel}</button>
-
-                    </div>
+                         <div className="receipt-row">
+                             <span className="param-name">{hco3Indicator} HCO<sub>3</sub><sup>-</sup></span>
+                             <span className={`param-value ${hco3Class}`}>{HCO3?.toFixed(1)}</span>
+                             <span className="param-unit">mmol/L</span>
+                             <span className="param-ref">{formatRef(REF_HCO3, 'mmol/L', 0)}</span>
+                             <button className="apuva-button" onClick={() => onOpenHelp('HCO3')} aria-label={`Apua ${texts.hco3Label}`}>{texts.helpButtonLabel}</button>
+                         </div>
+                         <div className="receipt-row">
+                             <span className="param-name">{beIndicator} {texts.beLabel}</span>
+                             <span className={`param-value ${beClass}`}>{BE?.toFixed(1)}</span>
+                             <span className="param-unit">mmol/L</span>
+                             <span className="param-ref">{formatRef(REF_BE, 'mmol/L', 0)}</span>
+                              <button className="apuva-button" onClick={() => onOpenHelp('BE')} aria-label={`Apua ${texts.beLabel}`}>{texts.helpButtonLabel}</button>
+                         </div>
+                         {anionGap !== null ? (
+                            <div className="receipt-row">
+                                <span className="param-name">{agIndicator} {texts.agLabel}</span>
+                                <span className={`param-value ${agClass}`}>{anionGap?.toFixed(0)}</span>
+                                <span className="param-unit">mmol/L</span>
+                                <span className="param-ref">~{formatRef(REF_AG, 'mmol/L', 0)}</span>
+                                <button className="apuva-button" onClick={() => onOpenHelp('AG')} aria-label={`Apua ${texts.agLabel}`}>{texts.helpButtonLabel}</button>
+                            </div>
                  ) : null}
 
-                {/* Oksimetria-arvot (Nyt käytetään oikeita luokkamuuttujia) */}
+                {/* Oksimetria-arvot (LISÄTTY NUOLET) */}
                 <h4 className="receipt-heading">{texts.headingOxymetry}</h4>
-                {Hb !== undefined ? (
-                    <div className="receipt-row">
-                        <span className="param-name">{texts.hbLabel}</span>
-                        <span className={`param-value ${hbClass}`}>{Hb?.toFixed(0)}</span> {/* Käyttää hbClass */}
-                        <span className="param-unit">g/L</span>
-                        <span className="param-ref">{formatRef(REF_HB, 'g/L', 0)}</span>
-                    </div>
-                ) : null}
-                 {MetHb !== undefined ? (
-                    <div className="receipt-row">
-                        <span className="param-name">{texts.methbLabel}</span>
-                        <span className={`param-value ${methbClass}`}>{MetHb?.toFixed(1)}</span> {/* Käyttää methbClass */}
-                        <span className="param-unit">%</span>
-                         <span className="param-ref">{formatRef(REF_METHB, '%', 1)}</span>
-                         <button className="apuva-button" onClick={() => onOpenHelp('MetHb')} aria-label={`Apua ${texts.methbLabel}`}>{texts.helpButtonLabel}</button>
-                    </div>
-                ) : null}
+                        {Hb !== undefined ? ( <div className="receipt-row"> <span className="param-name">{hbIndicator} {texts.hbLabel}</span> <span className={`param-value ${hbClass}`}>{Hb?.toFixed(0)}</span> <span className="param-unit">g/L</span> <span className="param-ref">{formatRef(REF_HB, 'g/L', 0)}</span> </div> ) : null}
+                        {MetHb !== undefined ? ( <div className="receipt-row"> <span className="param-name">{methbIndicator} {texts.methbLabel}</span> <span className={`param-value ${methbClass}`}>{MetHb?.toFixed(1)}</span> <span className="param-unit">%</span> <span className="param-ref">{formatRef(REF_METHB, '%', 1)}</span> <button className="apuva-button" onClick={() => onOpenHelp('MetHb')} aria-label={`Apua ${texts.methbLabel}`}>{texts.helpButtonLabel}</button> </div> ) : null}
 
-                {/* Elektrolyyttiarvot (Nyt käytetään oikeita luokkamuuttujia) */}
+                {/* Elektrolyyttiarvot (LISÄTTY NUOLET) */}
                 <h4 className="receipt-heading">{texts.headingElectrolytes}</h4>
-                 {(K !== undefined && K !== null) ? (
-                    <div className="receipt-row">
-                        <span className="param-name">{texts.kLabel.replace(':','')}</span>
-                        <span className={`param-value ${kClass}`}>{K?.toFixed(1)}</span> {/* Käyttää kClass */}
-                        <span className="param-unit">mmol/L</span>
-                        <span className="param-ref">{formatRef(REF_K, 'mmol/L', 1)}</span>
-                        <button className="apuva-button" onClick={() => onOpenHelp('K')} aria-label={`Apua ${texts.kLabel}`}>{texts.helpButtonLabel}</button>
+                         {(K !== undefined && K !== null) ? (<div className="receipt-row"> <span className="param-name">{kIndicator} K<sup>+</sup></span> <span className={`param-value ${kClass}`}>{K?.toFixed(1)}</span> <span className="param-unit">mmol/L</span> <span className="param-ref">{formatRef(REF_K, 'mmol/L', 1)}</span> <button className="apuva-button" onClick={() => onOpenHelp('K')} aria-label={`Apua ${texts.kLabel}`}>{texts.helpButtonLabel}</button> </div>) : null}
+                         {Na !== undefined ? ( <div className="receipt-row"> <span className="param-name">{naIndicator} Na<sup>+</sup></span> <span className={`param-value ${naClass}`}>{Na?.toFixed(0)}</span> <span className="param-unit">mmol/L</span> <span className="param-ref">{formatRef(REF_NA, 'mmol/L', 0)}</span> </div> ) : null}
+                         {Ca2 !== undefined ? ( <div className="receipt-row"> <span className="param-name">{ca2Indicator} Ca<sup>2+</sup></span> <span className={`param-value ${ca2Class}`}>{Ca2?.toFixed(2)}</span> <span className="param-unit">mmol/L</span> <span className="param-ref">{formatRef(REF_CA2, 'mmol/L', 2)}</span> </div> ) : null}
+                         {Cl !== undefined ? ( <div className="receipt-row"> <span className="param-name">{clIndicator} Cl<sup>-</sup></span> <span className={`param-value ${clClass}`}>{Cl?.toFixed(0)}</span> <span className="param-unit">mmol/L</span> <span className="param-ref">{formatRef(REF_CL, 'mmol/L', 0)}</span> <button className="apuva-button" onClick={() => onOpenHelp('Cl')} aria-label={`Apua ${texts.clLabel}`}>{texts.helpButtonLabel}</button> </div> ) : null}
 
-                    </div>
-                 ) : null}
-                 {Na !== undefined ? (
-                    <div className="receipt-row">
-                        <span className="param-name">{texts.naLabel.replace(':','')}</span>
-                        <span className={`param-value ${naClass}`}>{Na?.toFixed(0)}</span> {/* Käyttää naClass */}
-                        <span className="param-unit">mmol/L</span>
-                        <span className="param-ref">{formatRef(REF_NA, 'mmol/L', 0)}</span>
-                    </div>
-                 ) : null}
-                  {Ca2 !== undefined ? (
-                    <div className="receipt-row">
-                        <span className="param-name">{texts.ca2Label}</span>
-                        <span className={`param-value ${ca2Class}`}>{Ca2?.toFixed(2)}</span> {/* Käyttää ca2Class */}
-                        <span className="param-unit">mmol/L</span>
-                        <span className="param-ref">{formatRef(REF_CA2, 'mmol/L', 2)}</span>
-                    </div>
-                 ) : null}
-                 {Cl !== undefined ? (
-                    <div className="receipt-row">
-                        <span className="param-name">{texts.clLabel.replace(':','')}</span>
-                        <span className={`param-value ${clClass}`}>{Cl?.toFixed(0)}</span> {/* Käyttää clClass */}
-                        <span className="param-unit">mmol/L</span>
-                        <span className="param-ref">{formatRef(REF_CL, 'mmol/L', 0)}</span>
-                        <button className="apuva-button" onClick={() => onOpenHelp('Cl')} aria-label={`Apua ${texts.clLabel}`}>{texts.helpButtonLabel}</button>
-                    </div>
-                 ) : null}
+                         {/* Metaboliittiarvot (LISÄTTY NUOLET) */}
+                         <h4 className="receipt-heading">{texts.headingMetabolites}</h4>
+                          {Glu !== undefined ? ( <div className="receipt-row"> <span className="param-name">{gluIndicator} {texts.gluLabel}</span> <span className={`param-value ${gluClass}`}>{Glu?.toFixed(1)}</span> <span className="param-unit">mmol/L</span> <span className="param-ref">{formatRef(REF_GLU, 'mmol/L', 1)}</span> </div> ) : null}
+                          {(Lac !== undefined && Lac !== null) ? (<div className="receipt-row"> <span className="param-name">{lacIndicator} {texts.lacLabel}</span> <span className={`param-value ${lacClass}`}>{Lac?.toFixed(1)}</span> <span className="param-unit">mmol/L</span> <span className="param-ref">{formatRef(REF_LAC, 'mmol/L', 1)}</span> <button className="apuva-button" onClick={() => onOpenHelp('Lac')} aria-label={`Apua ${texts.lacLabel}`}>{texts.helpButtonLabel}</button> </div>) : null}
 
-                 {/* Metaboliittiarvot (Nyt käytetään oikeita luokkamuuttujia) */}
-                 <h4 className="receipt-heading">{texts.headingMetabolites}</h4>
-                  {Glu !== undefined ? (
-                    <div className="receipt-row">
-                        <span className="param-name">{texts.gluLabel}</span>
-                        <span className={`param-value ${gluClass}`}>{Glu?.toFixed(1)}</span> {/* Käyttää gluClass */}
-                        <span className="param-unit">mmol/L</span>
-                        <span className="param-ref">{formatRef(REF_GLU, 'mmol/L', 1)}</span>
-                    </div>
-                 ) : null}
-                 {(Lac !== undefined && Lac !== null) ? (
-                    <div className="receipt-row">
-                        <span className="param-name">{texts.lacLabel.replace(':','')}</span>
-                        <span className={`param-value ${lacClass}`}>{Lac?.toFixed(1)}</span> {/* Käyttää lacClass */}
-                        <span className="param-unit">mmol/L</span>
-                        <span className="param-ref">{formatRef(REF_LAC, 'mmol/L', 1)}</span>
-                        <button className="apuva-button" onClick={() => onOpenHelp('Lac')} aria-label={`Apua ${texts.lacLabel}`}>{texts.helpButtonLabel}</button>
-
-                    </div>
-                 ) : null}
-
-                 {/* Footer Info */}
-                 <hr className="receipt-separator" />
-                 <div className="receipt-footer">
-                    <span>{texts.footerPrinted} {currentTime}</span>
-                 </div>
+                         {/* Footer Info */}
+                         <hr className="receipt-separator" />
+                         <div className="receipt-footer"> /* ... */ </div>
             </section>
         </div> {/* UUSI WRAPPER ELEMENTTI LOPPUU */}
         </Fragment>
