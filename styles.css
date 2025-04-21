@@ -181,7 +181,7 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
 .receipt-row {
     display: grid;
     /* Sarakkeet: Nimi | Arvo | Yksikkö | Viite | Nappi */
-    grid-template-columns: 135px 65px 60px 1fr auto; /* Säädä tarvittaessa */
+    grid-template-columns: 125px 65px 60px 1fr auto; /* Säädä tarvittaessa */
     gap: 0 8px; /* Ei riviväliä, sarakkeiden väli 8px */
     align-items: baseline;
     margin-bottom: 3px; /* Tiheä riviväli */
