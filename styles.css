@@ -426,7 +426,7 @@ feedback-section p {
 .modal-body li { margin-bottom: 12px; line-height: 1.6; }
 .modal-body ul li { margin-bottom: 8px; }
 .modal-body p { margin-bottom: 15px; line-height: 1.6; }
-modal-body a {
+.modal-body a {
     color: #8ecae6; /* Aseta haluamasi perusväri tähän */
     text-decoration: underline; /* Lisää alleviivaus selkeyden vuoksi */
     transition: color 0.2s; /* Pehmeä siirtymä hover-värille */
