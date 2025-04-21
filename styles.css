@@ -181,7 +181,7 @@ hr { border: none; height: 1px; background-color: var(--border-color); margin-to
 .receipt-row {
     display: grid;
     /* Sarakkeet: Nimi | Arvo | Yksikkö | Viite | Nappi */
-    grid-template-columns: 125px 65px 60px 1fr auto; /* Säädä tarvittaessa */
+    grid-template-columns: 120px 65px 60px 1fr auto; /* Säädä tarvittaessa */
     gap: 0 8px; /* Ei riviväliä, sarakkeiden väli 8px */
     align-items: baseline;
     margin-bottom: 3px; /* Tiheä riviväli */
@@ -426,6 +426,19 @@ feedback-section p {
 .modal-body li { margin-bottom: 12px; line-height: 1.6; }
 .modal-body ul li { margin-bottom: 8px; }
 .modal-body p { margin-bottom: 15px; line-height: 1.6; }
+modal-body a {
+    color: var(--link-color); /* Käytä :rootissa määriteltyä vaaleansinistä */
+    /* Voit myös kokeilla jotain muuta kirkasta väriä, esim: */
+    /* color: #f1c40f; */ /* Keltainen kuten strong-tagit */
+    /* color: #80caff; */ /* Toinen vaaleansininen */
+    text-decoration: underline; /* Lisätään alleviivaus, jotta erottuu paremmin linkiksi */
+}
+
+/* Valinnainen: Muuta väriä hieman, kun hiiri viedään linkin päälle */
+.modal-body a:hover {
+    color: #a8d8ff; /* Hieman kirkkaampi sininen */
+    text-decoration: none; /* Poista alleviivaus hoverissa (valinnainen) */
+}
 .modal-body strong { color: #f1c40f; font-weight: 600; }
 .modal-body code { background-color: var(--code-bg); color: var(--text-color); padding: 3px 6px; border-radius: 4px; font-family: monospace; font-size: 0.95em; }
 .modal-body small { display: block; margin-top: 15px; font-style: italic; color: var(--text-muted); text-align: left; font-size: 0.9em; }
