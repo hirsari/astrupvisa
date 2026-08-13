@@ -1,852 +1,451 @@
-/* styles.css (Dark Mode v5 - Potilastapaukset + PaO2/BE) */
+/* =========================================================================
+   Astrupvisa - styles.css (v6)
+   Korvaa vanhan tiedoston kokonaan.
+   ========================================================================= */
 
-/* === Väripaletti === */
 :root {
-    --bg-color: #212529; --surface-color: #343a40; --text-color: #f8f9fa;
-    --text-muted: #adb5bd; --border-color: #495057; --accent-color: #0d6efd;
-    --accent-darker: #0b5ed7; --success-bg: rgba(25, 135, 84, 0.2);
-    --success-text: #a3cfbb; --success-border: #198754; --error-bg: rgba(220, 53, 69, 0.15);
-    --error-text: #f1aeb5; --error-border: #dc3545; --button-bg: #495057;
-    --button-hover-bg: #6c757d; --button-text: #ffffff; --button-border: #6c757d;
-    --button-focus-shadow: rgba(13, 110, 253, 0.35); --selected-bg: var(--accent-color);
-    --selected-text: #ffffff; --selected-border: var(--accent-darker); --code-bg: #495057;
+    --bg-color: #212529;
+    --surface-color: #343a40;
+    --text-color: #f8f9fa;
+    --text-muted: #adb5bd;
+    --border-color: #495057;
+    --accent-color: #0d6efd;
+    --accent-darker: #0b5ed7;
+    --success-bg: rgba(25, 135, 84, 0.2);
+    --success-text: #a3cfbb;
+    --success-border: #198754;
+    --success-rgb: 25, 135, 84;          /* rgba() tarvitsee luvut, ei hexiä */
+    --error-bg: rgba(220, 53, 69, 0.15);
+    --error-text: #f1aeb5;
+    --error-border: #dc3545;
+    --button-bg: #495057;
+    --button-hover-bg: #6c757d;
+    --button-text: #ffffff;
+    --button-border: #6c757d;
+    --button-focus-shadow: rgba(13, 110, 253, 0.45);
+    --selected-bg: var(--accent-color);
+    --selected-text: #ffffff;
+    --selected-border: var(--accent-darker);
+    --code-bg: #495057;
     --link-color: #6ea8fe;
-    --highlight-issue-border: #ffca2c; --highlight-compensation-bg: rgba(110, 168, 254, 0.1);
-    --highlight-compensation-border: #6ea8fe;
-    --abnormal-red: #e74c3c; /* Kirkas punainen */
+    --abnormal-red: #c0392b;             /* 5.4:1 kuittipaperia vasten (oli 3.7:1) */
     --receipt-bg: #fdfdfd;
     --receipt-border: #cccccc;
     --receipt-text: #2c3e50;
     --receipt-text-muted: #555555;
-    --receipt-shadow: rgba(0, 0, 0, 0.1);
+    --receipt-shadow: rgba(0, 0, 0, 0.35);
 }
-/* === Perus- ja layout-tyylit === */
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; line-height: 1.5; transition: background-color 0.5s ease; }
+
+/* === Perus === */
+* { box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.5;
+}
+body.no-scroll { overflow: hidden; }
 main { max-width: 750px; margin: 20px auto; }
-.container { position: relative; background-color: var(--surface-color); color: var(--text-color); padding: 20px 30px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); }
-/* Virhetilat */
-.container.loading, .container.error-state { text-align: center; padding: 40px 20px; font-size: 1.2em; color: var(--text-muted); }
+
+.container {
+    position: relative;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    padding: 20px 30px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+.container.loading, .container.error-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
 .container.error-state p { color: var(--error-text); font-weight: bold; }
-.case-display.error-state .case-context p { color: var(--error-text); font-weight: bold; text-align: center; }
-.abg-values.error-state p { grid-column: 1 / -1; text-align: center; color: var(--error-text); font-weight: bold; }
-/* === Otsikot, pistelasku, yksikkövalitsin === */
-h1 { text-align: center; color: #ffffff; margin-top: 10px; margin-bottom: 25px; }
-.help-button-general { position: absolute; top: 15px; right: 15px; background-color: var(--button-bg); color: var(--button-text); border: 1px solid var(--button-border); border-radius: 50%; width: 30px; height: 30px; font-size: 1.1em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; padding: 0; line-height: 1; transition: background-color 0.2s, transform 0.1s; }
-.help-button-general:hover { background-color: var(--button-hover-bg); transform: scale(1.1); }
-.help-button-general:focus { outline: none; box-shadow: 0 0 0 3px var(--button-focus-shadow); }
-#score-root { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 8px 15px; background-color: var(--surface-color); border: 1px solid var(--border-color);
-    border-radius: 6px; color: var(--text-muted); font-size: 0.95em; position: sticky; /* Aseta elementti "tahmeaksi" */
-    top: 0;           /* Kiinnitä yläreunaan, kun scrollaus osuu kohdalle */
-    z-index: 100;     /* Varmista, että se pysyy muiden elementtien päällä */
-    /* Voit lisätä/muokata varjoa korostamaan kiinnittymistä */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);}
-.score-display { font-weight: 500; color: var(--text-color); display: flex; /* Asetetaan elementit vierekkäin */
-    align-items: center;
-    gap: 8px; /* Pieni väli pisteiden ja yritysten välille */
+.abg-values.error-state p { text-align: center; color: var(--error-text); font-weight: bold; }
+
+h1 { text-align: center; color: #fff; font-size: 1.6em; margin: 10px 0 15px; }
+h2 { text-align: center; color: var(--text-color); font-size: 1.25em; margin: 26px 0 14px; }
+.options-grid h2, .compensation-grid h2 { grid-column: 1 / -1; margin-bottom: 4px; }
+hr { border: none; height: 1px; background-color: var(--border-color); margin: 26px 0; }
+
+/* === Yläpalkki (pisteet + yksikkö) === */
+#score-root {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 16px; padding: 8px 15px;
+    background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 6px;
+    color: var(--text-muted); font-size: 0.95em;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
-.score-display span { margin-right: 0px; }
+.score-display { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-weight: 500; color: var(--text-color); }
 .score-number {
-    font-weight: 700; /* Lihavampi */
-    color: var(--success-text); /* Vihreä väri pisteille */
-    font-size: 1.1em; /* Hieman suurempi */
-    padding: 2px 6px; /* Pieni tausta */
-    background-color: rgba(var(--success-border), 0.2); /* Läpikuultava vihreä tausta */
-    border-radius: 3px;
-    display: inline-block; /* Jotta padding toimii oikein */
-    transition: transform 0.2s ease-out, background-color 0.2s ease-out; /* Perussiirtymä */
+    font-weight: 700; color: var(--success-text); font-size: 1.1em;
+    padding: 2px 6px; background-color: rgba(var(--success-rgb), 0.2);
+    border-radius: 3px; display: inline-block;
 }
-.score-number.score-animated {
-    /* Käytetään keyframes-animaatiota */
-    animation: score-bump 0.6s ease-out forwards;
-}
+.score-number.score-animated { animation: score-bump 0.6s ease-out forwards; }
 @keyframes score-bump {
-    0% {
-        transform: scale(1);
-        background-color: rgba(var(--success-border), 0.2);
-        color: var(--success-text);
-    }
-    30% {
-        transform: scale(1.4); /* Suurenee */
-        background-color: var(--success-border); /* Täysi väri */
-        color: #ffffff; /* Valkoinen teksti */
-        box-shadow: 0 0 10px var(--success-border); /* Hehku */
-    }
-    100% {
-        transform: scale(1); /* Palaa normaaliksi */
-        background-color: rgba(var(--success-border), 0.2);
-        color: var(--success-text);
-        box-shadow: none;
-    }
+    0%   { transform: scale(1); background-color: rgba(var(--success-rgb), 0.2); }
+    30%  { transform: scale(1.35); background-color: var(--success-border); color: #fff; }
+    100% { transform: scale(1); background-color: rgba(var(--success-rgb), 0.2); }
 }
-.unit-selector { text-align: right; }
-.unit-selector span { margin-right: 10px; font-weight: 500; color: var(--text-muted); }
-.unit-selector label { margin-left: 5px; cursor: pointer; color: var(--text-color); }
-.unit-selector input[type="radio"] { margin-right: 4px; vertical-align: middle; accent-color: var(--accent-color); transform: scale(1.1); }
-h2 { display: flex; justify-content: center; align-items: center; text-align: center; color: var(--text-color); font-size: 1.3em; margin-top: 30px; margin-bottom: 15px; }
-.options-grid h2, .compensation-grid h2 { border-bottom: none; grid-column: 1 / -1; margin-bottom: 10px; }
-/* === "Apuva"-napit === */
-.apuva-button { background: none; border: 1px solid var(--text-muted); color: var(--link-color); border-radius: 4px; padding: 1px 5px; font-size: 0.75em; font-weight: bold; cursor: pointer; line-height: 1.2; transition: background-color 0.2s, color 0.2s, transform 0.1s; vertical-align: middle; white-space: nowrap; justify-self: end; margin-top: 2px;}
-.apuva-button:hover { background-color: rgba(255, 255, 255, 0.1); color: #8ecae6; transform: translateY(-1px); }
-.apuva-button:focus { outline: none; box-shadow: 0 0 0 3px var(--button-focus-shadow); border-color: var(--accent-color); }
-/* === Visuaalinen erotin === */
-hr { border: none; height: 1px; background-color: var(--border-color); margin-top: 30px; margin-bottom: 30px; }
-/* === Potilaskonteksti ja ABG-arvot === */
-.case-display { margin-bottom: 20px; }
-.case-context { padding: 15px 25px; background-color: var(--bg-color); border: 1px solid var(--border-color); border-bottom: none; border-radius: 6px 6px 0 0; margin-bottom: 0; color: var(--text-color); }
-.case-context strong { color: var(--accent-color); margin-right: 10px; font-weight: 700;}
-.receipt-scroll-wrapper {
-    overflow-x: auto; /* Salli vaakavieritys jos sisältö leveämpi */
-    display: flex;
-    justify-content: center; /* Keskitä sisältö (kuitti) vaakasuunnassa */
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
+.streak-badge, .progress-badge {
+    font-size: 0.85em; padding: 2px 8px; border-radius: 12px;
+    border: 1px solid var(--border-color); color: var(--text-muted); white-space: nowrap;
 }
-/* Lisätään pieni visuaalinen vihje, että voi vierittää (valinnainen) */
-.receipt-scroll-wrapper::-webkit-scrollbar {
-    height: 5px; /* Vierityspalkin korkeus */
+.streak-badge { border-color: var(--success-border); color: var(--success-text); }
+.unit-selector span { margin-right: 8px; font-weight: 500; color: var(--text-muted); }
+.unit-selector label { margin-left: 8px; cursor: pointer; color: var(--text-color); }
+.unit-selector input[type="radio"] { margin-right: 4px; vertical-align: middle; accent-color: var(--accent-color); }
+
+/* === Työkalurivi === */
+.toolbar {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    justify-content: center; margin-bottom: 20px;
 }
-.receipt-scroll-wrapper::-webkit-scrollbar-thumb {
-    background: var(--border-color); /* Palkin väri */
-    border-radius: 3px;
+.toolbar-button, .secondary-button {
+    background-color: var(--button-bg); color: var(--button-text);
+    border: 1px solid var(--button-border); border-radius: 6px;
+    padding: 8px 14px; font-size: 0.9em; cursor: pointer;
+    transition: background-color 0.2s;
 }
+.toolbar-button:hover, .secondary-button:hover { background-color: var(--button-hover-bg); }
+.secondary-button.small { padding: 5px 10px; font-size: 0.85em; }
+.switch { display: flex; align-items: center; gap: 6px; font-size: 0.9em; color: var(--text-color); cursor: pointer; padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 6px; }
+.switch input { accent-color: var(--accent-color); width: 16px; height: 16px; cursor: pointer; }
+.help-button-general {
+    position: absolute; top: 15px; right: 15px; z-index: 10;
+    background-color: var(--button-bg); color: var(--button-text);
+    border: 1px solid var(--button-border); border-radius: 50%;
+    width: 32px; height: 32px; font-size: 1.1em; font-weight: bold; cursor: pointer;
+    display: flex; justify-content: center; align-items: center; padding: 0;
+}
+.help-button-general:hover { background-color: var(--button-hover-bg); }
+
+/* === Potilaskonteksti === */
+.case-context {
+    padding: 14px 20px; background-color: var(--bg-color);
+    border: 1px solid var(--border-color); border-radius: 6px;
+    margin-bottom: 14px; color: var(--text-color);
+}
+.case-context p { margin: 0; font-size: 0.95em; line-height: 1.5; overflow-wrap: break-word; }
+.case-context strong { color: var(--link-color); margin-right: 8px; }
+.blind-notice { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-style: dashed; }
+.blind-notice p { color: var(--text-muted); font-style: italic; }
+
+/* === Kuitti === */
+.receipt-scroll-wrapper { display: flex; justify-content: center; }
 .abg-values {
     background-color: var(--receipt-bg);
+    color: var(--receipt-text);
     border-radius: 3px;
-    box-shadow: 2px 2px 5px var(--receipt-shadow);
+    box-shadow: 0 3px 10px var(--receipt-shadow);
     position: relative;
-    /* Säädetty padding: Ylä/ala 15px, Oikea 10px, Vasen 15px */
-    padding: 15px 35px 15px 15px;
-    font-family: 'Courier New', Courier, monospace;
-    min-width: 430px; 
-    max-width: 450px; /* Hieman leveämpi uusille sarakkeille ja ref. */
-    flex-shrink: 0;
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 0; /* Pidä kiinni yläpuolisessa kontekstissa */
-    margin-bottom: 20px; /* Lisää tilaa alle */
-    color: var(--receipt-text);
-    transition: none;
-    overflow: visible; /* Piilottaa sahalaitamaskien ylitykset */
+    padding: 20px 18px;
+    font-family: "Courier New", Courier, monospace;
+    font-variant-numeric: tabular-nums;     /* desimaalit linjaan */
+    width: 100%;
+    max-width: 460px;
+    margin: 0 0 20px;
 }
-.receipt-header {
-    display: flex;
-    justify-content: space-between; /* Elementit reunoille */
-    font-size: 0.9em;
-    color: var(--receipt-text-muted);
-    margin-bottom: 8px;
-    padding: 0 5px; /* Pieni sivuttaispadding */
-}
+.receipt-header { display: flex; justify-content: space-between; gap: 10px; font-size: 0.9em; color: var(--receipt-text-muted); margin-bottom: 8px; }
+.receipt-separator { border: none; border-top: 1px dashed var(--receipt-border); margin: 8px 0; height: 0; background: none; }
+.receipt-heading { font-weight: 700; font-size: 0.85em; margin: 12px 0 5px; color: var(--receipt-text); text-transform: uppercase; letter-spacing: 0.04em; }
+.receipt-footer { font-size: 0.85em; color: var(--receipt-text-muted); }
 
-/* Erotinviiva */
-.receipt-separator {
-    border: none;
-    border-top: 1px dashed var(--receipt-border); /* Katkoviiva */
-    margin: 8px 0; /* Tilaa ylä- ja alapuolelle */
-}
-/* Ryhmäotsikko (esim. Happo-emäs-tila) */
-.receipt-heading {
-    font-weight: 700; /* Lihavoitu */
-    font-size: 0.85em;
-    margin-top: 8px; /* Tilaa edellisestä */
-    margin-bottom: 4px; /* Tilaa seuraavaan riviin */
-    color: var(--receipt-text);
-    /* Voit lisätä alleviivauksen jos haluat */
-    /* border-bottom: 1px solid var(--receipt-border); */
-    /* padding-bottom: 2px; */
-}
-
-/* Yksi arvorivi kuitissa */
-
-
-/* Parametrin nimi (esim. pH(T)) */
-
-
-/* Parametrin arvo (numero) */
-
-
-/* Poikkeavan arvon väritys */
-.receipt-row .param-value.abnormal-value {
-    color: var(--abnormal-red);
-}
-
-.receipt-header .abnormal-value {
-    color: var(--abnormal-red);
-    /* Voit lisätä lihavoinnin myös poikkeavalle lämpötilalle, jos haluat */
-    font-weight: 700;
-}
-
-/* Yksi arvorivi kuitissa (GRID MÄÄRITYS) */
 .receipt-row {
     display: grid;
-    /* Sarakkeet: Nimi | Arvo | Yksikkö | Viite | Nappi */
-    grid-template-columns: 125px 65px 60px 1fr auto; /* Säädä tarvittaessa */
-    gap: 0 8px; /* Ei riviväliä, sarakkeiden väli 8px */
+    grid-template-columns: 112px 62px 14px 52px 1fr;  /* nimi | arvo | nuoli | yksikkö | viite */
+    gap: 0 6px;
     align-items: baseline;
-    margin-bottom: 3px; /* Tiheä riviväli */
-    padding: 0;
-    font-size: 1.0em;
-    line-height: 1.3;
-    color: var(--receipt-text);
-  }
-  
-  /* Parametrin nimi (esim. pH(T)) */
-  .receipt-row .param-name {
-    grid-column: 1;
-    text-align: left;
-    font-weight: 400;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 5px;
-    font-family: 'Courier New', Courier, monospace;
-  }
-  
-  /* Parametrin arvo (numero) */
-  .receipt-row .param-value {
-    grid-column: 2;
-    text-align: right;
-    font-weight: 700; /* Lihavoitu */
-    white-space: nowrap;
-    font-family: 'Courier New', Courier, monospace;
-  }
+    margin-bottom: 4px;
+    line-height: 1.35;
+}
+.receipt-row .param-name { text-align: left; overflow-wrap: break-word; }
+.receipt-row .param-value { text-align: right; font-weight: 700; white-space: nowrap; }
+.receipt-row .param-arrow { text-align: center; font-weight: 700; }
+.receipt-row .param-unit { text-align: left; }
+.receipt-row .param-ref { font-size: 0.82em; color: var(--receipt-text-muted); white-space: nowrap; padding-left: 6px; }
+.abnormal-value { color: var(--abnormal-red); }
 
-  /* Parametrin yksikkö */
-.receipt-row .param-unit {
-    grid-column: 3;
-    text-align: left;
-    font-weight: 400;
-    white-space: nowrap;
-    padding-left: 3px;
-    font-family: 'Courier New', Courier, monospace;
-  }
-  
-  /* Viitearvojen teksti */
-  .receipt-row .param-ref {
-    grid-column: 4;
-    text-align: left;
-    font-weight: 400;
-    font-size: 0.85em;
-    color: var(--receipt-text-muted);
-    white-space: nowrap;
-    padding-left: 10px;
-    font-family: 'Courier New', Courier, monospace;
-    vertical-align: baseline;
-  }
-
-/* Parametrin yksikkö */
-
-
-
-.receipt-row .apuva-button {
-    grid-column: 5; /* Asetetaan viidenteen sarakkeeseen */
-    justify-self: center; /* Keskitä nappi sarakkeessaan */
-    align-self: center; /* Keskitä myös pystysuunnassa */
-    /* Säilytetään vanhat tyylit (koko, väri jne.) */
-    border-color: #bbb;
-    color: #666;
-    padding: 0px 4px;
-    font-size: 0.7em;
-    line-height: 1.1;
-    font-family: inherit;
-    background: none;
+/* Parametrin nimi on itse ohjeen avaaja */
+button.param-name {
+    background: none; border: none; padding: 0; margin: 0;
+    font: inherit; color: inherit; text-align: left; cursor: default;
+}
+button.param-name.has-help {
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-    margin-left: 5px; /* Pieni lisäväli vasemmalle puolelle nappia */
-  }
-  .receipt-row .apuva-button:hover {
-    background-color: rgba(0, 0, 0, 0.08); /* Hyvin kevyt tumma korostus */
-    color: #333; /* Hieman tummempi tekstin väri */
-    border-color: #999; /* Hieman tummempi reunus */
-    grid-template-columns: auto auto auto 1fr;
-    gap: 0 5px; /* Pienempi sarakkeiden väli */
-    font-size: 0.9em; /* Hieman pienempi fonttikoko riveillä */
-    margin-bottom: 1px; /* Vielä tiheämpi riviväli */
-    line-height: 1.2;
+    border-bottom: 1px dotted var(--receipt-text-muted);
+    color: #1a5f8a;
 }
+button.param-name.has-help:hover { color: #0d3d5c; border-bottom-style: solid; }
+button.param-name.has-help:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 2px; }
+.help-hint { text-align: center; font-size: 0.8em; color: var(--text-muted); margin: -8px 0 0; }
 
-/* Kuitin Footer (Tulostusaika) */
-.receipt-footer {
-    font-size: 0.9em;
-    color: var(--receipt-text-muted);
-    margin-top: 8px;
-    padding: 0 5px;
-    text-align: left;
+/* Sahalaita ylä- ja alareunassa */
+.abg-values::before, .abg-values::after {
+    content: ""; position: absolute; left: 0; right: 0; height: 12px;
+    background: var(--surface-color);
+    -webkit-mask-size: 20px 12px; mask-size: 20px 12px;
+    -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
 }
-.abg-values::before,
-.abg-values::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 15px; /* Sahalaidan korkeus */
-  background: var(--surface-color); /* Tumma tausta */
-  -webkit-mask-size: 20px 15px; /* Hampaan koko */
-  mask-size: 20px 15px;
-  -webkit-mask-repeat: repeat-x;
-  mask-repeat: repeat-x;
-  -webkit-mask-position: center top; /* Kohdistus yläreunaan */
-   mask-position: center top;
-}
-
-/* Yläreunan maski (tummat kolmiot osoittavat ALAS) */
 .abg-values::before {
-  top: 0;
-  /* VAIHDETTU: Käytä alaspäin osoittavaa SVG:tä */
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,0 20,0 10,15' fill='black'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,0 20,0 10,15' fill='black'/%3E%3C/svg%3E");
-  -webkit-mask-position: center top; /* Säilytä kohdistus */
-   mask-position: center top;
+    top: 0;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,0 20,0 10,15' fill='black'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,0 20,0 10,15' fill='black'/%3E%3C/svg%3E");
 }
-
-/* Alareunan maski (tummat kolmiot osoittavat YLÖS) */
 .abg-values::after {
-  bottom: 0;
-   /* VAIHDETTU: Käytä ylöspäin osoittavaa SVG:tä */
-   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,15 10,0 20,15' fill='black'/%3E%3C/svg%3E");
-   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,15 10,0 20,15' fill='black'/%3E%3C/svg%3E");
-   -webkit-mask-position: center bottom; /* Säilytä kohdistus */
-    mask-position: center bottom;
+    bottom: 0;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,15 10,0 20,15' fill='black'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 15'%3E%3Cpolygon points='0,15 10,0 20,15' fill='black'/%3E%3C/svg%3E");
 }
 
-
-.abg-values p {
-    color: var(--receipt-text);
-    font-size: 1.1em;
-    background-color: transparent;
-    grid-template-columns: 90px 1fr auto;
-    gap: 5px 10px;
-    align-items: baseline;
-    margin-bottom: 8px;
-    padding: 2px 0;
+/* === Vastausvaihtoehdot === */
+.options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.compensation-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+button.option, button.compensation {
+    padding: 12px 10px; font-size: 0.95em; min-height: 56px;
+    border: 1px solid var(--button-border); border-radius: 6px; cursor: pointer;
+    background-color: var(--button-bg); color: var(--button-text); font-weight: 500;
+    display: flex; justify-content: center; align-items: center; text-align: center;
+    hyphens: auto; overflow-wrap: break-word;
+    transition: background-color 0.15s, border-color 0.15s;
 }
-
-.abg-values p:last-child { margin-bottom: 0; }
-.abg-values strong {
-    color: var(--receipt-text-muted);
-    font-weight: 400; /* Tai normal */
-    text-align: right;
-    font-size: 1em;
-    font-family: 'Courier New', Courier, monospace;
-
+button.option:hover:not(:disabled), button.compensation:hover:not(:disabled) { background-color: var(--button-hover-bg); }
+button.option.selected, button.compensation.selected {
+    background-color: var(--selected-bg); color: var(--selected-text);
+    border-color: var(--selected-border); font-weight: 700;
 }
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--button-focus-shadow); border-color: var(--accent-color); }
 
-.abg-values .ref {
-    color: var(--receipt-text-muted);
-    /* Kokeile suurentaa fonttikokoa lähemmäs pääarvoa (1em = sama kuin label) */
-    font-size: 1em; /* Tai kokeile 1em tai inherit */
-    font-style: normal;
-    white-space: nowrap;
-    justify-self: start;
-    padding-left: 5px;
-    font-family: 'Courier New', Courier, monospace;
-    /* Lisätään varmuuden vuoksi baseline-tasaus */
-    vertical-align: baseline;
+/* === Toimintopalkki (tarttuu alareunaan) === */
+.action-bar {
+    position: sticky; bottom: 0; z-index: 50;
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    margin: 24px -30px 0; padding: 14px 20px;
+    background: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.25);
 }
-.abg-values .apuva-button {
-    border-color: #bbb;
-    color: #666;
-    padding: 0px 4px;
-    font-size: 0.7em;
-    line-height: 1.1;
-    align-self: center; /* Keskitä nappi pystysuunnassa riville */
-    font-family: 'Courier New', Courier, monospace;
+.new-question {
+    padding: 12px 26px; font-size: 1.05em; font-weight: bold;
+    border: none; border-radius: 6px; background-color: #1e8449; color: #fff; cursor: pointer;
+}
+.new-question:hover:not(:disabled) { background-color: #196f3d; }
+.new-question:disabled { background-color: var(--button-bg); color: var(--text-muted); }
 
-}
-.abg-values .apuva-button:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: #333;
-}
-.abg-values .value-text.abnormal-value { /* Lisätty .abg-values alkuun */
-    color: var(--abnormal-red) !important;  /* Käytetään punaista väriä, lisätty !important varmuudeksi */
-    /* Muut mahdolliset tyylit tähän, mutta color on tärkein */
-  }
-/* Hypoksemialuokitus */
-/* Korostustyylit */
-.abg-values p.highlight-issue { background-color: var(--highlight-issue-bg); }
-.abg-values p.highlight-compensation { background-color: var(--highlight-compensation-bg); }
-/* === Valintojen grid === */
-.options-grid, .compensation-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 0px; }
-/* === Napit (Yleiset) === */
-button.option, button.compensation, button.new-question, .modal-close-button { padding: 12px 15px; font-size: 1em; border: 1px solid var(--button-border); border-radius: 6px; cursor: pointer; background-color: var(--button-bg); transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s; text-align: center; word-wrap: break-word; color: var(--button-text); font-weight: 500; min-height: 50px; display: flex; justify-content: center; align-items: center; }
-button.option:hover, button.compensation:hover, .modal-close-button:hover { background-color: var(--button-hover-bg); border-color: #888888; }
-button.option:focus, button.compensation:focus, button.new-question:focus, .modal-close-button:focus, .apuva-button:focus, .help-button-general:focus { outline: none; box-shadow: 0 0 0 3px var(--button-focus-shadow); border-color: var(--accent-color); }
-button.option.selected, button.compensation.selected { background-color: var(--selected-bg); color: var(--selected-text); border-color: var(--selected-border); font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-button:active:not(:disabled) { transform: translateY(1px); }
-button:disabled { opacity: 0.6; cursor: not-allowed; background-color: var(--button-bg); border-color: var(--button-border); box-shadow: none; color: var(--text-muted); transform: none !important; }
 /* === Palaute === */
-.feedback { margin-top: 25px; padding: 15px 20px; font-size: 1.05em; text-align: left; border-radius: 6px; line-height: 1.6; border: 1px solid; }
-.feedback.correct { background-color: var(--success-bg); color: var(--success-text); border-color: var(--success-border); }
-.feedback.incorrect { background-color: var(--error-bg); color: var(--error-text); border-color: var(--error-border); }
-.feedback-summary { font-weight: bold; font-size: 1.1em; text-align: center; margin-bottom: 15px; color: var(--text-color); }
-.feedback-summary span { margin-right: 8px; font-size: 1.2em; }
-.feedback-correct-answer { margin-bottom: 15px; padding: 10px; background-color: rgba(255, 255, 255, 0.05); border-radius: 4px; font-size: 0.95em; }
-.feedback-correct-answer p { margin: 5px 0; color: var(--text-color); }
-.feedback-correct-answer strong { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; text-transform: uppercase; }
+.feedback {
+    margin-top: 24px; padding: 16px 20px; border-radius: 6px;
+    line-height: 1.6; font-size: 1em;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--border-color);   /* värikoodi vain reunassa */
+}
+.feedback.correct { border-left-color: var(--success-border); background-color: var(--success-bg); }
+.feedback.incorrect { border-left-color: var(--error-border); background-color: var(--error-bg); }
+.feedback-summary { font-weight: bold; font-size: 1.05em; text-align: center; margin-bottom: 12px; color: var(--text-color); }
+.feedback-summary span { margin-right: 8px; }
+.feedback-divider { border: none; height: 1px; background-color: var(--border-color); opacity: 0.6; margin: 14px 0; }
+
+.quick-strip {
+    display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+    margin-bottom: 14px; font-family: "Courier New", Courier, monospace;
+    font-variant-numeric: tabular-nums;
+}
+.quick-item { padding: 3px 9px; border-radius: 4px; background: rgba(0, 0, 0, 0.25); font-size: 0.9em; white-space: nowrap; }
+.quick-item .quick-key { color: var(--text-muted); }
+.quick-item.quick-bad { color: #ff8f83; background: rgba(220, 53, 69, 0.18); font-weight: 700; }
+
+.feedback-correct-answer { margin-bottom: 12px; padding: 10px 12px; background-color: rgba(255, 255, 255, 0.05); border-radius: 4px; font-size: 0.95em; }
+.feedback-correct-answer p { margin: 4px 0; color: var(--text-color); }
+.feedback-correct-answer strong { display: block; margin-bottom: 4px; color: var(--text-muted); font-size: 0.85em; text-transform: uppercase; }
 .feedback-correct-answer em { font-style: normal; color: var(--text-muted); margin-right: 8px; }
-.feedback-divider { border: none; height: 1px; background-color: var(--border-color); opacity: 0.5; margin: 15px 0; }
-/* Erotusdiagnostiikka palautteessa */
-.feedback-differential { margin-top: 15px; padding-top: 0; /* Poista yläpadding, koska divider hoitaa */ }
-.feedback-differential p { margin-bottom: 8px; font-weight: bold; color: var(--text-muted); font-size: 0.9em; text-transform: uppercase; }
-.feedback-differential ul { margin: 0; padding-left: 20px; list-style: disc; font-size: 0.9em; color: var(--error-text); }
-.feedback-differential li { margin-bottom: 6px; }
-feedback-section {
-    margin-top: 15px; /* Lisää tilaa edelliseen osioon */
+.your-answer { opacity: 0.85; }
+
+.feedback-differential p { margin-bottom: 8px; font-weight: bold; color: var(--text-muted); font-size: 0.85em; text-transform: uppercase; }
+.feedback-differential ul { margin: 0; padding-left: 20px; font-size: 0.95em; }
+.feedback-differential li { margin-bottom: 8px; }
+
+.feedback-section { margin-top: 14px; }
+.feedback-section h4 { font-size: 0.85em; color: var(--text-muted); margin: 0 0 5px; font-weight: 600; text-transform: uppercase; }
+.feedback-section p { margin: 0; font-size: 0.97em; color: var(--text-color); line-height: 1.65; }
+.treatment-toggle {
+    background: none; border: 1px solid var(--border-color); border-radius: 6px;
+    color: var(--text-color); padding: 6px 12px; cursor: pointer; font-size: 0.9em; font-weight: 600;
 }
-.feedback-section h4 {
-    /* Otsikoiden tyyli (Selitys:, Hoito:) */
-    font-size: 1em; /* Sama koko kuin leipäteksti tai hieman isompi */
-    color: var(--text-muted); /* Harmaampi väri otsikolle */
-    margin-bottom: 5px; /* Pieni väli otsikon ja tekstin väliin */
-    font-weight: 600;
-    text-transform: uppercase; /* Isot kirjaimet (valinnainen) */
+.treatment-toggle:hover { background: rgba(255, 255, 255, 0.06); }
+.exam-answered { text-align: center; color: var(--text-muted); font-style: italic; margin-top: 20px; }
+
+/* === Kokeen tulokset === */
+.exam-report h2 { margin-top: 10px; }
+.exam-score { text-align: center; font-size: 2.2em; font-weight: 700; color: var(--success-text); margin: 0 0 20px; }
+.exam-list { padding-left: 0; list-style: none; margin: 0; }
+.exam-list li {
+    display: grid; grid-template-columns: 28px 1fr; gap: 4px 8px;
+    padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.92em;
 }
-feedback-section p {
-    /* Itse tekstin tyyli */
-    margin: 0;
+.exam-mark { grid-row: 1 / span 2; }
+.exam-case { color: var(--text-color); }
+.exam-detail { grid-column: 2; color: var(--error-text); font-size: 0.9em; }
+
+/* === Tilastot === */
+.stats-panel { display: flex; flex-direction: column; gap: 10px; }
+.stats-row { display: grid; grid-template-columns: 110px 1fr 48px; gap: 10px; align-items: center; font-size: 0.9em; }
+.stats-label { color: var(--text-color); }
+.stats-bar { height: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; overflow: hidden; }
+.stats-fill { display: block; height: 100%; background: var(--success-border); border-radius: 5px; }
+.stats-num { text-align: right; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.stats-total { margin-top: 6px; font-weight: 700; }
+.stats-empty, .stats-note { color: var(--text-muted); font-style: italic; font-size: 0.9em; }
+.stats-reset { align-self: flex-start; background: none; border: 1px solid var(--error-border); color: var(--error-text); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+
+/* === Modaali === */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.modal-content {
+    background: var(--surface-color); color: var(--text-color); padding: 24px;
+    border-radius: 8px; max-width: 650px; width: 92%; max-height: 85vh;
+    display: flex; flex-direction: column; border: 1px solid var(--border-color);
+}
+.modal-content h2 { margin: 0 0 16px; text-align: left; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 1.3em; color: #fff; }
+.modal-body { overflow-y: auto; margin-bottom: 16px; flex-grow: 1; }
+.modal-body ol, .modal-body ul { padding-left: 22px; margin: 12px 0; }
+.modal-body li { margin-bottom: 10px; line-height: 1.6; }
+.modal-body p { margin-bottom: 12px; }
+.modal-body a { color: #8ecae6; text-decoration: underline; }
+.modal-body strong { color: #f1c40f; font-weight: 600; }
+.modal-body code { background-color: var(--code-bg); padding: 3px 6px; border-radius: 4px; font-family: monospace; }
+.modal-body small { display: block; margin-top: 12px; font-style: italic; color: var(--text-muted); }
+.modal-close-button { align-self: center; padding: 10px 25px; background-color: var(--button-bg); color: #fff; border: 1px solid var(--button-border); border-radius: 6px; font-weight: bold; cursor: pointer; }
+.modal-close-button:hover { background-color: var(--button-hover-bg); }
+
+/* === Sivupaneeli === */
+.sidebar-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: 1050; }
+.sidebar {
+    position: fixed; top: 0; right: 0; width: 360px; max-width: 92%; height: 100%;
+    background-color: var(--surface-color); border-left: 1px solid var(--border-color);
+    z-index: 1060; display: flex; flex-direction: column;
+    animation: slide-in 0.25s ease-out;
+}
+@keyframes slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--border-color); }
+.sidebar-header h3 { margin: 0; font-size: 1.1em; }
+.sidebar-close-button { background: none; border: none; color: var(--text-muted); font-size: 2em; line-height: 1; cursor: pointer; padding: 0 6px; }
+.sidebar-close-button:hover { color: var(--text-color); }
+.sidebar-filter-controls { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 15px; border-bottom: 1px solid var(--border-color); }
+.filter-button { background-color: var(--button-bg); color: var(--button-text); border: 1px solid var(--button-border); padding: 5px 12px; border-radius: 15px; cursor: pointer; font-size: 0.85em; white-space: nowrap; }
+.filter-button:hover { background-color: var(--button-hover-bg); }
+.filter-button.active { background-color: var(--accent-color); border-color: var(--accent-darker); font-weight: bold; }
+.sidebar-content { padding: 0 15px 20px; overflow-y: auto; flex-grow: 1; }
+.sidebar-content ul { list-style: none; padding: 0; margin: 0; }
+.sidebar-content li { border-bottom: 1px dashed var(--border-color); }
+.sidebar-case-button {
+    display: block; width: 100%; background: none; border: none; padding: 14px 4px;
+    text-align: left; font-family: inherit; font-size: 0.9em; line-height: 1.5;
+    color: var(--text-muted); cursor: pointer; overflow-wrap: break-word;
+}
+.sidebar-case-button:hover, .sidebar-case-button:focus { background-color: rgba(255, 255, 255, 0.08); color: var(--text-color); }
+.no-cases-message { padding: 15px; text-align: center; color: var(--text-muted); font-style: italic; }
+
+/* === Animaatiot === */
+.fade-in-effect { animation: fadeIn 0.35s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* === Tabletti === */
+@media (max-width: 768px) {
+    main { width: 96%; margin: 10px auto; }
+    .container { padding: 15px 18px 0; }
+    .action-bar { margin-left: -18px; margin-right: -18px; }
+    #score-root { font-size: 0.9em; }
+    h1 { font-size: 1.35em; }
+}
+
+/* === Puhelin === */
+@media (max-width: 520px) {
+    body { padding: 8px; }
+    main { width: 100%; margin: 4px auto; }
+    .container { padding: 12px 12px 0; border-radius: 6px; }
+    .action-bar { margin-left: -12px; margin-right: -12px; padding: 12px; }
+    .action-bar button { flex: 1 1 auto; min-width: 120px; }
+    h1 { font-size: 1.2em; }
+    h2 { font-size: 1.05em; }
+
+    .options-grid, .compensation-grid { grid-template-columns: 1fr; gap: 10px; }
+    button.option, button.compensation { min-height: 48px; font-size: 0.92em; }
+
+    .abg-values { max-width: 100%; padding: 18px 12px; }
+    /* Viitearvo omalle rivilleen, jotta vaakavieritystä ei tarvita */
+    .receipt-row { grid-template-columns: 1fr auto 14px 46px; gap: 0 6px; }
+    .receipt-row .param-ref {
+        grid-column: 1 / -1; grid-row: 2;
+        text-align: right; padding-left: 0; font-size: 0.78em;
+        margin-bottom: 4px;
+    }
+    .receipt-heading { margin-top: 14px; }
+    .toolbar { gap: 6px; }
+    .toolbar-button, .switch { font-size: 0.85em; padding: 7px 10px; }
+    .stats-row { grid-template-columns: 92px 1fr 44px; font-size: 0.85em; }
+}
+
+/* === Saavutettavuus === */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* === Ohjemodaalien sisältö === */
+.modal-body h4 {
+    margin: 20px 0 8px;
     font-size: 0.95em;
-    color: var(--text-color); /* Kirkas teksti */
+    color: #fff;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+.modal-body h4:first-child { margin-top: 0; }
+.help-lead {
+    font-size: 1.02em;
+    color: var(--text-color);
+    border-left: 3px solid var(--accent-color);
+    padding-left: 12px;
+    margin: 0 0 16px;
+}
+.help-note { font-size: 0.88em; color: var(--text-muted); font-style: italic; }
+.help-tip {
+    background: rgba(13, 110, 253, 0.12);
+    border: 1px solid rgba(13, 110, 253, 0.4);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 16px 0;
+    font-size: 0.95em;
     line-height: 1.6;
 }
-.feedback-treatment {
-    margin-top: 20px;
-}
-/* === Uusi kysymys -nappi === */
-.new-question { margin: 30px auto 10px; display: block; padding: 12px 25px; font-size: 1.1em; border: none; background-color: #27ae60; color: #fff; font-weight: bold; }
-.new-question:hover { background-color: #229954; }
-/* === Ohje-ikkunan (Modaali) tyylit === */
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
-.modal-overlay.visible { opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
-.modal-content { background: var(--surface-color); color: var(--text-color); padding: 25px 30px; border-radius: 8px; max-width: 650px; width: 90%; box-shadow: 0 5px 20px rgba(0,0,0,0.4); max-height: 85vh; display: flex; flex-direction: column; transform: scale(0.95) translateY(-10px); transition: transform 0.3s ease; border: 1px solid var(--border-color); }
-.modal-overlay.visible .modal-content { transform: scale(1) translateY(0); }
-.modal-content h2 { margin-top: 0; margin-bottom: 20px; text-align: left; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 1.4em; color: #ffffff; flex-shrink: 0; }
-.modal-body { overflow-y: auto; margin-bottom: 20px; flex-grow: 1; }
-.modal-body ol, .modal-body ul { padding-left: 25px; margin-top: 15px; margin-bottom: 15px; }
-.modal-body li { margin-bottom: 12px; line-height: 1.6; }
-.modal-body ul li { margin-bottom: 8px; }
-.modal-body p { margin-bottom: 15px; line-height: 1.6; }
-.modal-body a {
-    color: #8ecae6; /* Aseta haluamasi perusväri tähän */
-    text-decoration: underline; /* Lisää alleviivaus selkeyden vuoksi */
-    transition: color 0.2s; /* Pehmeä siirtymä hover-värille */
-}
-
-/* Valinnainen: Muuta väriä hieman, kun hiiri viedään linkin päälle */
-.modal-body a:hover {
-    color: #a8d8ff; /* Esimerkki hover-väri (vaaleampi) */
-    text-decoration: none; /* Poista alleviivaus hoverissa (valinnainen) */
-    transform: scale(1.1)
-}
-.modal-body strong { color: #f1c40f; font-weight: 600; }
-.modal-body code { background-color: var(--code-bg); color: var(--text-color); padding: 3px 6px; border-radius: 4px; font-family: monospace; font-size: 0.95em; }
-.modal-body small { display: block; margin-top: 15px; font-style: italic; color: var(--text-muted); text-align: left; font-size: 0.9em; }
-.modal-close-button { display: block; margin: 0 auto 0; padding: 10px 25px; background-color: var(--button-bg); color: white; border-color: var(--button-border); font-weight: bold; flex-shrink: 0; }
-.modal-close-button:hover { background-color: var(--button-hover-bg); border-color: #555; }
-/* === Responsiivisuus === */
-@media (max-width: 768px) { main { width: 95%; margin: 10px auto; } .container { padding: 15px 20px; } #score-root { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 10px; } .score-display { order: 1;} .unit-selector { order: 2; text-align: left; margin-top: 5px;} h1 { font-size: 1.4em; margin-bottom: 20px; .abg-values { max-width: none; }} }
-@media (max-width: 480px) { body { padding: 10px; } main { width: 100%; margin: 5px auto; } .container { padding: 10px; border-radius: 4px;} h1 { font-size: 1.3em; } h2 { font-size: 1.1em; margin-top: 30px; margin-bottom: 10px;} .options-grid, .compensation-grid { gap: 10px; grid-template-columns: 1fr; } .abg-values { padding: 15px 8px 15px 8px; margin-left: 0;  /* Asettaa vasempaan reunaan */
-    margin-right: 0; /* Asettaa vasempaan reunaan */; margin-top: 0;
-    margin-bottom: 15px; /* Esim. */}  .abg-values strong { font-size: 0.85em; text-align: right; } .abg-values .value-text { font-size: 1.05em; } .abg-values .value-text span.hypoxemia-class { display: block; margin-left: 0; margin-top: 3px; font-size: 0.75em; } /* Siirrä luokitus omalle riville pienellä näytöllä */ .abg-values .ref { font-size: 0.75em; white-space: normal; } .apuva-button { font-size: 0.7em; padding: 0 4px; } button.option, button.compensation { padding: 12px 10px; font-size: 0.9em; } .feedback { font-size: 0.95em; padding: 12px 15px; } .feedback-summary { font-size: 1em; } .feedback-correct-answer { font-size: 0.9em; padding: 8px;} .feedback-explanation { font-size: 0.9em;} .feedback-differential ul { font-size: 0.85em; } .new-question { font-size: 1em; padding: 10px 20px; } .modal-content { padding: 15px 20px; width: 95%; } .modal-content h2 { font-size: 1.2em; margin-bottom: 15px;} .modal-body { margin-bottom: 15px; } .modal-close-button { padding: 8px 20px; } .help-button-general { top: 10px; right: 10px; width: 25px; height: 25px; font-size: 1em;} .receipt-scroll-wrapper {
-        justify-content: flex-start; /* MUUTA KESKITYS VASEMMALLE TASAUKSEKSI */
-    }.receipt-row .param-ref {
-        display: inline-block;}}
-/* Korjaus Tapaus-tekstin katkeamiseen */
-.case-context p {
-    /* Aiemmat tyylit säilyvät... */
-    margin: 0;
-    line-height: 1.5;
-    font-size: 0.95em;
-    /* LISÄYKSET: Varmistetaan rivitys ja normaali korkeus */
-    white-space: normal;/* Salli tekstin rivittyä (important varmistaa yliajon) */
-    overflow-wrap: break-word; /* Salli pitkien sanojen katkaisu */
-    height: auto; /* Varmista, että korkeus mukautuu sisältöön */
-    overflow: visible; /* Varmista, ettei sisältöä leikata */
-    color: var(--text-color); /* Varmista tekstin väri */
-
-}
-
-/* Korjaus/varmistus palautetekstin katkeamiseen */
-.feedback {
-    /* Aiemmat tyylit säilyvät... */
-    margin-top: 25px; padding: 15px 20px; font-size: 1.05em;
-    text-align: left; border-radius: 6px; line-height: 1.6; border: 1px solid;
-    /* LISÄYKSET: Varmistetaan korkeuden mukautuminen ja näkyvyys */
-    height: auto;
-    overflow: visible;
-}
-
-/* Varmistus myös palautteen sisäosille */
-.feedback-explanation p,
-.feedback-differential ul,
-.feedback-differential li {
-    height: auto;
-    overflow: visible;
-    white-space: normal; /* Varmistetaan rivitys myös listan osissa */
-    overflow-wrap: break-word;
-}
-/* === Sivupaneeli Tapauslistalle === */
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6); /* Hieman läpinäkyvämpi kuin modaalissa */
-    z-index: 1050; /* Päällimmäisenä (paitsi ehkä modaali) */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
-}
-.sidebar-overlay.visible {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.3s ease;
-}
-
-.sidebar {
-    position: fixed;
-    top: 0;
-    right: 0; /* Paneeli tulee oikeaan reunaan */
-    width: 350px; /* Paneelin leveys */
-    max-width: 90%; /* Varmistus pienillä näytöillä */
-    height: 100%;
-    background-color: var(--surface-color);
-    border-left: 1px solid var(--border-color);
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
-    z-index: 1060; /* Vielä overlayn päällä */
-    display: flex;
-    flex-direction: column;
-    transform: translateX(100%); /* Piilotettu oikealle */
-    transition: transform 0.3s ease-in-out;
-}
-.sidebar.open {
-    transform: translateX(0); /* Liukuu näkyviin */
-}
-
-.sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0; /* Estä headeria kutistumasta */
-}
-.sidebar-header h3 {
-    margin: 0;
-    font-size: 1.2em;
-    color: var(--text-color);
-}
-.sidebar-close-button {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 2em;
-    line-height: 1;
-    padding: 0 5px;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-.sidebar-close-button:hover {
-    color: var(--text-color);
-}
-
-.sidebar-content {
-    padding: 10px 20px 20px 20px;
-    overflow-y: auto; /* Salli vieritys, jos lista pitkä */
-    flex-grow: 1; /* Vie loput tilasta */
-}
-.sidebar-content ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.sidebar-content li {
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px dashed var(--border-color);
-}
-.sidebar-content li:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-.sidebar-content p {
-    margin: 0;
-    font-size: 0.9em;
-    line-height: 1.5;
-    color: var(--text-muted);
-    white-space: normal !important; /* Varmistetaan rivitys */
-    overflow-wrap: break-word !important;
-}
-
-/* Paneelin avausnapin tyyli (sijoita sopivaan paikkaan) */
-.case-list-toggle-button {
-    /* Esimerkkityylit - voit muokata */
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    border: 1px solid var(--button-border);
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.85em;
-    margin-left: 15px; /* Tilaa ?-napin jälkeen */
-    transition: background-color 0.2s;
-    vertical-align: middle; /* Kohdista muiden yläpalkin elementtien kanssa */
-}
-.case-list-toggle-button:hover {
-    background-color: var(--button-hover-bg);
-}
-.case-list-toggle-button:focus {
-     outline: none;
-     box-shadow: 0 0 0 3px var(--button-focus-shadow);
-     border-color: var(--accent-color);
-}
-
-/* Varmista, ettei overlay estä modaalin klikkausta (jos molemmat auki) */
-.modal-overlay { z-index: 1000; }
-.modal-content { z-index: 1010; }
-/* === Sivupaneelin tapausnapit === */
-.sidebar-content ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.sidebar-content li {
-    margin: 0; /* Poista marginaali listan alkiosta */
-    padding: 0; /* Poista padding listan alkiosta */
-    border-bottom: 1px dashed var(--border-color);
-}
-.sidebar-content li:last-child {
-    border-bottom: none;
-}
-
-.sidebar-case-button {
-    /* Tyylit, jotta näyttää enemmän tekstiltä, mutta on klikattava */
-    display: block; /* Vie koko leveyden */
+.help-tip strong { color: #9ec5fe; }
+.help-table {
     width: 100%;
-    background: none;
-    border: none;
-    padding: 12px 0; /* Pystysuuntainen väli */
-    margin: 0;
-    text-align: left;
-    font-family: inherit; /* Käytä sivun oletusfonttia */
+    border-collapse: collapse;
+    margin: 10px 0 16px;
     font-size: 0.9em;
-    line-height: 1.5;
+}
+.help-table th {
+    text-align: left;
+    padding: 6px 8px;
     color: var(--text-muted);
-    cursor: pointer;
-    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
-    white-space: normal !important; /* Varmista rivitys */
-    overflow-wrap: break-word !important;
-}
-
-.sidebar-case-button:hover,
-.sidebar-case-button:focus {
-    background-color: rgba(255, 255, 255, 0.08); /* Hento korostus hoverissa/focuksessa */
-    color: var(--text-color); /* Kirkkaampi teksti */
-    outline: none; /* Poista oletus focus-reunus */
-}
-
-.sidebar-case-button:active {
-    background-color: rgba(255, 255, 255, 0.12); /* Tummempi korostus klikatessa */
-}
-/* === Päivitetty: Paneelin avausnapin keskitys ja väli === */
-.case-list-toggle-button {
-    /* Vanhat tyylit säilyvät pohjalla (värit, reunat jne.)... */
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    border: 1px solid var(--button-border);
-    padding: 6px 12px; /* Hieman isompi padding */
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em; /* Voit säätää fonttikokoa */
-    transition: background-color 0.2s;
-
-    /* UUDET TYYLIT KESKITYSTÄ JA VÄLIÄ VARTEN: */
-    display: block;       /* Tekee napista lohkoelementin (oma rivi) */
-    width: fit-content;   /* Leveys määräytyy sisällön (tekstin) mukaan */
-    margin-top: 10px;     /* Tilaa yläpuolella olevaan elementtiin (esim. otsikko) */
-    margin-bottom: 25px;  /* Tilaa napin ALLE (tämä lisää pyytämäsi tilan) */
-    margin-left: auto;    /* Automaattinen vasen marginaali -> */
-    margin-right: auto;   /* Automaattinen oikea marginaali -> Yhdessä keskittävät */
-
-    /* Poistetaan aiemmat sijaintiin vaikuttaneet tyylit, jos ne olivat käytössä */
-    /* vertical-align: middle; */ /* Ei tarvita display:block kanssa */
-    /* margin-left: 15px; */ /* Korvattu auto-marginaalilla */
-}
-
-/* Voit säätää myös otsikon alamarginaalia, jos haluat napin lähemmäs/kauemmas */
-h1 {
-    /* ... muut h1-tyylit ... */
-    margin-bottom: 15px; /* Esim. hieman vähemmän, koska nappi tuo omaa marginaaliaan */
-}
-
-/* Tarkista myös ?-napin (yleisohje) sijainti. Jos se oli aiemmin tämän napin vieressä, */
-/* se jää nyt yksin ylös. Absoluuttinen asemointi oikeaan yläkulmaan toimii edelleen. */
-.help-button-general {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    /* ... muut tyylit ... */
-    z-index: 10; /* Varmista, että se pysyy päällä */
-}
-
-/* Hover ja focus kuten aiemmin */
-.case-list-toggle-button:hover {
-    background-color: var(--button-hover-bg);
-}
-.case-list-toggle-button:focus {
-     outline: none;
-     box-shadow: 0 0 0 3px var(--button-focus-shadow);
-     border-color: var(--accent-color);
-}
-/* Lisää tämä :root lohkoon muiden värien joukkoon */
-
-
-/* Tyyli poikkeaville arvoille */
-.value-text.abnormal-value {
-    color: var(--abnormal-red);
-    font-weight: 700; /* Lihavoidaan hieman enemmän kuin normaali arvo */
-    /* Jos haluat kokeilla "outlinea" tekstivarjolla: */
-  /* text-shadow: 0 0 2px rgba(0, 0, 0, 0.7); */ /* Tumma hehku */
-}
-
-/* Varmista oletusarvon normaali paino */
-.abg-values .value-text {
-    color: var(--receipt-text); /* Oletusväri */
-    font-weight: 700;
-    text-shadow: none;
-    white-space: nowrap;
-    font-family: 'Courier New', Courier, monospace;
-
-}
-
-
-
-/* Poistetaan aiemmat palautteeseen liittyvät korostusluokat, jos ne ovat vielä olemassa */
-/* } */
-
-
-/* Mobiiliresponsiivisuus nuolelle (jos layout muuttuu) */
-
-/* === Kompensaatioruudukon ilmestymisanimaatio === */
-
-/* Määritellään animaatio */
-@keyframes fadeIn {
-    from {
-      opacity: 0;
-      /* Voit lisätä pienen liikkeen, esim. */
-      /* transform: translateY(10px); */
-    }
-    to {
-      opacity: 1;
-      /* transform: translateY(0); */
-    }
-  }
-  
-  /* Luokka, joka käynnistää animaation */
-  .fade-in-effect {
-    /* Käytetään fadeIn-animaatiota, kesto 0.4s, ease-out-ajoitus */
-    animation: fadeIn 0.4s ease-out forwards;
-    /* 'forwards' pitää lopputilan (opacity: 1) päällä animaation jälkeen */
-  }
-  /* styles.css (LISÄTTY suodatustyylit) */
-
-/* ... (kaikki aiemmat tyylit säilyvät) ... */
-
-/* === Sivupaneeli Tapauslistalle (olemassa olevat tyylit) === */
-.sidebar-overlay {
-    /* ... */
-}
-.sidebar {
-    /* ... */
-}
-.sidebar.open {
-    /* ... */
-}
-.sidebar-header {
-    /* ... */
-}
-.sidebar-header h3 {
-    /* ... */
-}
-.sidebar-close-button {
-    /* ... */
-}
-
-/* === UUDET TYYLIT SUODATUKSELLE === */
-.sidebar-filter-controls {
-    padding: 10px 15px; /* Pieni väli reunoihin ja headeriin/sisältöön */
-    border-bottom: 1px solid var(--border-color); /* Erotin listasta */
-    display: flex; /* Aseta napit vierekkäin */
-    flex-wrap: wrap; /* Salli rivitys, jos ei mahdu */
-    gap: 8px; /* Väli nappien välille */
-    margin-bottom: 10px; /* Tilaa ennen listaa */
-}
-
-.filter-button {
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    border: 1px solid var(--button-border);
-    padding: 5px 10px;
-    border-radius: 15px; /* Pyöristetyt reunat */
-    cursor: pointer;
     font-size: 0.85em;
-    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-    white-space: nowrap; /* Estä tekstin rivitys napin sisällä */
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-color);
 }
-
-.filter-button:hover {
-    background-color: var(--button-hover-bg);
-    border-color: var(--text-muted);
+.help-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    vertical-align: top;
 }
-
-.filter-button.active {
-    background-color: var(--accent-color); /* Korosta aktiivista */
-    border-color: var(--accent-darker);
-    color: var(--selected-text);
-    font-weight: bold;
+.help-table tr:last-child td { border-bottom: none; }
+.help-table td:first-child { color: var(--text-muted); white-space: nowrap; padding-right: 14px; }
+@media (max-width: 520px) {
+    .help-table { font-size: 0.85em; }
+    .help-table td:first-child { white-space: normal; }
 }
-
-.filter-button:focus {
-     outline: none;
-     box-shadow: 0 0 0 2px var(--button-focus-shadow); /* Pienempi focus-kehys */
-}
-
-/* Viesti jos suodatus ei tuota tuloksia */
-.no-cases-message {
-    padding: 15px;
-    text-align: center;
-    color: var(--text-muted);
-    font-style: italic;
-}
-/* === /UUDET TYYLIT SUODATUKSELLE === */
-
-
-.sidebar-content {
-    /* ... (olemassa olevat tyylit) ... */
-    padding: 10px 20px 20px 20px; /* Varmista padding */
-}
-.sidebar-content ul {
-    /* ... */
-}
-.sidebar-content li {
-    /* ... */
-}
-.sidebar-case-button {
-    /* ... */
-}
-.sidebar-case-button:hover,
-.sidebar-case-button:focus {
-    /* ... */
-}
-.sidebar-case-button:active {
-    /* ... */
-}
-
-/* ... (kaikki loput tyylit säilyvät) ... */
-
-/* Esim. Abnormal value tyyli (säilyy ennallaan) */
-
-
-
-/* ... (muut tyylit) ... */
