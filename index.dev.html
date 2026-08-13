@@ -1,0 +1,2102 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laurin astrup-arvoitukset</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>window.onerror=function(m,s,l){document.body.insertAdjacentHTML('afterbegin','<pre style="color:#ff8080;background:#000;padding:10px;white-space:pre-wrap;font:13px monospace">'+m+'\n'+s+':'+l+'</pre>');};</script>
+  <script src="https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+  <noscript>Tarvitset JavaScriptin käyttääksesi tätä sovellusta.</noscript>
+  <main>
+    <div id="score-root"></div>
+    <div id="root"></div>
+  </main>
+  <div id="modal-root"></div>
+
+  <script type="text/babel" data-presets="react">
+    // React ja ReactDOM hookit/funktiot
+    const { useState, useEffect, useMemo, useCallback, Fragment } = React;
+    const { createPortal } = ReactDOM;
+
+    // --- Tekstit ja Käännökset (TÄYDELLISET OHJEET) ---
+    const texts = {
+        title: "Laurin astrup-arvoitukset",
+        scoreLabel: "Pisteet:",
+        attemptsLabel: "Yritykset:",
+        selectUnit: "Valitse PaCO2/PaO2 yksikkö:",
+        kpa: "kPa",
+        mmhg: "mmHg",
+        selectPrimary: "Valitse ensisijainen häiriö:",
+        selectCompensation: "Valitse kompensaation aste:",
+        sampleTypeLabel: "Näytetyyppi",
+        oxygenLabel: "Happilisä",
+        ageLabel: "Ikä",
+        sampleTypeValue: "Valtimo",
+        tempLabel: "T",
+        tempUnit: "°C",
+        headingTempCorrected: "Lämpötilakorjatut arvot",
+        headingAcidBase: "Happo-emäs-tila",
+        headingOxymetry: "Oksimetria-arvot",
+        headingElectrolytes: "Elektrolyyttiarvot",
+        headingMetabolites: "Metaboliittiarvot",
+        footerPrinted: "Tulostettu",
+        phLabel: "pH(T)",
+        pco2Label: "PaCO2(T):",
+        hco3Label: "HCO3-:",
+        paO2Label: "pO2(T):",
+        beLabel: "BE",
+        naLabel: "Na+:",
+        kLabel: "K+:",
+        clLabel: "Cl-:",
+        agLabel: "Anion Gap",
+        lacLabel: "Laktaatti",
+        ca2Label: "Ca2+", // Tämän pitää olla määriteltynä!
+        hbLabel: "Hb",
+        methbLabel: "MetHb",
+        cohbLabel: "COHb",
+        gluLabel: "Glu",
+        caseLabel: "Potilas:",
+        normal: "Normaali",
+        metabolicAcidosisNAGMA: "Metabolinen asidoosi (Norm. anionivaje)",
+        metabolicAcidosisHAGMA: "Metabolinen asidoosi (↑ anionivaje)",
+        metabolicAlkalosis: "Metabolinen alkaloosi",
+        respiratoryAcidosis: "Respiratorinen asidoosi",
+        respiratoryAlkalosis: "Respiratorinen alkaloosi",
+        mixedMetAcidRespAcid: "Sekahäiriö (m. asid + r. asid)",
+        mixedMetAcidRespAlk: "Sekahäiriö (m. asid + r. alk)",
+        mixedMetAlkRespAcid: "Sekahäiriö (m. alk + r. asid)",
+        compensated: "Kompensoitu",
+        partiallyCompensated: "Osittain Kompensoitu",
+        nonCompensated: "Kompensoitumaton",
+        newQuestion: "Uusi Tapaus",
+        feedbackCorrect: "Oikein!",
+        feedbackIncorrect: "Väärin.",
+        feedbackCorrectAnswerIs: "Oikea vastaus:",
+        feedbackPrimaryIs: "Ensisijainen häiriö:",
+        feedbackCompensationIs: "Kompensaatio:",
+        feedbackDiffDiagTitle: "Erotusdiagnostisia huomioita:",
+        explanationSeparator: " ",
+        explanationTitle: "Selitys:", // UUSI
+        treatmentTitle: "Hoito:", // UUSI
+        closeButton: "Sulje",
+        helpButtonLabel: "Apua",
+        showCasesButton: "Näytä tapausten kuvaukset ja valitse potilascase",
+        caseListTitle: "Potilastapaukset (Valitse case vapaasti)",
+        filterAllLabel: "Kaikki", // UUSI
+        filterNormalLabel: "Normaali", // UUSI
+        filterMetAcidLabel: "Met. Asid.", // UUSI
+        filterMetAlkLabel: "Met. Alk.", // UUSI
+        filterRespAcidLabel: "Resp. Asid.", // UUSI
+        filterRespAlkLabel: "Resp. Alk.", // UUSI
+        filterMixedLabel: "Sekahäiriöt",
+        filterSpecialtyLabel: "Erikoisala:",
+        caseCountLabel: "tapausta",
+        helpTitleGeneral: "Astrupin systemaattinen tulkinta",
+        helpTitlePH: "pH – veren happamuus",
+        helpTitlePCO2: "pCO2 – hengityksen komponentti",
+        helpTitleHCO3: "HCO3- – metabolinen komponentti",
+        helpTitlePaO2: "pO2 – happeutuminen",
+        helpTitleBE: "BE – emäsylimäärä",
+        helpTitleAG: "Anionivaje (AG)",
+        helpTitleLac: "Laktaatti",
+        helpTitleK: "Kalium (K+)",
+        helpTitleCl: "Kloridi (Cl-)",
+        helpTitleMetHb: "Methemoglobiini (MetHb)",
+        helpTitleCOHb: "Häkähemoglobiini (COHb)",
+
+        helpContentGeneral: (
+            <Fragment>
+                <p className="help-lead">Viisi kysymystä aina samassa järjestyksessä. Käy ne läpi ennen kuin katsot tapauskertomusta – niin opit lukemaan arvoja etkä arvaamaan diagnoosia.</p>
+
+                <h4>1. Onko pH poikkeava?</h4>
+                <p>Alle 7.35 on asidemia, yli 7.45 alkalemia. Normaali pH ei sulje pois häiriötä: se voi olla täysin kompensoitu, tai kaksi vastakkaista häiriötä voi kumota toisensa.</p>
+
+                <h4>2. Kumpi selittää pH:n, pCO2 vai HCO3-?</h4>
+                <p>Ensisijainen häiriö on se arvo, joka on muuttunut <em>samaan suuntaan</em> kuin pH-poikkeama.</p>
+                <table className="help-table">
+                    <thead><tr><th>Löydös</th><th>Ensisijainen häiriö</th></tr></thead>
+                    <tbody>
+                        <tr><td>pH matala + pCO2 korkea</td><td>Respiratorinen asidoosi</td></tr>
+                        <tr><td>pH matala + HCO3- matala</td><td>Metabolinen asidoosi</td></tr>
+                        <tr><td>pH korkea + pCO2 matala</td><td>Respiratorinen alkaloosi</td></tr>
+                        <tr><td>pH korkea + HCO3- korkea</td><td>Metabolinen alkaloosi</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>3. Yrittääkö toinen arvo korjata tilannetta?</h4>
+                <p>Katso nyt sitä arvoa, joka <em>ei</em> ole ensisijainen häiriö. Kompensaation aste luetaan suoraan arvoista – laskukaavoja ei tarvita.</p>
+                <table className="help-table">
+                    <thead><tr><th>pH</th><th>Kompensoiva arvo</th><th>Vastaus</th></tr></thead>
+                    <tbody>
+                        <tr><td>Poikkeava</td><td>Viitealueella</td><td>Kompensoitumaton</td></tr>
+                        <tr><td>Poikkeava</td><td>Muuttunut auttavaan suuntaan</td><td>Osittain kompensoitu</td></tr>
+                        <tr><td>Viitealueella</td><td>Molemmat poikkeavia</td><td>Kompensoitu</td></tr>
+                    </tbody>
+                </table>
+                <div className="help-tip">
+                    <strong>Keuhkot reagoivat minuuteissa, munuaiset vuorokausissa.</strong> Siksi kompensaation aste kertoo myös siitä, kuinka kauan tilanne on kestänyt: kompensoitumaton tarkoittaa tuoretta ja kompensoitu pitkään jatkunutta häiriötä. Elimistö ei myöskään ylikompensoi eikä kompensaatio käännä pH:ta toiselle puolelle. Jos siltä näyttää, kyseessä on kaksi häiriötä.
+                </div>
+
+                <h4>4. Jos kyseessä on metabolinen asidoosi: katso anionivaje</h4>
+                <p>Analysaattori laskee anionivajeen valmiiksi (viitearvo n. 8–12). Kysymys on aina sama: onko vereen kertynyt happoa (anionivaje koholla) vai onko emästä menetetty (anionivaje normaali)? Nämä ovat kaksi täysin eri tautiryhmää.</p>
+
+                <h4>5. Arvioi happeutuminen erikseen ja sovita kliiniseen kuvaan</h4>
+                <p>Happo-emästila ja happeutuminen ovat eri asioita. Vertaa pO2:ta ikätaulukkoon ja muista happilisä: lisähapella pO2:n kuuluu olla selvästi viitearvoja korkeampi, joten ”normaali” lukema happilisällä voi kätkeä vakavan ongelman. Kysy lopuksi, sopiiko tulkinta potilaaseen – sama lukusarja sopii moneen tautiin, ja COPD-potilaan korkea HCO3- tarkoittaa eri asiaa kuin oksentelevan potilaan. Jos luvut ja tarina ovat ristiriidassa, epäile sekahäiriötä tai näytevirhettä.</p>
+
+                <div className="help-tip">
+                    <strong>Erikoistapaus: pH on viitealueella, mutta sekä pCO2 että HCO3- ovat poikkeavia.</strong> Vertaa pH:ta lukuun 7.40. Sen alle jäävä pH kertoo, että taustalla on asidoosi, ja yli menevä alkaloosi. Katso sitten, kumpi arvo sen selittää.
+                </div>
+            </Fragment>
+        ),
+
+        helpContentPH: (
+            <Fragment>
+                <p className="help-lead">Viitearvo 7.35–7.45. Kertoo lopputuloksen, ei syytä.</p>
+                <ul>
+                    <li><strong>Asidemia ja alkalemia</strong> kuvaavat veren pH:ta. <strong>Asidoosi ja alkaloosi</strong> kuvaavat prosessia, joka pH:ta muuttaa. Potilaalla voi olla yhtä aikaa asidoosi ja alkaloosi mutta normaali pH – siksi pelkkä pH ei riitä diagnoosiin.</li>
+                    <li>Muutokset ovat suurempia kuin miltä näyttävät: pH 7.10 tarkoittaa noin kaksinkertaista happamuutta pH 7.40:een verrattuna. Pienet luvut ovat siis isoja asioita.</li>
+                    <li>Alle 7.20 sydämen pumppausvoima heikkenee, rytmihäiriöalttius kasvaa ja verenpainelääkkeiden teho huononee. Alle 7.0 ja yli 7.6 ovat välittömästi hengenvaarallisia.</li>
+                    <li>Alkaloosi laskee ionisoitua kalsiumia (pistely sormissa ja suun ympärillä) ja kaliumia, ja hemoglobiini luovuttaa happea kudoksiin huonommin.</li>
+                </ul>
+                <div className="help-tip">
+                    Hoida syy, älä lukua. Bikarbonaatin antaminen korjaa numeron mutta ei kudosten hapensaantia, ja hyöty siitä on harvinaista.
+                </div>
+            </Fragment>
+        ),
+
+        helpContentPCO2: (unit) => (
+            <Fragment>
+                <p className="help-lead">
+                    Viitearvo {unit === "mmHg" ? "34–45 mmHg" : "4.5–6.0 kPa"}. Mittaa sitä, kuinka hyvin potilas ventiloi – ei mitään muuta.
+                </p>
+                <ul>
+                    <li><strong>Korkea pCO2</strong> tarkoittaa, että potilas hengittää liian vähän. Syitä: hengityskeskuksen lama (opioidit, rauhoittavat lääkkeet, päihteet), hengityslihasten heikkous tai väsyminen, ahtauttava keuhkosairaus, kipu ja väärin säädetty hengityskone.</li>
+                    <li><strong>Matala pCO2</strong> tarkoittaa, että potilas hengittää tavallista enemmän. Syitä: kipu, jännitys, kuume, infektio, keuhkoembolia, astma, raskaus – tai metabolisen asidoosin kompensaatio.</li>
+                    <li>Nukutetulla ja hengityskoneessa olevalla potilaalla pCO2 on käytännössä se, minkä kone määrää.</li>
+                </ul>
+                <div className="help-tip">
+                    <strong>Vaarallisin löydös on normaali pCO2 väsyvällä, tiheään hengittävällä potilaalla.</strong> Astmakohtauksessa tai vaikeassa metabolisessa asidoosissa pCO2:n kuuluisi olla matala. Nousu viitealueelle kertoo, etteivät hengityslihakset enää jaksa, ja ennakoi hengityksen pysähtymistä.
+                </div>
+                <p className="help-note">
+                    Uloshengityksen hiilidioksidi (EtCO2) on leikkaussalissa jatkuva mittari, mutta se on normaalistikin hieman pienempi kuin valtimoveren pCO2.
+                    {unit === "kPa" ? " Muunnos: 1 kPa = 7.5 mmHg." : " Muunnos: 1 mmHg = 0.133 kPa."}
+                </p>
+            </Fragment>
+        ),
+
+        helpContentHCO3: (
+            <Fragment>
+                <p className="help-lead">Viitearvo 22–27 mmol/l. Aineenvaihdunnan puoli, jota munuaiset säätelevät.</p>
+                <ul>
+                    <li>Analysaattori ei mittaa bikarbonaattia suoraan vaan laskee sen mitatusta pH:sta ja pCO2:sta. Siksi nämä kolme arvoa eivät voi olla keskenään ristiriidassa – jos siltä näyttää, näytteessä tai lukemassa on virhe.</li>
+                    <li><strong>Matala HCO3-:</strong> metabolinen asidoosi (emästä on menetetty tai happoa kertynyt) TAI pitkään jatkuneen respiratorisen alkaloosin kompensaatio.</li>
+                    <li><strong>Korkea HCO3-:</strong> metabolinen alkaloosi TAI pitkään jatkuneen respiratorisen asidoosin kompensaatio.</li>
+                    <li>Kumpi näistä on kyseessä, ratkeaa pH:sta ja potilaan taustasta. Munuaisten kompensaatiotoimenpiteiden täysi vaste vie 2–5 vuorokautta, joten muutoksen suuruus kertoo myös häiriön kestosta.</li>
+                </ul>
+                <p className="help-note">Laskimoverestä mitattu &quot;CO2-total&quot; on eri suure, mutta käytännössä lähellä tätä (n. 1–2 mmol/l korkeampi).</p>
+            </Fragment>
+        ),
+
+        helpContentPaO2: (unit) => (
+            <Fragment>
+                <p className="help-lead">Kertoo vereen liuenneen hapen osapaineen. Tulkitse aina yhdessä iän ja happilisän kanssa.</p>
+
+                <h4>Ikäsidonnaiset viitearvot (huoneilma)</h4>
+                <table className="help-table">
+                    <tbody>
+                        <tr><td>alle 18 v</td><td>12.0–14.0 kPa</td></tr>
+                        <tr><td>18–30 v</td><td>11.0–14.0 kPa</td></tr>
+                        <tr><td>31–50 v</td><td>10.3–13.0 kPa</td></tr>
+                        <tr><td>51–60 v</td><td>9.7–12.7 kPa</td></tr>
+                        <tr><td>61–70 v</td><td>9.3–12.3 kPa</td></tr>
+                        <tr><td>71–80 v</td><td>8.8–11.9 kPa</td></tr>
+                        <tr><td>yli 80 v</td><td>8.3–11.4 kPa</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>Kysy kolme asiaa</h4>
+                <ul>
+                    <li><strong>Paljonko happea potilas saa?</strong> pO2 11 kPa on hyvä huoneilmalla mutta huolestuttava, jos potilaalla on 15 litraa happea maskilla. Kirjaa happilisä aina näytteen yhteyteen – ilman sitä lukua ei voi tulkita.</li>
+                    <li><strong>Onko pCO2 samaan aikaan korkea?</strong> Jos on, matala happiarvo voi selittyä pelkästään liian vähäisellä hengityksellä (esim. opioidi). Keuhkot ovat silloin terveet ja tilanne korjaantuu, kun ventilaatio korjaantuu.</li>
+                    <li><strong>Onko happiarvo matala, vaikka potilas hengittää tiheästi?</strong> Silloin vika on keuhkoissa: ilma ja verenkierto eivät kohtaa. Näin käy keuhkokuumeessa, keuhkoemboliassa, keuhkopöhössä ja kasaan painuneessa keuhkossa. Jos happilisä ei auta lainkaan, veri ohittaa keuhkorakkulat kokonaan.</li>
+                </ul>
+
+                <div className="help-tip">
+                    SpO2 ei ole sama asia kuin pO2. Saturaatio 90 % vastaa suunnilleen pO2:ta 8 kPa, ja sen alapuolella pieni saturaation lasku tarkoittaa suurta osapaineen laskua. Saturaatio ei myöskään kerro mitään ventilaatiosta: happilisällä lukema voi näyttää hyvältä, vaikka pCO2 olisi 9 kPa ja potilas nukahtamassa.
+                </div>
+                <p className="help-note">{unit === "kPa" ? "Muunnos: 1 kPa = 7.5 mmHg." : "Muunnos: 1 mmHg = 0.133 kPa."}</p>
+            </Fragment>
+        ),
+
+        helpContentBE: (
+            <Fragment>
+                <p className="help-lead">Viitearvo −3…+3 mmol/l. Selkein yksittäinen mittari aineenvaihdunnan osalta.</p>
+                <ul>
+                    <li>BE kertoo, kuinka paljon happoa tai emästä tarvittaisiin palauttamaan pH normaaliksi. Hengityksen osuus on vakioitu pois, ja juuri se tekee BE:stä käyttökelpoisen.</li>
+                    <li>Negatiivinen BE tarkoittaa metabolista asidoosia, positiivinen metabolista alkaloosia. Luvun suuruus kertoo vaikeusasteen.</li>
+                    <li><strong>BE ei juuri muutu tuoreessa respiratorisessa häiriössä.</strong> Jos pCO2 on korkea mutta BE normaali, tilanne on akuutti. Jos BE on selvästi positiivinen, munuaiset ovat kompensoineet päiväkausia. Tämä on nopein tapa erottaa akuutti ja krooninen hiilidioksidin kertyminen.</li>
+                    <li>Vammapotilaalla selvästi negatiivinen BE kertoo vuodon määrästä ja huonosta kudosverenkierrosta.</li>
+                    <li>BE ei kerro syytä. Erottelu tehdään anionivajeen, laktaatin ja kliinisen kuvan avulla.</li>
+                </ul>
+            </Fragment>
+        ),
+
+        helpContentAG: (
+            <Fragment>
+                <p className="help-lead">Viitearvo n. 8–12 mmol/l. Analysaattori laskee anionivajeen valmiiksi natriumista, kloridista ja bikarbonaatista – sinun tehtäväsi on tulkita se.</p>
+                <p>Anionivaje kuvaa niitä anioneja, joita ei rutiinisti mitata. Metabolisessa asidoosissa kysymys on aina sama: <strong>onko vereen kertynyt jotain tuntematonta anionia/happoa vai onko emästä menetetty?</strong></p>
+
+                <h4>Anionivaje koholla – happoa on kertynyt</h4>
+                <ul>
+                    <li><strong>Laktaatti:</strong> sokki, verenvuoto, sepsis, suolen tai raajan verenkiertohäiriö, kouristuskohtaus, kova rasitus</li>
+                    <li><strong>Ketoaineet:</strong> diabeettinen ketoasidoosi, alkoholi ja nälkiintyminen</li>
+                    <li><strong>Munuaisten vajaatoiminta:</strong> happamat kuona-aineet jäävät elimistöön</li>
+                    <li><strong>Myrkytykset:</strong> metanoli, etyleeniglykoli, salisylaatti</li>
+                </ul>
+
+                <h4>Anionivaje normaali – emästä on menetetty</h4>
+                <p>Bikarbonaattia menetetään ja kloridi jää sen tilalle, joten kloridi on tyypillisesti koholla. Tavallisimmat syyt ovat ripuli, runsaseritteinen avanne ja suuret määrät 0.9 % keittosuolaliuosta. Harvinaisempana munuaistubulusten toimintahäiriö.</p>
+
+                <div className="help-tip">
+                    Muista, että anionivaje kannattaa katsoa myös silloin, kun pH on normaali. Kohonnut anionivaje kertoo happokuormasta, vaikka jokin toinen häiriö peittäisi sen vaikutuksen pH:hon.
+                </div>
+            </Fragment>
+        ),
+
+        helpContentLac: (
+            <Fragment>
+                <p className="help-lead">Viitearvo alle 2.0 mmol/l. Kertoo kudosten hapensaannista ja hoidon tehosta.</p>
+                <ul>
+                    <li><strong>Tavallisin syy on hapenpuute:</strong> kaikki sokin muodot, verenvuoto, sydänpysähdys, suolen tai raajan verenkiertohäiriö sekä vaikea hapetushäiriö.</li>
+                    <li><strong>Laktaatti voi nousta myös ilman hapenpuutetta:</strong> kouristuskohtaus, kova lihastyö, salbutamoli ja adrenaliini, metformiini, maksan vajaatoiminta ja tiamiinin puute. Siksi korkea laktaatti ei yksin tarkoita sepsistä.</li>
+                    <li>Yli 4 mmol/l on selvä hälytysraja. Yli 2 mmol/l verenpainelääkitystä tarvitsevalla potilaalla täyttää septisen sokin kriteerin.</li>
+                    <li><strong>Suunta ratkaisee, ei yksittäinen luku.</strong> Laskeva laktaatti kertoo verenkierron korjaantumisesta, paikallaan pysyvä siitä, ettei hoito ole riittänyt.</li>
+                    <li>Virhelähteitä: pitkään kiristetty staassi ja viivästynyt näytteen analysointi.</li>
+                </ul>
+            </Fragment>
+        ),
+
+        helpContentK: (
+            <Fragment>
+                <p className="help-lead">Viitearvo 3.3–4.8 mmol/l. Verikaasuanalyysin kiireellisin yksittäinen luku, koska suuri poikkeama voi tappaa potilaan tunneissa.</p>
+
+                <h4>Yhteys happo-emästasapainoon</h4>
+                <ul>
+                    <li>Asidoosissa kalium siirtyy soluista vereen korvatakseen menetettyjä sähköisiä varauksia, joten plasman kalium nousee. Alkaloosissa käy päinvastoin.</li>
+                    <li>Plasman kalium ei kerro elimistön kokonaiskaliumia. Ketoasidoosipotilaalla arvo on usein korkea, vaikka varastot ovat tyhjentyneet – ja insuliinihoito romahduttaa arvon nopeasti.</li>
+                </ul>
+
+                <div className="help-tip">
+                    Ketoasidoosissa: jos kalium on alle matala (noin 3.3), se korvataan ennen insuliinin aloitusta.
+                </div>
+
+                <h4>Korkea kalium</h4>
+                <p>Munuaisten vajaatoiminta, osa verenpainelääkkeistä, kudostuho (lihasvammat esim murskavammoissa, palovamma, laaja iskemia) ja asidoosi. EKG:ssä korkeat teräväkärkiset (hyperakuutit)T-aallot ja levenevä QRS. Hoito: kalsiumglukonaatti i.v. suojaamaan sydäntä, insuliini-glukoosi ja salbutamoli-inhalaatio siirtämään kaliumia soluihin, tarvittaessa dialyysi.</p>
+
+                <h4>Matala kalium</h4>
+                <p>Diureetit, oksentelu ja nenämahaletkun imu, ripuli, alkaloosi, insuliini ja salbutamoli. Aiheuttaa lihasheikkoutta ja rytmihäiriöitä sekä ylläpitää metabolista alkaloosia.</p>
+
+                <p className="help-note">Hemolysoitunut tai pitkään seissyt näyte voi antaa valheellisen korkean kaliumin. Jos arvo ei sovi kliiniseen kuvaan, ota uusi näyte.</p>
+            </Fragment>
+        ),
+
+        helpContentCl: (
+            <Fragment>
+                <p className="help-lead">Viitearvo 96–111 mmol/l. Kloridi on usein se luku, joka paljastaa syyn.</p>
+                <ul>
+                    <li><strong>Korkea kloridi metabolisessa asidoosissa</strong> tarkoittaa lähes aina normaalin anionivajeen asidoosia: bikarbonaattia on menetetty ja kloridi on jäänyt sen tilalle. Syitä ovat ripuli, runsaseritteinen avanne ja suuret määrät 0.9 % keittosuolaliuosta, jossa on kloridia 154 mmol/l eli selvästi enemmän kuin veressä. Balansoidut liuokset kuten Ringer eivät aiheuta samaa.</li>
+                    <li><strong>Matala kloridi metabolisessa alkaloosissa</strong> viittaa mahahapon menetykseen (oksentelu, nenämahaletkun imu) tai diureetteihin. Se kertoo samalla, mitä hoidossa pitää korvata: kloridia (keittosuolaliuosta) ja kaliumia.</li>
+                    <li>Korkean anionivajeen asidoosissa kloridi on tyypillisesti normaali, koska vajeen aiheuttaa jokin muu happo.</li>
+                </ul>
+            </Fragment>
+        ),
+
+        helpContentMetHb: (
+            <Fragment>
+                <p className="help-lead">Viitearvo alle 2 %. Epäile, kun potilas on sinertävä mutta happiosapaine on normaali.</p>
+                <p>Methemoglobiini on hemoglobiinia, joka ei kykene sitomaan happea, koska se on hapettunut kaksiarvoisesta kolmiarvoiseksi(Fe^3+). Veri näyttää aspiroituna tummanruskealta ja potilas syanoottiselta, vaikka keuhkot toimisivat moitteettomasti.</p>
+
+                <h4>Oireet pitoisuuden mukaan</h4>
+                <table className="help-table">
+                    <tbody>
+                        <tr><td>alle 15 %</td><td>usein oireeton</td></tr>
+                        <tr><td>15–30 %</td><td>syanoosi, suklaanruskea veri</td></tr>
+                        <tr><td>30–50 %</td><td>väsymys, sekavuus, hengenahdistus</td></tr>
+                        <tr><td>yli 50 %</td><td>rytmihäiriöt, kouristukset, hengenvaara</td></tr>
+                    </tbody>
+                </table>
+
+                <div className="help-tip">
+                    <strong>Saturaatiojekku:</strong> Tavallinen pulssioksimetri jumittuu noin lukemaan 85 % eikä nouse hapella, kun taas verikaasuanalyysin pO2 on normaali. Juuri tämä ristiriita on se mistä saadaan myös diagnoosi. Varmistus tehdään co-oksimetrialla, joka on useimmissa verikaasuanalysaattoreissa.
+                </div>
+
+                <h4>Syitä</h4>
+                <p>Puudutteet, erityisesti prilokaiini ja bentsokaiini – myös puudutevoide pienelle vauvalle. Lisäksi dapsoni sekä nitraatit ja nitriitit, suomessa methemoglobinemiaa tavataan lähinnä dapsonin käytön yhteydessä eli harvoin. Alle 3 kuukauden ikäiset ovat erityisen herkkiä.</p>
+
+                <h4>Hoito</h4>
+                <p>Altiste pois ja happea. Oireiselle potilaalle laskimoon annosteltuna metyleenisininen.</p>
+            </Fragment>
+        ),
+
+        helpContentCOHb: (
+            <Fragment>
+                <p className="help-lead">Viitearvo alle 2 %. Tupakoitsijalla 5–10 % on tavallista. Epäile häkämyrkytystä, kun oireet ovat epämääräisiä mutta happiarvot näyttävät hyviltä.</p>
+                <p>Häkä sitoutuu hemoglobiiniin paljon voimakkaammin kuin happi. Veri ei siis kuljeta happea, vaikka keuhkot toimivat normaalisti ja liuenneen hapen osapaine (pO2) on täysin normaali.</p>
+
+                <div className="help-tip">
+                    <strong>Pulssioksimetri ei erota häkähemoglobiinia happihemoglobiinista</strong>, joten SpO2 voi näyttää lähes 100 % vaikka potilaalla olisi vakavakin häkämyrkytys. Diagnoosi tehdään verikaasuanalyysin co-oksimetrialla, ei saturaatiomittarilla.
+                </div>
+
+                <h4>Milloin epäillä</h4>
+                <p>Tulipalo tai savuinen tila, huonosti vetävä takka tai kiuas, moottori suljetussa tilassa. Oireet ovat epämääräisiä: päänsärky, pahoinvointi, huimaus, sekavuus.</p>
+
+                <h4>Hoito</h4>
+                <p>100 % happea varaajapussimaskilla heti ja riittävän pitkään – se nopeuttaa hään poistumista moninkertaisesti. Vaikeissa tapauksissa (tajuttomuus, neurologiset oireet, raskaus) harkitaan ylipainehappihoitoa. Tulipalon savussa mieti myös syanidia jota vapautuu palavista kalusteista, erityisesti jos laktaatti on korkea. Sen hoitona on hydroksikobalamiiniu eli B12-vitamiini laskimoon.</p>
+            </Fragment>
+        ),
+    }; // texts-objekti päättyy
+
+
+    // --- Vakiot ja Apufunktiot ---
+    const KPA_TO_MMHG = 7.50062; const MMHG_TO_KPA = 1 / KPA_TO_MMHG;
+const REF_PH = { low: 7.35, high: 7.45 }; // Ennallaan
+const REF_PCO2_KPA = { low: 4.5, high: 6.0 }; // MUUTETTU
+// Lasketaan uusi mmHg-vastine: 4.5 kPa ≈ 33.8 mmHg, 6.0 kPa = 45.0 mmHg -> Pyöristetään 34-45
+const REF_PCO2_MMHG = { low: 34, high: 45 }; // MUUTETTU
+const REF_HCO3 = { low: 22, high: 27 }; // MUUTETTU
+const REF_PAO2_KPA = { low: 10.6, high: 13.3 }; // Ennallaan (ikäkohd. vaikea toteuttaa)
+const REF_PAO2_MMHG = { low: 80, high: 100 }; // Ennallaan
+const REF_BE = { low: -3.0, high: 3.0 }; // MUUTETTU
+const REF_NA = { low: 137, high: 144 }; // MUUTETTU
+const REF_CL = { low: 96, high: 111 }; // MUUTETTU
+const REF_AG = { low: 8, high: 12 }; // Ennallaan (tulkinnallinen, ei suoraan kuvasta)
+const REF_LAC = { low: 0.5, high: 2.0 }; // yläraja 2.0 = yleinen kliininen raja
+const REF_K = { low: 3.3, high: 4.8 }; // MUUTETTU
+// Uudet/olemassaolevat viitearvot lisäparametreille
+const REF_TEMP = { low: 36.0, high: 37.5 }; // Ennallaan (arvio)
+const REF_HB = { low: 120, high: 170 }; // Ennallaan (arvio)
+const REF_METHB = { low: 0, high: 2.0 };
+const REF_COHB = { low: 0, high: 2.0 }; // tupakoitsijalla usein 5-10 %
+const REF_CA2 = { low: 1.15, high: 1.30 }; // MUUTETTU
+const REF_GLU = { low: 4.0, high: 7.8 }; // satunnaisnäyte, ei paastoarvo
+
+    function shuffleArray(array) {
+        const arr = array.slice();
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+    function getPao2RefKpa(age) {
+        // Käytetään vanhaa kiinteää arvoa, jos ikä puuttuu tai on virheellinen
+        const fallbackRef = { low: 10.6, high: 13.3 };
+        if (age === null || age === undefined || isNaN(age)) {
+            console.warn("Potilaan ikä puuttuu tai virheellinen, käytetään oletus pO2-viitearvoa.");
+            return fallbackRef;
+        }
+        // Palautetaan oikea väli kuvan perusteella
+        if (age < 18) return { low: 12.0, high: 14.0 };
+        if (age <= 30) return { low: 11.0, high: 14.0 };
+        if (age <= 50) return { low: 10.3, high: 13.0 };
+        if (age <= 60) return { low: 9.7, high: 12.7 };
+        if (age <= 70) return { low: 9.3, high: 12.3 };
+        if (age <= 80) return { low: 8.8, high: 11.9 };
+        // Yli 80v
+        return { low: 8.3, high: 11.4 };
+    }
+
+    function getHbRef(age) {
+        // Karkeat ikäkohtaiset rajat, jottei lasten normaali Hb näytä poikkeavalta
+        if (age === null || age === undefined || isNaN(age)) return REF_HB;
+        if (age < 0.5) return { low: 95, high: 135 };
+        if (age < 2) return { low: 100, high: 140 };
+        if (age < 12) return { low: 110, high: 150 };
+        return REF_HB;
+    }
+
+     // --- Potilastapaukset ---
+    // Selitysten rakenne on joka tapauksessa sama, jotta opiskelija oppii järjestyksen:
+    // 1) mitä pH sanoo  2) kumpi arvo selittää sen  3) kompensoiko toinen  4) muut löydökset
+    const patientCases = [
+        {
+            id: "DKA01", label: "Diabeettinen ketoasidoosi", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "25v nainen, tyypin 1 diabetes. Insuliinipumppu lakannut toimimasta. Vatsakipua, oksentelua, syvää tihentynyttä hengitystä.",
+            values: { age: 25, pH: 7.185, pCO2_kPa: 2.5, HCO3: 7, PaO2_kPa: 12.5, BE: -19, Na: 136, Cl: 98, Lac: 1.8, K: 5.2, Temp: 37.0, Hb: 145, MetHb: 0.8, COHb: 0.8, Ca2: 1.10, Glu: 25.5},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "pH on matala eli asidoosi. HCO3- (7) ja BE (-19) ovat matalat, joten häiriö on metabolinen. pCO2 on matala eli hengitys kompensoi, mutta pH ei ole vielä normaali, joten kompensaatio on osittainen. Anionivaje on selvästi koholla (31): asidoosin aiheuttavat ketoaineet. Sokeri on korkea ja kalium näyttää nyt korkealta, vaikka elimistön kokonaiskalium on vähissä.",
+            treatment: "Nesteytys, insuliini-infuusio ja kaliumin tiivis seuranta. Kalium laskee nopeasti hoidon aikana, joten sitä joudutaan yleensä korvaamaan.",
+        },
+        {
+            id: "Lactic01", label: "Septinen sokki", specialty: "Anestesia ja teho",
+            oxygen: "Maski", difficulty: 2,
+            context: "60v mies, septinen sokki teho-osastolla, lisähappi maskilla. Korkea kuume, matala verenpaine, virtsantulo vähentynyt merkittävästi.",
+            values: { age: 60, pH: 7.29, pCO2_kPa: 3.9, HCO3: 14, PaO2_kPa: 7.8, BE: -11, Na: 140, Cl: 105, Lac: 6.5, K: 4.8, Temp: 39.1, Hb: 110, MetHb: 1.0, COHb: 1.0, Ca2: 1.05, Glu: 8.1 },
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Matala pH ja matala HCO3- (14) kertovat metabolisesta asidoosista. Matala pCO2 on hengityksen kompensaatiota, joka jää osittaiseksi. Anionivaje on koholla (21) ja laktaatti korkea (6.5): sokissa kudokset saavat liian vähän happea ja tuottavat maitohappoa. Myös happeutuminen on huono.",
+            treatment: "Sepsiksen hoito: nesteytys, antibiootit varhain ja infektiopesäkkeen hoito, tarvittaessa verenpainelääkitys. Laktaatti laskee, kun verenkierto korjaantuu.",
+        },
+        {
+            id: "Renal01", label: "Krooninen munuaisten vajaatoiminta", specialty: "Sisätaudit",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "72v mies, krooninen munuaisten vajaatoiminta. Väsymystä ja yleistä huonovointisuutta.",
+            values: { age: 72, pH: 7.31, pCO2_kPa: 4.0, HCO3: 15, PaO2_kPa: 11.0, BE: -10, Na: 138, Cl: 105, Lac: 1.2, K: 5.4, Temp: 36.8, Hb: 95, MetHb: 0.7, COHb: 0.9, Ca2: 1.12, Glu: 5.8},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi: matala pH, matala HCO3- (15) ja negatiivinen BE. Hengitys kompensoi (matala pCO2), mutta osittain. Anionivaje on koholla (18), koska vaurioituneet munuaiset eivät eritä happamia kuona-aineita normaalisti. Muutkin löydökset sopivat munuaisten vajaatoimintaan: korkea kalium, matala hemoglobiini ja matala kalsium.",
+            treatment: "Munuaissairauden hoito sekä kaliumin ja ruokavalion seuranta. Pitkittyneessä asidoosissa bikarbonaatti suun kautta, dialyysin tarve arvioidaan erikseen.",
+        },
+        {
+            id: "NAGMA01", label: "Ripuli", specialty: "Yleislääketiede",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "45v nainen, vaikea ripuli kolmen vuorokauden ajan.",
+            values: { age: 45, pH: 7.30, pCO2_kPa: 3.8, HCO3: 14, PaO2_kPa: 13.0, BE: -11, Na: 137, Cl: 115, Lac: 1.5, K: 3.2, Temp: 37.2, Hb: 130, MetHb: 0.6, COHb: 0.7, Ca2: 1.18, Glu: 6.0},
+            correctPrimary: texts.metabolicAcidosisNAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi (matala pH, HCO3- 14, BE -11), jota hengitys kompensoi osittain. Tässä anionivaje on kuitenkin normaali (8) ja kloridi korkea (115). Ripulissa menetetään bikarbonaattia suoraan suolistosta, ja sen tilalle elimistöön jää kloridia. Tämä on tyypillinen normaalin anionivajeen asidoosi. Kalium on matala, koska sitäkin menetetään ulosteeseen.",
+            treatment: "Nesteytys balansoidulla liuoksella (esim. Ringer) ja kaliumin korvaus. Runsas keittosuolaliuos voi pahentaa asidoosia.",
+        },
+        {
+            id: "Salicylate01", label: "Salisylaattimyrkytys", specialty: "Myrkytykset",
+            oxygen: "Huoneilma", difficulty: 3,
+            context: "19v opiskelija, ottanut yliannoksen aspiriinia. Sekava, hengittää tiheästi, korvissa soi.",
+            values: { age: 19, pH: 7.49, pCO2_kPa: 2.5, HCO3: 14, PaO2_kPa: 14.0, BE: -8, Na: 142, Cl: 104, Lac: 3.5, K: 3.8, Temp: 38.0, Hb: 135, MetHb: 1.1, COHb: 0.9, Ca2: 1.15, Glu: 7.5},
+            correctPrimary: texts.mixedMetAcidRespAlk,
+            correctCompensation: "N/A",
+            explanation: "Tässä on kaksi häiriötä yhtä aikaa. pCO2 on hyvin matala: salisylaatti kiihdyttää hengityskeskusta, mistä seuraa respiratorinen alkaloosi. Samalla HCO3- ja BE ovat matalat ja anionivaje korkea (24), eli mukana on metabolinen asidoosi. pH on lievästi alkalinen, joten hengityksen vaikutus on voimakkaampi. Tiheä hengitys ja tinnitus yhdessä ovat klassinen vihje.",
+            treatment: "Päivystyshoito: nesteytys, bikarbonaatti ja vaikeissa myrkytyksissä dialyysi. Jos potilas joudutaan nukuttamaan, hengitystä on jatkettava tiheänä, muuten pH romahtaa.",
+        },
+        {
+            id: "Vomiting01", label: "Pitkittynyt oksentelu", specialty: "Yleislääketiede",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "50v mies, oksentanut voimakkaasti kaksi vuorokautta. Kuiva ja väsynyt.",
+            values: { age: 50, pH: 7.51, pCO2_kPa: 6.4, HCO3: 38, PaO2_kPa: 9.5, BE: 14, Na: 135, Cl: 85, Lac: 1.1, K: 3.0, Temp: 36.5, Hb: 150, MetHb: 0.5, COHb: 1.0, Ca2: 1.25, Glu: 5.9},
+            correctPrimary: texts.metabolicAlkalosis,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "pH on korkea eli alkaloosi. HCO3- (38) ja BE (+14) ovat korkeat, joten häiriö on metabolinen: oksentaessa menetetään mahahappoa. Hengitys kompensoi hidastumalla, joten pCO2 on koholla, mutta pH ei ole vielä normaali. Tyypilliset seuralaiset ovat matala kloridi (85), matala kalium (3.0) ja kuivuminen.",
+            treatment: "Nesteytys keittosuolaliuoksella sekä kaliumin ja kloridin korvaus. Oksentelun syy selvitetään.",
+        },
+        {
+            id: "Diuretics01", label: "Diureettihoito", specialty: "Sisätaudit",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "75v nainen, sydämen vajaatoiminta ja suuri annos furosemidia. Lihasheikkoutta ja lihaskramppeja.",
+            values: { age: 75, pH: 7.50, pCO2_kPa: 6.1, HCO3: 35, PaO2_kPa: 10.0, BE: 11, Na: 138, Cl: 92, Lac: 1.3, K: 3.0, Temp: 36.9, Hb: 125, MetHb: 0.8, COHb: 0.8, Ca2: 1.16, Glu: 6.2},
+            correctPrimary: texts.metabolicAlkalosis,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen alkaloosi: korkea pH, korkea HCO3- (35) ja positiivinen BE. Hengitys kompensoi hidastumalla (pCO2 koholla), mutta osittain. Nesteenpoistolääke lisää hapon ja kaliumin eritystä virtsaan. Matala kalium (3.0) selittää lihasoireet, ja matala kloridi kertoo, mitä hoidossa pitää korvata.",
+            treatment: "Diureetin annoksen säätö sekä kaliumin ja kloridin korvaus. Tarkista myös magnesium.",
+        },
+        {
+            id: "RespAcidChronic01", label: "COPD, vakaa vaihe", specialty: "Sisätaudit",
+            oxygen: "Kotihappi 1 l/min", difficulty: 2,
+            context: "65v mies, vaikea COPD vakaassa vaiheessa. Kotihappi käytössä.",
+            values: { age: 65, pH: 7.37, pCO2_kPa: 7.7, HCO3: 33, PaO2_kPa: 8.8, BE: 8, Na: 140, Cl: 96, Lac: 1.4, K: 4.2, Temp: 36.6, Hb: 165, MetHb: 0.9, COHb: 5.5, Ca2: 1.20, Glu: 6.5},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.compensated,
+            explanation: "pH on viitealueella, mutta sekä pCO2 (7.7) että HCO3- (33) ovat koholla. Se tarkoittaa täysin kompensoitua häiriötä. Kumpi on ensisijainen? pH on alle 7.40 eli asidoosin puolella, ja sen selittää korkea pCO2: keuhkot eivät saa hiilidioksidia ulos. Munuaiset ovat vastanneet pidättämällä bikarbonaattia, mikä vie päiviä, joten tilanne on krooninen. Tämä on potilaan oma normaalitaso. Koholla oleva COHb ja korkea hemoglobiini sopivat tupakointiin.",
+            treatment: "COPD:n perushoito ja tupakoinnin lopetus. Happihoidossa tavoitesaturaatio on matalampi (88-92 %). Tätä pCO2-arvoa ei pidä yrittää korjata normaaliksi.",
+        },
+        {
+            id: "RespAcidAcuteExac01", label: "COPD, pahenemisvaihe", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "Sama 65v COPD-potilas kuin vakaan vaiheen tapauksessa, nyt päivystyksessä kuumeen ja pahentuneen hengenahdistuksen vuoksi.",
+            values: { age: 65, pH: 7.29, pCO2_kPa: 9.5, HCO3: 34, PaO2_kPa: 6.5, BE: 7, Na: 141, Cl: 95, Lac: 2.1, K: 4.6, Temp: 38.5, Hb: 163, MetHb: 1.2, COHb: 4.8, Ca2: 1.14, Glu: 7.8},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Matala pH ja korkea pCO2 (9.5) eli respiratorinen asidoosi. Vertaa vakaan vaiheen arvoihin: pCO2 on noussut selvästi, mutta HCO3- on lähes ennallaan (33 ja 34). Munuaiskompensaatio ei ehdi mukaan muutamassa tunnissa, joten kyseessä on akuutti pahenemisvaihe kroonisen tilan päälle ja kompensaatio jää osittaiseksi. Happeutuminen on huono ja kuume viittaa infektioon.",
+            treatment: "Pahenemisvaiheen syyn hoito, avaavat lääkkeet, kortisoni ja kontrolloitu happihoito. Jos pH on alle 7.35, maskiventilaatio (NIV) on ensisijainen hoito.",
+        },
+        {
+            id: "RespAcidAcuteOpioid01", label: "Opioidin yliannostus", specialty: "Myrkytykset",
+            oxygen: "Huoneilma", difficulty: 1,
+            context: "30v mies, löydetty tajuttomana, hidas ja pinnallinen hengitys. Vieressä tyhjä purkki, jossa lukee ”Tippa”. Näyte huoneilmalla.",
+            values: { age: 30, pH: 7.17, pCO2_kPa: 10.0, HCO3: 27, PaO2_kPa: 5.5, BE: -1, Na: 139, Cl: 103, Lac: 1.6, K: 4.7, Temp: 35.8, Hb: 155, MetHb: 0.6, COHb: 1.6, Ca2: 1.19, Glu: 6.1},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Matala pH ja hyvin korkea pCO2 (10.0) eli respiratorinen asidoosi. HCO3- ja BE ovat normaalit, joten munuaiskompensaatiota ei ole ehtinyt syntyä: tilanne on akuutti eli kompensoitumaton. Opioidi lamaa hengityskeskuksen. Myös happiarvo on matala, mutta pelkästään siksi, että potilas hengittää liian vähän. Keuhkot itsessään ovat terveet, ja tila korjaantuu kun ventilaatio korjaantuu.",
+            treatment: "Naloksoni, hengityksen avustaminen ja happi. Opioidin vaikutus kestää naloksonia pidempään, joten potilasta on seurattava.",
+        },
+        {
+            id: "RespAlkAcuteAnxiety01", label: "Paniikkikohtaus", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 1,
+            context: "28v nainen, paniikkikohtaus. Hyperventiloi, tuntee pistelyä sormissa ja suun ympärillä.",
+            values: { age: 28, pH: 7.53, pCO2_kPa: 3.5, HCO3: 22, PaO2_kPa: 13.5, BE: 0, Na: 140, Cl: 106, Lac: 1.0, K: 3.4, Temp: 37.1, Hb: 133, MetHb: 0.7, COHb: 0.7, Ca2: 1.10, Glu: 5.5},
+            correctPrimary: texts.respiratoryAlkalosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Korkea pH ja matala pCO2 (3.5) eli respiratorinen alkaloosi: hyperventilaatio puhaltaa hiilidioksidia ulos. HCO3- ja BE ovat normaalit, joten kompensaatiota ei ole ehtinyt tulla ja tilanne on akuutti. Pistely sormissa ja suun ympärillä johtuu ionisoidun kalsiumin laskusta, joka on alkaloosin suora seuraus.",
+            treatment: "Rauhoittelu ja hengityksen ohjaus. Paperipussiin hengittämistä ei käytetä. Varmista ensin, ettei tiheän hengityksen taustalla ole esimerkiksi keuhkoemboliaa tai astmaa.",
+        },
+        {
+            id: "RespAlkChronicCirrhosis01", label: "Maksakirroosi", specialty: "Sisätaudit",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "62v mies, alkoholimaksakirroosi. Tulee päivystykseen sekavuuden ja väsymyksen vuoksi. Lievästi ikteerinen, vatsa turvonnut.",
+            values: { age: 62, pH: 7.44, pCO2_kPa: 4.0, HCO3: 20, PaO2_kPa: 7.5, BE: -4, Na: 137, Cl: 106, Lac: 2.4, K: 3.6, Temp: 37.0, Hb: 105, MetHb: 0.9, COHb: 1.2, Ca2: 1.13, Glu: 5.2},
+            correctPrimary: texts.respiratoryAlkalosis,
+            correctCompensation: texts.compensated,
+            explanation: "pH on viitealueella, mutta sekä pCO2 (4.0) että HCO3- (20) ovat matalat, eli kyseessä on täysin kompensoitu häiriö. pH on yli 7.40 eli alkaloosin puolella, ja sen selittää matala pCO2. Maksakirroosiin liittyy pitkäaikainen hyperventilaatio, ja munuaiset ovat ehtineet vastata laskemalla bikarbonaattia. Matala happiarvo ilman keuhkosairautta liittyy niin ikään maksasairauteen.",
+            treatment: "Maksasairauden ja sen komplikaatioiden hoito. Hyperventilaatioon itseensä ei puututa.",
+        },
+        {
+            id: "PE01", label: "Keuhkoembolia", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "55v mies, äkillinen hengenahdistus ja rintakipu pitkän lennon jälkeen. Näyte huoneilmalla.",
+            values: { age: 55, pH: 7.50, pCO2_kPa: 3.8, HCO3: 22, PaO2_kPa: 7.0, BE: -1, Na: 141, Cl: 107, Lac: 1.7, K: 3.7, Temp: 37.3, Hb: 142, MetHb: 0.8, COHb: 1.0, Ca2: 1.17, Glu: 6.8},
+            correctPrimary: texts.respiratoryAlkalosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Korkea pH ja matala pCO2 eli akuutti respiratorinen alkaloosi (HCO3- ja BE normaalit). Tärkein löydös on kuitenkin yhdistelmä: potilas hengittää tiheästi JA happiarvo on silti matala. Terveillä keuhkoilla tiheä hengitys nostaisi happiarvoa, joten kaasujenvaihdossa on jotain vikaa. Äkillinen hengenahdistus pitkän lennon jälkeen tekee keuhkoemboliasta todennäköisen. Muista, että normaali astrup ei sulje pois keuhkoemboliaa.",
+            treatment: "Happihoito ja antikoagulaatio. Jos potilas on verenkierrollisesti epävakaa, liuotushoito.",
+        },
+        {
+            id: "Normal01", label: "Terve verrokki", specialty: "Fysiologia",
+            oxygen: "Huoneilma", difficulty: 1,
+            context: "35v terve mies, kandi harjoitellut astrupin ottoa.",
+            values: { age: 35, pH: 7.40, pCO2_kPa: 5.4, HCO3: 25, PaO2_kPa: 12.8, BE: 0, Na: 139, Cl: 104, Lac: 1.1, K: 4.1, Temp: 36.9, Hb: 150, MetHb: 0.7, COHb: 0.8, Ca2: 1.22, Glu: 5.1},
+            correctPrimary: texts.normal,
+            correctCompensation: "N/A",
+            explanation: "Kaikki arvot ovat viitealueilla: pH 7.40, pCO2 5.4 kPa, HCO3- 25 ja BE 0. Myös anionivaje (10) ja happeutuminen ovat normaalit. Ei merkkejä happo-emästasapainon häiriöstä. Muista silti, ettei normaali astrup sulje pois sairautta, jos kliininen kuva on huolestuttava.",
+            treatment: "Psykologista tukea kandin runtelemisen jäljiltä.",
+        },
+        {
+            id: "Normal02", label: "COPD, kontrollikäynti", specialty: "Sisätaudit",
+            oxygen: "Huoneilma", difficulty: 1,
+            context: "50v nainen, COPD, kontrollikäynnillä.",
+            values: { age: 50, pH: 7.38, pCO2_kPa: 5.9, HCO3: 26, PaO2_kPa: 11.5, BE: 1, Na: 142, Cl: 105, Lac: 1.3, K: 4.0, Temp: 37.0, Hb: 135, MetHb: 0.8, COHb: 3.5, Ca2: 1.20, Glu: 5.6},
+            correctPrimary: texts.normal,
+            correctCompensation: "N/A",
+            explanation: "pH, pCO2, HCO3- ja BE ovat kaikki viitealueilla, samoin anionivaje ja happeutuminen. Kaikilla COPD-potilailla ei siis ole hiilidioksidin kertymistä. Tämä on hyvä lähtötaso, johon myöhempiä pahenemisvaiheita voidaan verrata. Ainoa poikkeava luku on lievästi koholla oleva COHb, joka kertoo tupakoinnista.",
+            treatment: "COPD:n perushoito kliinisen tilanteen mukaan.",
+        },
+        {
+            id: "PostOpRespDep01", label: "Opioidi heräämössä", specialty: "Anestesia ja teho",
+            oxygen: "Viikset 3 l/min", difficulty: 1,
+            context: "68v mies vatsaleikkauksen jälkeen heräämössä, lisähappi 3 l/min viiksillä. Saanut kipuun reippaasti oksikodonia. Hoitaja huomaa potilaan olevan hyvin väsynyt, hengitystaajuus 6/min.",
+            values: { age: 68, pH: 7.20, pCO2_kPa: 9.0, HCO3: 26, PaO2_kPa: 8.0, BE: -1, Na: 140, Cl: 104, Lac: 1.8, K: 4.9, Temp: 36.2, Hb: 148, MetHb: 0.9, COHb: 0.9, Ca2: 1.19, Glu: 7.0},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Matala pH ja korkea pCO2 (9.0) eli respiratorinen asidoosi. HCO3- ja BE ovat normaalit, joten kompensaatiota ei ole: tilanne on akuutti. Syynä on opioidin aiheuttama liian hidas hengitys. Heräämön tärkein oppi: lisähapen kanssa pulssioksimetri voi näyttää kohtalaista lukemaa, vaikka potilaalle kertyy hiilidioksidia. Saturaatio ei kerro ventilaatiosta.",
+            treatment: "Herättely, happi ja hengityksen avustaminen, tarvittaessa naloksoni pieninä annoksina. Potilasta seurataan, koska väsymys voi uusia.",
+        },
+        {
+            id: "AnxietyHypervent01", label: "Leikkausjännitys", specialty: "Anestesia ja teho",
+            oxygen: "Huoneilma", difficulty: 1,
+            context: "22v nainen tulossa polvileikkaukseen. Voimakkaan jännittynyt leikkaussalin odotustilassa, hengittää tiheästi ja syvään, valittaa käsien ja suun ympäryksen pistelyä.",
+            values: { age: 22, pH: 7.52, pCO2_kPa: 3.6, HCO3: 22, PaO2_kPa: 14.0, BE: -0.5, Na: 138, Cl: 104, Lac: 1.2, K: 3.3, Temp: 37.0, Hb: 130, MetHb: 0.6, COHb: 0.6, Ca2: 1.08, Glu: 5.7},
+            correctPrimary: texts.respiratoryAlkalosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Korkea pH ja matala pCO2 eli respiratorinen alkaloosi. HCO3- ja BE ovat normaalit, joten tilanne on akuutti ja kompensoitumaton. Matala ionisoitu kalsium (1.08) selittää pistelyn: alkaloosissa kalsium sitoutuu tiukemmin valkuaisaineisiin, jolloin vapaan kalsiumin määrä laskee.",
+            treatment: "Rauhoittelu ja hengityksen ohjaus, tarvittaessa kevyt esilääkitys. Varmista, ettei taustalla ole kipua tai hapenpuutetta.",
+        },
+        {
+            id: "ESRDpreOp01", label: "Väliin jäänyt dialyysi", specialty: "Anestesia ja teho",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "58v mies, dialyysihoidossa 3 krt/vko. Tulossa AV-fistelin korjausleikkaukseen. Edellinen dialyysikerta jäi väliin flunssan vuoksi. Hieman väsynyt.",
+            values: { age: 58, pH: 7.32, pCO2_kPa: 3.9, HCO3: 15, PaO2_kPa: 11.5, BE: -10, Na: 138, Cl: 100, Lac: 1.4, K: 5.8, Temp: 36.7, Hb: 98, MetHb: 0.8, COHb: 1.0, Ca2: 1.05, Glu: 6.4},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi: matala pH, matala HCO3- (15) ja negatiivinen BE. pCO2 on laskenut viitealueen alle, eli hengitys kompensoi, mutta pH ei ole normaali, joten kompensaatio on osittainen. Anionivaje on korkea (23), koska väliin jäänyt dialyysi on jättänyt happamat kuona-aineet elimistöön. Anestesian kannalta tärkein yksittäinen löydös on kuitenkin kalium 5.8.",
+            treatment: "Elektiivinen leikkaus siirretään ja potilas dialysoidaan ensin. Dialyysi korjaa sekä asidoosin että kaliumin.",
+        },
+        {
+            id: "MassiveTransfusionShock01", label: "Polytrauma ja massiivi verensiirto", specialty: "Anestesia ja teho",
+            oxygen: "Hengityskone", difficulty: 2,
+            context: "45v mies, polytrauma. Leikkaussalissa menettänyt runsaasti verta ja saanut 12 yksikköä punasoluja. Hengityskoneessa, verenpaine matala, periferia viileä.",
+            values: { age: 45, pH: 7.12, pCO2_kPa: 5.0, HCO3: 12, PaO2_kPa: 7.5, BE: -15, Na: 142, Cl: 105, Lac: 8.0, K: 5.6, Temp: 35.1, Hb: 75, MetHb: 1.3, COHb: 1.2, Ca2: 0.95, Glu: 9.0},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Vaikea metabolinen asidoosi: pH 7.12, HCO3- 12 ja BE -15. Anionivaje (25) ja laktaatti (8.0) ovat korkeat, koska verenvuoto ja sokki jättävät kudokset ilman happea. pCO2 näyttää normaalilta, ja juuri se on ongelma: potilas on hengityskoneessa eikä voi itse hengittää tiheämmin, joten kompensaatiota ei tule. Lisäksi matala kalsium (verituotteiden säilöntäaine sitoo sitä), korkea kalium ja alilämpö.",
+            treatment: "Tärkeintä on tyrehdyttää vuoto. Verituotteet, kalsium, potilaan lämmittäminen ja hengityskoneen ventilaation lisääminen.",
+        },
+        {
+            id: "MH01", label: "Maligni hypertermia", specialty: "Anestesia ja teho",
+            oxygen: "Hengityskone", difficulty: 3,
+            context: "30v terve mies elektiivisessä tyräleikkauksessa yleisanestesiassa (sevofluraani, suksinyylikoliini). Induktion jälkeen kehittyy nopeasti takykardia, uloshengityksen hiilidioksidi nousee jyrkästi ja leuat ovat jäykät.",
+            values: { age: 30, pH: 6.965, pCO2_kPa: 9.5, HCO3: 16, PaO2_kPa: 7.0, BE: -14, Na: 145, Cl: 103, Lac: 9.5, K: 6.5, Temp: 40.5, Hb: 150, MetHb: 1.8, COHb: 1.0, Ca2: 1.30, Glu: 8.5},
+            correctPrimary: texts.mixedMetAcidRespAcid,
+            correctCompensation: "N/A",
+            explanation: "Kaksi asidoosia yhtä aikaa: pCO2 on erittäin korkea (respiratorinen) ja samalla HCO3- ja BE ovat matalat sekä anionivaje ja laktaatti korkeat (metabolinen). Kumpikaan ei kompensoi toista, joten pH romahtaa alle 7.0. Malignissa hypertermiassa lihakset ylikuormittuvat ja tuottavat hiilidioksidia, maitohappoa ja lämpöä. Kalium nousee lihasvauriosta. Huomaa järjestys: hiilidioksidin nousu on varhainen merkki, kuume tulee vasta myöhemmin.",
+            treatment: "Laukaiseva anestesia-aine pois, apua paikalle ja dantroleeni heti. Lisäksi tehokas ventilaatio 100 % hapella, potilaan viilennys ja hyperkalemian hoito. Tehohoitoseuranta.",
+        },
+        {
+            id: "NGsuctionDiuretics01", label: "Nenämahaimu ja diureetti", specialty: "Anestesia ja teho",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "70v nainen suolileikkauksen jälkeen teho-osastolla. Nenämahaletkussa jatkuva imu. Saanut furosemidia nesteen kertymisen vuoksi. Väsähtänyt ja lievästi sekava.",
+            values: { age: 70, pH: 7.52, pCO2_kPa: 6.5, HCO3: 39, PaO2_kPa: 9.8, BE: 15, Na: 136, Cl: 88, Lac: 1.0, K: 3.1, Temp: 36.8, Hb: 115, MetHb: 0.7, COHb: 0.8, Ca2: 1.22, Glu: 6.6},
+            correctPrimary: texts.metabolicAlkalosis,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Korkea pH sekä korkea HCO3- (39) ja BE (+15) eli metabolinen alkaloosi. Hengitys kompensoi hidastumalla (pCO2 koholla), mutta osittain. Syitä on kaksi samaan suuntaan: mahaletkun imu vie mahahappoa ja furosemidi lisää hapon eritystä virtsaan. Matala kloridi (88) ja matala kalium (3.1) ovat tyypilliset seuralaiset ja kertovat, mitä pitää korvata.",
+            treatment: "Mahaletkun imun tarpeen arviointi, diureetin tauko, keittosuolaliuos sekä kaliumin ja kloridin korvaus.",
+        },
+        {
+            id: "COPD_Vomiting01", label: "COPD ja oksentelu", specialty: "Sisätaudit",
+            oxygen: "Huoneilma", difficulty: 3,
+            context: "70v COPD-potilas, joka on oksennellut kaksi vuorokautta eikä ole syönyt kunnolla.",
+            values: { age: 70, pH: 7.46, pCO2_kPa: 8.0, HCO3: 42, PaO2_kPa: 8.5, BE: 17, Na: 138, Cl: 85, Lac: 1.2, K: 3.1, Temp: 36.9, Hb: 130, MetHb: 0.9, COHb: 4.0, Ca2: 1.18, Glu: 6.9},
+            correctPrimary: texts.mixedMetAlkRespAcid,
+            correctCompensation: "N/A",
+            explanation: "Tämä on vaikea. Ensivaikutelma on metabolinen alkaloosi, jota hengitys kompensoi, mutta mieti potilaan taustaa. COPD-potilaalla pCO2 on kroonisesti korkea eli hänellä on respiratorinen asidoosi, ja oksentelu on tuonut sen päälle metabolisen alkaloosin. Kaksi vastakkaista häiriötä pitävät pH:n lähes normaalina. Ratkaiseva vihje: pelkkä kompensaatio ei koskaan käännä pH:ta toiselle puolelle, ja matala kloridi (85) paljastaa oksentelun. Arvoja ei siis voi lukea ilman potilaan taustatietoja.",
+            treatment: "Varovainen nesteytys keittosuolaliuoksella ja kaliumin korvaus, COPD:n perushoito.",
+        },
+        // --- PÄIVYSTYS JA HENGITYSVAIKEUS ---
+        {
+            id: "Asthma01", label: "Astmakohtaus, alkuvaihe", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 1,
+            context: "24v nainen päivystyksessä astmakohtauksen vuoksi. Ei pysty puhumaan kokonaisia lauseita hengenahdistuksen vuoksi, hengitystaajuus 28/min, uloshengitys vinkuu. Näyte huoneilmalla.",
+            values: { age: 24, pH: 7.47, pCO2_kPa: 4.1, HCO3: 22, PaO2_kPa: 9.5, BE: -1, Na: 139, Cl: 105, Lac: 1.8, K: 3.6, Temp: 36.8, Hb: 135, MetHb: 0.6, COHb: 0.8, Ca2: 1.20, Glu: 6.0},
+            correctPrimary: texts.respiratoryAlkalosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Korkea pH ja matala pCO2 eli respiratorinen alkaloosi: ahdistunut potilas hengittää tiheästi ja puhaltaa hiilidioksidia ulos. HCO3- ja BE ovat normaalit, joten kompensaatiota ei ole ehtinyt tulla ja tilanne on tuore. Tämä on astmakohtauksen odotettu ja rauhoittava löydös. Happiarvo on silti hieman matala, koska ahtautuneet keuhkoputket sotkevat ilman ja verenkierron kohtaamista. Seuraa pCO2:ta: jos se alkaa nousta kohti viitealuetta, potilas ei ole paranemassa vaan väsymässä.",
+            treatment: "Avaava lääke sumuttimella, kortisoni ja happi. Astrup ei ohjaa hoitoa tässä vaiheessa, vaan potilaan vointi ja PEF.",
+        },
+        {
+            id: "AsthmaTiring01", label: "Astmakohtaus, väsyvä potilas", specialty: "Päivystys",
+            oxygen: "Maski", difficulty: 3,
+            context: "Sama 24v astmapotilas 45 minuutin hoidon jälkeen. On rauhoittunut ja hiljentynyt, hengitystaajuus laskenut 28:sta 14:ään, hengitysäänet ovat vaimeat. Lisähappi maskilla.",
+            values: { age: 24, pH: 7.36, pCO2_kPa: 5.8, HCO3: 24, PaO2_kPa: 11.0, BE: -1, Na: 140, Cl: 104, Lac: 2.8, K: 3.2, Temp: 36.9, Hb: 136, MetHb: 0.7, COHb: 0.8, Ca2: 1.18, Glu: 8.9},
+            correctPrimary: texts.normal,
+            correctCompensation: "N/A",
+            explanation: "Kaikki happo-emäsarvot ovat viitealueilla, joten vastaus on ”normaali” - ja silti tämä on koko visan pelottavin astrup. Vaikeassa astmakohtauksessa potilaan pitäisi hyperventiloida, jolloin pCO2 on matala. Kun pCO2 nousee viitealueelle, se tarkoittaa että hengityslihakset eivät enää jaksa. Yhdessä laskeneen hengitystaajuuden, vaimenneiden hengitysäänten ja uneliaisuuden kanssa tämä ennakoi hengityksen pysähtymistä.",
+            treatment: "Tämä ei ole seurantatilanne. Kokenut apu ja anestesialääkäri paikalle, valmistaudu hengityksen avustamiseen ja intubaatioon. Laktaatti ja matala kalium selittyvät salbutamolilla.",
+        },
+        {
+            id: "AsthmaSevere01", label: "Astmakohtaus, hengitysvajaus", specialty: "Päivystys",
+            oxygen: "Maski", difficulty: 2,
+            context: "Sama 24v potilas vielä hetkeä myöhemmin: hän on muuttunut uneliaaksi, puhuu vain yksittäisiä sanoja ja hengitysäänet enää hädin tuskin kuuluvatkaan. Lisähappi maskilla.",
+            values: { age: 24, pH: 7.21, pCO2_kPa: 9.0, HCO3: 26, PaO2_kPa: 7.5, BE: -1, Na: 140, Cl: 103, Lac: 2.6, K: 3.1, Temp: 36.8, Hb: 136, MetHb: 0.7, COHb: 0.8, Ca2: 1.18, Glu: 9.8},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Matala pH ja korkea pCO2 eli respiratorinen asidoosi. HCO3- ja BE ovat normaalit, joten tilanne on akuutti ja kompensoitumaton. Tässä näkyy kohtauksen koko kaari samalla potilaalla: alussa pCO2 oli matala, väsyessä ”normaali” ja nyt korkea - suunta ratkaisee, ei yksittäinen luku. Korkea pCO2 kertoo hengityslihasten uupumisesta ja on hengenvaarallinen löydös, ja hiljentyneet hengitysäänet sopivat samaan kuvaan. Matala kalium ja lievä laktaatin nousu selittyvät salbutamolilla ja hengitystyöllä.",
+            treatment: "Hätätilanne: tehostettu avaava lääkitys, kortisoni ja välitön valmius hengityksen tukemiseen. Anestesialääkäri paikalle ajoissa.",
+        },
+        {
+            id: "Pneumonia01", label: "Vaikea keuhkokuume", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "70v mies, kolme päivää kuumetta ja yskää. Hengitystaajuus 30/min, oikealla puolella rahinoita. Näyte huoneilmalla.",
+            values: { age: 70, pH: 7.47, pCO2_kPa: 4.0, HCO3: 22, PaO2_kPa: 7.9, BE: -1, Na: 137, Cl: 104, Lac: 2.4, K: 4.0, Temp: 38.9, Hb: 138, MetHb: 0.7, COHb: 1.0, Ca2: 1.16, Glu: 7.0},
+            correctPrimary: texts.respiratoryAlkalosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Korkea pH ja matala pCO2 eli akuutti respiratorinen alkaloosi, HCO3- ja BE ovat normaalit. Kuume ja hapenpuute kiihdyttävät hengitystä. Tärkein löydös on silti pO2: potilas hengittää tiheästi ja arvo on siitä huolimatta selvästi ikätasoa matalampi, koska tulehdusnesteen täyttämissä keuhkorakkuloissa veri kulkee ohi ilman happeutumista. Hiilidioksidi poistuu silti hyvin - kyseessä on hapetushäiriö, ei ventilaatio-ongelma. Lievästi koholla oleva laktaatti kertoo, että infektio on vakava.",
+            treatment: "Happi, mikrobilääke varhain ja nesteytys. Seuraa hengitystaajuutta ja happeutumista: jos potilas väsyy ja pCO2 alkaa nousta, tarvitaan hengitystukea.",
+        },
+        {
+            id: "SepsisEarly01", label: "Alkava sepsis, virtsatieinfektio", specialty: "Yleislääketiede",
+            oxygen: "Huoneilma", difficulty: 1,
+            context: "78v nainen terveyskeskuspäivystyksessä. Kotihoito toi sekavuuden vuoksi. Kuumetta 38.7, hengitystaajuus 26/min, verenpaine 105/60. Alavatsa aristaa.",
+            values: { age: 78, pH: 7.47, pCO2_kPa: 4.2, HCO3: 23, PaO2_kPa: 9.8, BE: 0, Na: 138, Cl: 103, Lac: 2.3, K: 4.0, Temp: 38.7, Hb: 122, MetHb: 0.8, COHb: 0.9, Ca2: 1.15, Glu: 8.2},
+            correctPrimary: texts.respiratoryAlkalosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Korkea pH ja matala pCO2 eli akuutti respiratorinen alkaloosi. HCO3- ja BE ovat normaalit, joten kompensaatiota ei ole. Tiheä hengitys on infektiossa varhainen ja helposti ohitettu merkki, ja se näkyy astrupissa ennen kuin verenpaine laskee. Happeutuminen on ikään nähden normaali, joten kyse ei ole keuhko-ongelmasta. Laktaatti 2.3 on lievästi koholla ja ansaitsee kontrollin.",
+            treatment: "Virtsanäytteet ja veriviljelyt, mikrobilääke ja nesteytys. Ota laktaatti uudelleen: nouseva laktaatti tai laskeva verenpaine tarkoittaa erikoissairaanhoitoa.",
+        },
+        {
+            id: "Seizure01", label: "Kouristuskohtauksen jälkitila", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 1,
+            context: "24v mies, ensimmäinen yleistynyt kouristuskohtaus kadulla, kesto noin 2 minuuttia. Nyt tokkurainen mutta heräteltävissä. Näyte otettu 10 minuuttia kohtauksen jälkeen, huoneilmalla.",
+            values: { age: 24, pH: 7.23, pCO2_kPa: 4.9, HCO3: 15, PaO2_kPa: 11.5, BE: -11, Na: 140, Cl: 100, Lac: 9.0, K: 4.3, Temp: 37.2, Hb: 148, MetHb: 0.6, COHb: 0.7, Ca2: 1.18, Glu: 7.5},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Metabolinen asidoosi: matala pH, matala HCO3- ja BE -11. pCO2 on vielä viitealueella, joten hengityskompensaatio ei ole ehtinyt käynnistyä - näyte on otettu heti tapahtuman jälkeen. Anionivaje on korkea (25) ja selittyy laktaatilla (9.0): kouristelevat lihakset tuottavat hetkessä suuren määrän maitohappoa. Kaksi opetusta: kompensaatio vie aina aikaa, ja hyvin korkea laktaatti ei aina tarkoita sepsistä tai iskemiaa.",
+            treatment: "Tämä korjaantuu itsestään noin tunnissa, kun lihastyö loppuu. Älä anna bikarbonaattia. Kontrolloi arvo ja keskity kohtauksen syyn selvittämiseen sekä verensokeriin.",
+        },
+        {
+            id: "Rhabdo01", label: "Rabdomyolyysi", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "68v mies löydettiin kotoa lattialta. Arvioidaan maanneen paikallaan liikkumatta noin vuorokauden. Virtsa on tummaa, jalat ovat kipeät ja turvonneet.",
+            values: { age: 68, pH: 7.29, pCO2_kPa: 4.0, HCO3: 14, PaO2_kPa: 9.4, BE: -11, Na: 141, Cl: 107, Lac: 2.4, K: 6.3, Temp: 35.9, Hb: 138, MetHb: 0.9, COHb: 1.1, Ca2: 0.98, Glu: 7.0},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi (matala pH, HCO3- 14, BE -11), jota hengitys kompensoi osittain. Anionivaje on koholla (20), mutta laktaatti on lähes normaali: happo tulee tässä hajonneista lihassoluista ja munuaisten heikentyneestä erityksestä. Kiireellisin löydös ei kuitenkaan ole pH vaan kalium 6.3, joka on peräisin samoista rikkoutuneista lihaksista. Matala ionisoitu kalsium kuuluu tyyppikuvaan.",
+            treatment: "Ota EKG heti ja hoida hyperkalemia. Runsas suonensisäinen nesteytys suojaa munuaisia. Selvitä myös miksi potilas kaatui eikä päässyt ylös.",
+        },
+        {
+            id: "Anaphylaxis01", label: "Anafylaksia", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "35v mies, mehiläisen pisto 20 minuuttia sitten. Nokkosihottumaa, kasvot turvoksissa, hengitys vinkuu, verenpaine 70/40.",
+            values: { age: 35, pH: 7.30, pCO2_kPa: 3.7, HCO3: 14, PaO2_kPa: 8.8, BE: -11, Na: 140, Cl: 106, Lac: 5.8, K: 4.0, Temp: 36.7, Hb: 150, MetHb: 0.8, COHb: 0.8, Ca2: 1.20, Glu: 8.0},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi, jota hengitys kompensoi osittain. Anionivaje (20) ja laktaatti (5.8) ovat korkeat: verenpaine on romahtanut eivätkä kudokset saa happea. Matala happiarvo selittyy keuhkoputkien supistumisella. Astrup kertoo siis vain sen, kuinka sairas potilas on.",
+            treatment: "Adrenaliini lihakseen reiteen heti, sen jälkeen makuuasento jalat koholla, happi ja runsas nesteytys. Älä odota verikaasuanalyysia - diagnoosi ja hoito perustuvat kliiniseen kuvaan.",
+        },
+        {
+            id: "GBS01", label: "Neuromuskulaarinen hengitysvajaus", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "40v mies, viiden vuorokauden aikana nouseva raajaheikkous ripulitaudin jälkeen. Ei jaksa laskea yhdellä uloshengityksellä kymmeneen, puhe katkeilee. Keuhkojen kuuntelulöydös on siisti. Näyte huoneilmalla.",
+            values: { age: 40, pH: 7.29, pCO2_kPa: 7.2, HCO3: 26, PaO2_kPa: 9.8, BE: 0, Na: 139, Cl: 101, Lac: 1.3, K: 4.0, Temp: 36.8, Hb: 145, MetHb: 0.8, COHb: 0.9, Ca2: 1.20, Glu: 5.4},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Matala pH ja korkea pCO2 eli respiratorinen asidoosi. HCO3- ja BE ovat normaalit, joten tilanne on akuutti ja kompensoitumaton. Keuhkot ovat terveet, mutta hengityslihakset ovat halvaantumassa - pumppu pettää, ei kaasujenvaihto. Muista, että astrup muuttuu tässä sairaudessa vasta myöhään: normaali arvo ei riitä rauhoittamaan, jos potilas ei jaksa puhua lausetta loppuun.",
+            treatment: "Tehohoidon arvio kiireellisesti ja valmius hengityskonehoitoon. Seurantaan kuuluu toistuva puhallustesti ja kliininen arvio, ei pelkkä verikaasuanalyysi.",
+        },
+        {
+            id: "COPDOxygen01", label: "COPD ja liiallinen happilisä", specialty: "Päivystys",
+            oxygen: "Varaajamaski 15 l/min", difficulty: 3,
+            context: "68v mies, tiedossa vaikea COPD. Soitti apua hengenahdistuksen vuoksi ja sai matkalla varaajamaskilla 15 l/min happea. Perillä unelias ja vaikeasti heräteltävissä.",
+            values: { age: 68, pH: 7.22, pCO2_kPa: 11.0, HCO3: 33, PaO2_kPa: 22.0, BE: 6, Na: 141, Cl: 97, Lac: 1.8, K: 4.4, Temp: 36.7, Hb: 168, MetHb: 0.9, COHb: 4.2, Ca2: 1.19, Glu: 6.8},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Matala pH ja hyvin korkea pCO2 eli respiratorinen asidoosi. HCO3- (33) ja BE (+6) ovat koholla eli munuaiset ovat kompensoineet jo pitkään: pohjalla on krooninen hiilidioksidin kertyminen, jonka päälle on tullut akuutti paheneminen, ja kompensaatio jää osittaiseksi. Huomaa pO2 22 - reilusti liikaa. Vaikeassa COPD:ssä liiallinen happilisä pahentaa hiilidioksidin kertymistä, ja seurauksena on uneliaisuus eli hiilidioksidinarkoosi. Koholla oleva COHb ja korkea hemoglobiini kertovat tupakoinnista, eivät häkämyrkytyksestä.",
+            treatment: "Vähennä happilisä hallituksi (tavoite SpO2 88-92 %), avaava lääkitys ja pahenemisvaiheen hoito. Jos pH pysyy matalana, maskiventilaatio (NIV).",
+        },
+        {
+            id: "Normal03", label: "Lihasperäinen rintakipu", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 1,
+            context: "23v mies, salibandypelin jälkeen alkanut pistävä kipu rintakehällä. Kipu on paikannettavissa painellen rintalihakseen. Päivystyksessä on otettu laaja näytepaketti.",
+            values: { age: 23, pH: 7.41, pCO2_kPa: 5.2, HCO3: 24, PaO2_kPa: 13.2, BE: 0, Na: 140, Cl: 104, Lac: 1.4, K: 4.3, Temp: 36.8, Hb: 152, MetHb: 0.6, COHb: 0.6, Ca2: 1.21, Glu: 5.4},
+            correctPrimary: texts.normal,
+            correctCompensation: "N/A",
+            explanation: "Kaikki arvot ovat viitealueilla, eikä happo-emästasapainossa ole häiriötä. Kliininen kuva sopii lihasperäiseen kipuun. Sivuopetus: valtimonäyte on kivulias ja kajoava tutkimus - mieti aina, muuttaako se hoitoa, ennen kuin otat sen.",
+            treatment: "Ei astrupin perusteella hoidettavaa. Kivun hoito ja kliininen arvio.",
+        },
+        {
+            id: "VenousSample01", label: "Laskimonäyte", specialty: "Yleislääketiede",
+            oxygen: "Huoneilma", difficulty: 3, sampleType: "Laskimo",
+            context: "54v mies vuodeosastolla toipumassa keuhkokuumeesta. Vointi on hyvä ja SpO2 on 97 % huoneilmalla. Aamukierrolla pyydettiin kontrolliverikaasu; näytteenotto oli hankala ja vaati useita yrityksiä.",
+            values: { age: 54, pH: 7.35, pCO2_kPa: 6.5, HCO3: 26, PaO2_kPa: 5.2, BE: 1, Na: 140, Cl: 103, Lac: 1.6, K: 4.2, Temp: 36.9, Hb: 132, MetHb: 0.8, COHb: 0.9, Ca2: 1.20, Glu: 5.8},
+            correctPrimary: texts.normal,
+            correctCompensation: "N/A",
+            explanation: "Katso kuitin ylälaita: näytetyyppi on laskimo. Laskimoveressä pO2 on aina matala eikä kerro keuhkojen toiminnasta mitään - potilaan SpO2 97 % huoneilmalla todistaa, että happeutuminen on kunnossa. Laskimonäytteessä pCO2 on noin 0.5-1 kPa valtimoarvoa korkeampi ja pH noin 0.03 yksikköä matalampi, joten nämäkin lukemat ovat laskimonäytteelle tavanomaiset. Happo-emästilasta (pH, HCO3-, BE) laskimonäyte kertoo kohtalaisen hyvin, mutta hapetusta sillä ei voi arvioida. Punaisena hehkuva pO2 johti tässä melkein turhaan hälytykseen.",
+            treatment: "Ei hoidettavaa. Jos happeutumisesta tarvitaan tieto, ota valtimonäyte - ja katso aina ensin, mitä näytettä analysaattori kertoo mitanneensa.",
+        },
+        // --- LASTENTAUDIT ---
+        {
+            id: "Bronchiolitis01", label: "Bronkioliitti", specialty: "Lastentaudit",
+            oxygen: "Lisähappi", difficulty: 2,
+            context: "4 kuukauden ikäinen vauva, RS-virusinfektio. Hengitystaajuus 70/min, apuhengityslihakset käytössä kyljissä, kaulalla ja vatsalla sekä nenänsiipihengitystä, on lakannut syömästä ja vaikuttaa uupuneelta. Lisähappi käytössä.",
+            values: { age: 0.3, pH: 7.25, pCO2_kPa: 8.0, HCO3: 26, PaO2_kPa: 12.0, BE: -0.5, Na: 138, Cl: 102, Lac: 1.9, K: 4.4, Temp: 37.6, Hb: 105, MetHb: 0.7, COHb: 0.6, Ca2: 1.25, Glu: 4.5},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Matala pH ja korkea pCO2 eli respiratorinen asidoosi. HCO3- ja BE ovat normaalit, joten kompensaatiota ei ole ehtinyt tulla. Ahtautuneet pienet ilmatiet estävät hiilidioksidin poistumisen, ja pieni vauva väsyy nopeasti, koska hengitystyö on suurta suhteessa voimavaroihin. Lisähappi on korjannut happiarvon, mutta se ei ratkaise hiilidioksidiongelmaa.",
+            treatment: "Hengitystuki (ylipainehoito tai virtausviikset), imut ja nesteytys sekä tiivis seuranta. Uupuva vauva ja nouseva pCO2 tarkoittavat tehohoidon arviota.",
+        },
+        {
+            id: "PedGastro01", label: "Lapsen gastroenteriitti", specialty: "Lastentaudit",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "2-vuotias poika, oksentelua ja vetistä ripulia kolme vuorokautta. Limakalvot kuivat, itkee muttei tule kyyneleitä, on uninen ja veltto.",
+            values: { age: 2, pH: 7.30, pCO2_kPa: 3.7, HCO3: 14, PaO2_kPa: 13.0, BE: -11, Na: 138, Cl: 114, Lac: 1.9, K: 3.1, Temp: 37.4, Hb: 112, MetHb: 0.6, COHb: 0.6, Ca2: 1.20, Glu: 3.6},
+            correctPrimary: texts.metabolicAcidosisNAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi, jota tiheä hengitys kompensoi osittain. Anionivaje on normaali (10) ja kloridi korkea (114): ripulissa menetetään bikarbonaattia suolen kautta ja kloridi jää sen tilalle. Kalium on matala samasta syystä. Huomaa verensokeri 3.6 - pieni lapsi käyttää sokerivarastonsa nopeasti loppuun, kun syöminen ei onnistu.",
+            treatment: "Nesteytys, ensisijaisesti suun kautta ripulijuomana. Jos lapsi ei juo tai on veltto, suonensisäinen nesteytys sokeripitoisella liuoksella ja kaliumin korvaus.",
+        },
+        {
+            id: "PyloricStenosis01", label: "Pylorusstenoosi", specialty: "Lastentaudit",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "5 viikon ikäinen poika. Kaksi viikkoa suihkuavaa oksentelua heti syöttöjen jälkeen. On jatkuvasti nälkäinen mutta ei ole nousussa painokäyrällä.",
+            values: { age: 0.1, pH: 7.52, pCO2_kPa: 6.2, HCO3: 37, PaO2_kPa: 12.5, BE: 13, Na: 137, Cl: 90, Lac: 1.0, K: 2.9, Temp: 36.9, Hb: 115, MetHb: 0.5, COHb: 0.5, Ca2: 1.28, Glu: 4.2},
+            correctPrimary: texts.metabolicAlkalosis,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Korkea pH sekä korkea HCO3- (37) ja BE (+13) eli metabolinen alkaloosi. Hengitys kompensoi hidastumalla, joten pCO2 on koholla, mutta pH ei ole vielä normaali. Mahaportin ahtauma estää ruoan etenemisen, ja oksennuksen mukana menetetään mahahappoa. Matala kloridi (90) ja matala kalium (2.9) täydentävät klassisen kolmikon.",
+            treatment: "Tämä ei ole päivystysleikkaus vaan ensin nestehoito: keittosuolaliuosta ja kaliumia, kunnes kloridi ja happo-emästila ovat korjaantuneet. Alkalinen vauva ei kestä nukutusta, koska hengitys herkästi lamaantuu.",
+        },
+        {
+            id: "MetHb01", label: "Methemoglobinemia", specialty: "Lastentaudit",
+            oxygen: "Huoneilma", difficulty: 3,
+            context: "3 kuukauden ikäinen vauva näyttää sinertävältä. Vointi on kohtalainen, hengitystaajuus normaali eikä keuhkoissa kuulu poikkeavaa. Iholle oli laitettu runsaasti puuduttavaa voidetta ennen näytteenottoa. Saturaatio pysyy 85 %:ssa hapesta huolimatta.",
+            values: { age: 0.25, pH: 7.39, pCO2_kPa: 4.8, HCO3: 22, PaO2_kPa: 12.8, BE: -2, Na: 139, Cl: 106, Lac: 1.4, K: 4.5, Temp: 36.9, Hb: 110, MetHb: 24.0, COHb: 0.7, Ca2: 1.26, Glu: 5.0},
+            correctPrimary: texts.normal,
+            correctCompensation: "N/A",
+            explanation: "Happo-emästila on täysin normaali: pH, pCO2, HCO3- ja BE ovat kaikki viitealueilla. Poikkeava luku löytyy oksimetriasta: MetHb 24 %. Sininen lapsi, jonka happiosapaine on normaali ja jonka saturaatio ei nouse hapella, on methemoglobinemiaa kunnes toisin todistetaan. Puuduttava voide (prilokaiini) on tavallinen aiheuttaja, ja alle 3 kuukauden ikäiset ovat erityisen herkkiä.",
+            treatment: "Lopeta altiste ja anna happea. Oireiselle tai selvästi koholla olevalle pitoisuudelle annetaan metyleenisinistä. Tämä tapaus muistuttaa, että happo-emästila ja happeutuminen ovat kaksi eri asiaa.",
+        },
+        {
+            id: "NewT1DM01", label: "Tuore tyypin 1 diabetes", specialty: "Lastentaudit",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "15v poika, jota on viikkojen ajan janottanut ja joka on laihtunut. Nyt vatsakipua, oksentelua ja uneliaisuutta. Hengitys on syvää ja huohottavaa, ja siinä on makea haju.",
+            values: { age: 15, pH: 7.11, pCO2_kPa: 2.6, HCO3: 6, PaO2_kPa: 12.6, BE: -21, Na: 133, Cl: 97, Lac: 2.0, K: 5.5, Temp: 36.5, Hb: 158, MetHb: 0.6, COHb: 0.5, Ca2: 1.17, Glu: 32.0},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Vaikea metabolinen asidoosi: matala pH, hyvin matala HCO3- (6) ja BE -21. pCO2 on painettu alas syvällä hengityksellä (Kussmaul), eli kompensaatio on käynnissä mutta osittainen. Anionivaje on korkea (30) ja verensokeri 32: kyseessä on tuoreen tyypin 1 diabeteksen ketoasidoosi. Kalium näyttää korkealta, vaikka kokonaiskalium on vähissä, ja lievästi matala natrium on ketoasidoosissa tavallinen löydös. Lapsilla ja nuorilla diabetes löytyy usein vasta ketoasidoosista.",
+            treatment: "Nesteytys, insuliini-infuusio ja kaliumin tiivis seuranta hoitoprotokollan mukaan. Lapsipotilas kuuluu erikoissairaanhoitoon.",
+        },
+        // --- KIRURGIA ---
+        {
+            id: "RibFractures01", label: "Kylkiluumurtumat", specialty: "Kirurgia",
+            oxygen: "Huoneilma", difficulty: 1,
+            context: "62v mies kaatui portaissa. Viiden kylkiluun sarjamurtumat oikealla. Kova kipu, hengittää pinnallisesti eikä uskalla yskiä. Näyte huoneilmalla vuorokausi tapaturman jälkeen.",
+            values: { age: 62, pH: 7.31, pCO2_kPa: 6.9, HCO3: 26, PaO2_kPa: 8.6, BE: 0, Na: 140, Cl: 102, Lac: 1.6, K: 4.1, Temp: 36.7, Hb: 128, MetHb: 0.8, COHb: 1.0, Ca2: 1.19, Glu: 7.4},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Matala pH ja korkea pCO2 eli respiratorinen asidoosi, jossa HCO3- ja BE ovat normaalit eli kompensaatiota ei ole. Syy ei ole keuhkosairaus vaan kipu: potilas ei uskalla hengittää syvään, jolloin ventilaatio jää liian pieneksi. Samasta syystä keuhkon pohjat painuvat kasaan ja happiarvo laskee.",
+            treatment: "Tehokas kivunhoito on tässä hengityshoitoa - puudutus tai epiduraali, säännöllinen kipulääkitys ja hengitysharjoitukset. Ilman sitä seuraa keuhkokuume.",
+        },
+        {
+            id: "MesentericIschemia01", label: "Suolen verenkiertohäiriö", specialty: "Kirurgia",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "78v nainen, eteisvärinä ilman antikoagulaatiota. Äkillinen kova vatsakipu kolme tuntia sitten. Vatsa on pehmeä ja painellen lähes kivuton, mutta potilas on tuskainen. Perusverikokeet ovat lähes normaalit.",
+            values: { age: 78, pH: 7.28, pCO2_kPa: 3.8, HCO3: 13, PaO2_kPa: 10.0, BE: -12, Na: 140, Cl: 106, Lac: 7.2, K: 4.6, Temp: 36.9, Hb: 132, MetHb: 0.8, COHb: 0.9, Ca2: 1.14, Glu: 8.8},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi, jota hengitys kompensoi osittain. Anionivaje (21) ja laktaatti (7.2) ovat korkeat, eli jossain elimistössä on hapeton kudos. Kun vatsakipu on kova mutta tunnustelulöydös vähäinen ja laktaatti korkea, kyseessä on suolen verenkiertohäiriö kunnes toisin todistetaan. Eteisvärinä selittää mahdollisen embolian.",
+            treatment: "Kiireellinen varjoainetietokonekuvaus ja kirurgin konsultaatio heti, ei odottavaa linjaa. Nesteytys ja kivunhoito matkalla. Viive maksaa suolen.",
+        },
+        {
+            id: "SalineNAGMA01", label: "Runsas keittosuolainfuusio", specialty: "Kirurgia",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "58v mies ison suolileikkauksen jälkeisenä päivänä vuodeosastolla. On saanut vuorokaudessa kuusi litraa 0.9 % keittosuolaliuosta. Vointi on kohtalainen, virtsaa tulee.",
+            values: { age: 58, pH: 7.31, pCO2_kPa: 4.2, HCO3: 16, PaO2_kPa: 10.5, BE: -9, Na: 142, Cl: 116, Lac: 1.3, K: 4.0, Temp: 37.0, Hb: 118, MetHb: 0.8, COHb: 0.9, Ca2: 1.15, Glu: 7.2},
+            correctPrimary: texts.metabolicAcidosisNAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi, jota hengitys kompensoi osittain. Anionivaje on normaali (10) ja kloridi korkea (116), joten happoa ei ole kertynyt vaan tasapaino on siirtynyt kloridin suuntaan. Syy on tiputuspussissa: keittosuolaliuoksessa on kloridia 154 mmol/l eli selvästi enemmän kuin veressä. Laktaatti on normaali eikä potilas ole sokissa.",
+            treatment: "Vaihda balansoituun liuokseen (esim. Ringer) ja arvioi, tarvitaanko nestettä ylipäätään näin paljon. Tila korjaantuu itsestään. Tärkein oppi: tarkista aina myös se, mitä olet itse antanut potilaalle.",
+        },
+        {
+            id: "Ileostomy01", label: "Runsaseritteinen ileostomia", specialty: "Kirurgia",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "34v nainen, ileostomia tehty kolme viikkoa sitten. Avanteesta tulee erittäin runsaasti vetistä eritettä. On janoinen, väsynyt ja pyörryttää seisomaan noustessa.",
+            values: { age: 34, pH: 7.30, pCO2_kPa: 4.0, HCO3: 15, PaO2_kPa: 12.2, BE: -10, Na: 137, Cl: 112, Lac: 1.2, K: 2.9, Temp: 36.8, Hb: 125, MetHb: 0.7, COHb: 0.8, Ca2: 1.16, Glu: 5.2},
+            correctPrimary: texts.metabolicAcidosisNAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi osittaisella hengityskompensaatiolla. Anionivaje on normaali (10) ja kloridi koholla (112). Ohutsuolen eritteessä on runsaasti bikarbonaattia, ja kun sitä valuu avanteesta ulos litroittain, elimistö menettää emästä - sama mekanismi kuin ripulissa. Matala kalium kertoo, että myös sitä menetetään.",
+            treatment: "Nesteytys balansoidulla liuoksella ja kaliumin korvaus. Erityksen vähentäminen ravitsemusohjauksella ja lääkkeillä sekä avannehoitajan konsultaatio.",
+        },
+        {
+            id: "Ileus01", label: "Suolitukos", specialty: "Kirurgia",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "71v nainen, aiemmin tehty kohdunpoisto. Kolme vuorokautta vatsa turvoksissa, ei ulostetta eikä ilmavaivoja, runsasta oksentelua. Nenämahaletku laitettu päivystyksessä.",
+            values: { age: 71, pH: 7.48, pCO2_kPa: 6.3, HCO3: 35, PaO2_kPa: 9.9, BE: 11, Na: 139, Cl: 93, Lac: 1.8, K: 3.2, Temp: 37.1, Hb: 148, MetHb: 0.8, COHb: 0.9, Ca2: 1.19, Glu: 6.4},
+            correctPrimary: texts.metabolicAlkalosis,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Korkea pH sekä korkea HCO3- ja BE eli metabolinen alkaloosi, jota hengitys kompensoi osittain hidastumalla. Oksentelu ja nenämahaletku vievät mahahappoa, ja matala kloridi (93) sekä matala kalium (3.2) ovat tyypilliset seuralaiset. Korkea hemoglobiini kertoo kuivumisesta - neste on suolen sisällä, ei verenkierrossa.",
+            treatment: "Nesteytys keittosuolaliuoksella, kaliumin korvaus, nenämahaletku ja kirurginen arvio. Seuraa laktaattia: sen nousu on merkki kuroutuvasta suolesta ja päivystysleikkauksesta.",
+        },
+        // --- ANESTESIA JA TEHOHOITO ---
+        {
+            id: "Laparoscopy01", label: "Laparoskopian kaasutäyttö", specialty: "Anestesia ja teho",
+            oxygen: "Hengityskone", difficulty: 1,
+            context: "45v nainen sappileikkauksessa laparoskopiassa, nukutuksessa hengityskoneessa. Uloshengityksen hiilidioksidi on noussut tasaisesti leikkauksen aikana. Vatsaontelossa on hiilidioksidikaasulla tehty ylipaine ja potilas on jyrkässä asennossa.",
+            values: { age: 45, pH: 7.29, pCO2_kPa: 7.5, HCO3: 27, PaO2_kPa: 24.0, BE: 1, Na: 139, Cl: 100, Lac: 1.2, K: 4.2, Temp: 36.0, Hb: 128, MetHb: 0.8, COHb: 0.9, Ca2: 1.19, Glu: 6.8},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Matala pH ja korkea pCO2 eli respiratorinen asidoosi. HCO3- ja BE ovat normaalit, joten tilanne on syntynyt juuri äsken. Kaksi syytä vaikuttaa samaan suuntaan: vatsaonteloon puhallettu hiilidioksidi imeytyy verenkiertoon, ja täysi vatsa sekä pääalaspäin oleva asento estävät palleaa liikkumasta. Korkea happiarvo johtuu pelkästään siitä, että potilas hengittää happirikasta kaasua.",
+            treatment: "Lisää minuuttiventilaatiota hengityskoneella ja kerro tilanteesta kirurgille. Jos pCO2 nousee jyrkästi eikä ventilaation lisäys auta, mieti muita syitä.",
+        },
+        {
+            id: "OverVentilation01", label: "Liian tehokas koneventilaatio", specialty: "Anestesia ja teho",
+            oxygen: "Hengityskone", difficulty: 1,
+            context: "55v nainen nukutuksessa hengityskoneessa selkäleikkauksen aikana. Hengityskoneen asetuksia ei ole tarkistettu leikkauksen alun jälkeen. Uloshengityksen hiilidioksidi on ollut pitkään matala.",
+            values: { age: 55, pH: 7.52, pCO2_kPa: 3.6, HCO3: 22, PaO2_kPa: 22.0, BE: -0.5, Na: 139, Cl: 105, Lac: 0.9, K: 3.4, Temp: 36.1, Hb: 130, MetHb: 0.7, COHb: 0.8, Ca2: 1.20, Glu: 6.5},
+            correctPrimary: texts.respiratoryAlkalosis,
+            correctCompensation: texts.nonCompensated,
+            explanation: "Korkea pH ja matala pCO2 eli respiratorinen alkaloosi. HCO3- ja BE ovat normaalit, joten tila on tuore. Nukutettu potilas ei säätele omaa hengitystään, joten pCO2 on täsmälleen se, minkä hengityskone määrää - tämä häiriö on siis itse aiheutettu. Korkea happiarvo johtuu lisähapesta.",
+            treatment: "Pienennä minuuttiventilaatiota. Alkaloosi supistaa aivoverisuonia, laskee ionisoitua kalsiumia ja kaliumia sekä heikentää hapen luovutusta kudoksiin, joten sitä ei kannata jättää ennalleen.",
+        },
+        {
+            id: "OHS01", label: "Uniapnea ja hypoventilaatio", specialty: "Anestesia ja teho",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "52v mies leikkausta edeltävällä käynnillä ennen polven tekonivelleikkausta. Kertoo kuorsaavansa kovaa, herää yöllä hengenahdistukseen ja nukahtelee päivisin. Vyötärönympärys on suuri. Näyte huoneilmalla.",
+            values: { age: 52, pH: 7.36, pCO2_kPa: 7.6, HCO3: 32, PaO2_kPa: 8.9, BE: 6.5, Na: 140, Cl: 97, Lac: 1.1, K: 4.3, Temp: 36.6, Hb: 160, MetHb: 0.8, COHb: 1.0, Ca2: 1.21, Glu: 6.6},
+            correctPrimary: texts.respiratoryAcidosis,
+            correctCompensation: texts.compensated,
+            explanation: "pH on viitealueella, mutta sekä pCO2 (7.6) että HCO3- (32) ovat koholla - merkki täysin kompensoidusta häiriöstä. Kumpi on ensisijainen? pH on alle 7.40 eli asidoosin puolella, joten kyse on respiratorisesta asidoosista, jota munuaiset ovat kompensoineet pitkän ajan kuluessa. Hengitys jää yöllä liian pinnalliseksi, ja tila on kestänyt kuukausia. Korkeahko hemoglobiini on vastaus pitkäaikaiseen hapenpuutteeseen.",
+            treatment: "Ylipainehoidon (CPAP) arvio ennen leikkausta. Anestesian kannalta olennaista: tämä potilas on hyvin herkkä opioideille ja rauhoittaville lääkkeille, ja happea annetaan harkiten.",
+        },
+        // --- SYNNYTYS JA NAISTENTAUDIT ---
+        {
+            id: "Pregnancy01", label: "Normaali loppuraskaus", specialty: "Synnytys ja naistentaudit",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "30v nainen raskausviikolla 36. Tulee päivystykseen, koska hengästyy portaissa. Tutkimuslöydös on normaali, keuhkoembolia on suljettu pois. Näyte huoneilmalla.",
+            values: { age: 30, pH: 7.44, pCO2_kPa: 4.0, HCO3: 20, PaO2_kPa: 13.0, BE: -3.5, Na: 137, Cl: 106, Lac: 1.2, K: 3.9, Temp: 36.9, Hb: 118, MetHb: 0.6, COHb: 0.7, Ca2: 1.18, Glu: 4.8},
+            correctPrimary: texts.respiratoryAlkalosis,
+            correctCompensation: texts.compensated,
+            explanation: "pH on viitealueella, mutta sekä pCO2 (4.0) että HCO3- (20) ovat matalat - kyseessä on täysin kompensoitu häiriö. pH on yli 7.40 eli alkaloosin puolella, ja sen selittää matala pCO2. Raskaushormoni progesteroni lisää hengitystä, ja munuaiset ovat ehtineet vastata laskemalla bikarbonaattia. Tämä on siis normaali raskauden fysiologia, ei sairaus.",
+            treatment: "Ei hoitoa. Käännä ajattelu toisin päin: jos raskaana olevan pCO2 on ”normaali” 5.5, se on itse asiassa liian korkea ja kertoo uhkaavasta hengitysvajauksesta.",
+        },
+        {
+            id: "EctopicPregnancy01", label: "Kohdunulkoisen raskauden repeämä", specialty: "Synnytys ja naistentaudit",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "29v nainen, äkillinen alavatsakipu ja pyörtyminen kotona. Viimeiset kuukautiset noin 7 viikkoa sitten. Kalpea ja hikinen, verenpaine 85/50, syke 120.",
+            values: { age: 29, pH: 7.30, pCO2_kPa: 3.6, HCO3: 13, PaO2_kPa: 12.8, BE: -12, Na: 139, Cl: 106, Lac: 5.5, K: 3.9, Temp: 36.2, Hb: 78, MetHb: 0.6, COHb: 0.7, Ca2: 1.14, Glu: 6.2},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi (matala pH, HCO3- 13, BE -12), jota hengitys kompensoi osittain. Anionivaje (20) ja laktaatti (5.5) ovat korkeat, koska verenvuoto on vienyt kudoksilta hapen. Hemoglobiini 78 kertoo vuodon määrästä. Muista sääntö: hedelmällisessä iässä olevan naisen vatsakipu on kohdunulkoinen raskaus, kunnes raskaustesti sanoo muuta.",
+            treatment: "Raskaustesti ja kaikukuvaus heti, veriryhmä ja sopivuuskoe, suoniyhteydet ja verituotteet sekä päivystysleikkaus. Astrup kertoo vaikeusasteen, ei diagnoosia.",
+        },
+        {
+            id: "Hyperemesis01", label: "Raskaudenaikainen runsas oksentelu", specialty: "Synnytys ja naistentaudit",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "26v nainen raskausviikolla 10. On oksentanut useita viikkoja eikä pysty pitämään nesteitä sisällään. Painoa on lähtenyt, virtsa on niukkaa ja tummaa.",
+            values: { age: 26, pH: 7.49, pCO2_kPa: 6.2, HCO3: 35, PaO2_kPa: 13.2, BE: 11, Na: 137, Cl: 91, Lac: 1.1, K: 3.0, Temp: 36.7, Hb: 128, MetHb: 0.6, COHb: 0.6, Ca2: 1.22, Glu: 4.1},
+            correctPrimary: texts.metabolicAlkalosis,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Korkea pH sekä korkea HCO3- (35) ja BE (+11) eli metabolinen alkaloosi. Hengitys kompensoi hidastumalla, joten pCO2 on koholla, mutta pH ei ole vielä normaali. Mahahapon menetys oksennuksen mukana selittää sekä alkaloosin että matalan kloridin (91) ja kaliumin (3.0). Huomaa, että raskaana olevan lähtötaso on lievästi alkalinen ja matala HCO3-, joten muutos on todellisuudessa vielä suurempi kuin miltä näyttää.",
+            treatment: "Suonensisäinen nesteytys keittosuolaliuoksella, kaliumin korvaus ja pahoinvointilääkitys. Anna tiamiini ennen sokeripitoisia liuoksia, koska pitkittynyt oksentelu tyhjentää B1-varastot.",
+        },
+        // --- MYRKYTYKSET ---
+        {
+            id: "Methanol01", label: "Metanolimyrkytys", specialty: "Myrkytykset",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "47v mies tuodaan päivystykseen. Joi edellisenä iltana tuntematonta kirkasta alkoholia. Sekava ja valittaa, että näkö on sumea ”kuin lumisateessa”. Hengittää syvään ja tiheästi.",
+            values: { age: 47, pH: 7.15, pCO2_kPa: 3.0, HCO3: 8, PaO2_kPa: 12.8, BE: -19, Na: 143, Cl: 105, Lac: 3.0, K: 4.2, Temp: 36.4, Hb: 148, MetHb: 1.0, COHb: 0.9, Ca2: 1.17, Glu: 5.6},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Vaikea metabolinen asidoosi: pH 7.15, HCO3- 8 ja BE -19. Hengitys kompensoi voimakkaasti (pCO2 3.0), mutta ei riitä. Anionivaje on erittäin korkea (30), eikä laktaatti selitä siitä kuin pienen osan - jokin muu happo on kertynyt vereen. Tuntematon alkoholi ja näköoireet ovat yhdessä klassinen yhdistelmä.",
+            treatment: "Soita myrkytystietokeskukseen. Hoitona vastalääke (fomepitsoli tai etanoli), joka estää metanolin muuttumisen myrkylliseksi, sekä dialyysi vaikeissa tapauksissa. Näkövaurio voi jäädä pysyväksi, joten viive ratkaisee.",
+        },
+        {
+            id: "AlcoholKetosis01", label: "Alkoholiketoasidoosi", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "52v mies, runsasta alkoholinkäyttöä. Lopetti juomisen kaksi päivää sitten vatsakivun ja oksentelun vuoksi eikä ole syönyt sen jälkeen. Vointi on huono, hengitys syvää. Verensokeri on normaali eikä hänellä ole diabetesta.",
+            values: { age: 52, pH: 7.29, pCO2_kPa: 3.6, HCO3: 13, PaO2_kPa: 12.0, BE: -12, Na: 137, Cl: 102, Lac: 2.6, K: 3.3, Temp: 36.3, Hb: 142, MetHb: 0.9, COHb: 1.4, Ca2: 1.12, Glu: 4.4},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi, jota hengitys kompensoi osittain. Anionivaje on korkea (22), mutta verensokeri on normaali - tämä ei siis ole diabeettinen ketoasidoosi. Kun energiaa ei tule ravinnosta, elimistö polttaa rasvaa ja tuottaa ketoaineita. Laktaatti on vain lievästi koholla, joten sekään ei selitä anionivajetta.",
+            treatment: "Sokeripitoista nestettä ja keittosuolaliuosta sekä kaliumin korvaus. Anna tiamiini ennen sokeria. Insuliinia ei tarvita, ja tila korjaantuu yleensä nopeasti.",
+        },
+        {
+            id: "CO01", label: "Häkämyrkytys", specialty: "Myrkytykset",
+            oxygen: "Huoneilma", difficulty: 3,
+            context: "42v mies vedettiin ulos savuisesta asunnosta. Päänsärkyä, pahoinvointia ja sekavuutta, mutta hengitystaajuus on lähes normaali. Pulssioksimetri sormessa näyttää 99 %. Näyte otettiin heti huoneilmalla.",
+            values: { age: 42, pH: 7.30, pCO2_kPa: 3.8, HCO3: 14, PaO2_kPa: 12.2, BE: -11, Na: 140, Cl: 107, Lac: 6.0, K: 4.1, Temp: 36.5, Hb: 152, MetHb: 1.0, COHb: 28.0, Ca2: 1.18, Glu: 7.9},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Metabolinen asidoosi, jota hengitys kompensoi osittain. Anionivaje (19) ja laktaatti (6.0) ovat korkeat, vaikka happiosapaine on täysin normaali. Selitys löytyy oksimetriasta: COHb 28 %. Häkä sitoutuu hemoglobiiniin voimakkaammin kuin happi, jolloin veri ei kuljeta happea, vaikka pO2 näyttää hyvältä. Pulssioksimetri ei erota häkähemoglobiinia happihemoglobiinista, joten saturaatiolukema on valheellisen hyvä.",
+            treatment: "100 % happea varaajapussimaskilla heti ja pitkään. Vaikeassa myrkytyksessä ylipainehappihoidon arvio. Tulipalon savussa mieti myös syanidia, jos laktaatti on hyvin korkea.",
+        },
+        // --- FYSIOLOGIA ---
+        {
+            id: "Exercise01", label: "Maksimaalinen rasitus", specialty: "Fysiologia",
+            oxygen: "Huoneilma", difficulty: 2,
+            context: "22v terve juoksija osallistuu tutkimukseen. Näyte otettu heti maksimaalisen 400 metrin juoksun jälkeen. Hengästynyt mutta voi hyvin ja juttelee normaalisti.",
+            values: { age: 22, pH: 7.24, pCO2_kPa: 3.5, HCO3: 11, PaO2_kPa: 13.4, BE: -15, Na: 142, Cl: 108, Lac: 16.0, K: 5.2, Temp: 37.8, Hb: 155, MetHb: 0.7, COHb: 0.6, Ca2: 1.22, Glu: 6.0},
+            correctPrimary: texts.metabolicAcidosisHAGMA,
+            correctCompensation: texts.partiallyCompensated,
+            explanation: "Luvut näyttävät hälyttäviltä: pH 7.24, HCO3- 11, BE -15, anionivaje 23 ja laktaatti 16. Silti potilas on terve ja voi hyvin. Lihakset tuottivat maksimaalisessa suorituksessa valtavasti maitohappoa, ja tiheä hengitys kompensoi tilannetta osittain. Arvot palautuvat itsestään muutamassa kymmenessä minuutissa.",
+            treatment: "Ei mitään. Tämä tapaus on visan tärkein muistutus: älä koskaan hoida lukua, vaan potilasta. Sama laktaattiarvo tarkoittaa aivan eri asiaa vuodeosastolla makaavalla vanhuksella.",
+        },
+        // --- SEKAHÄIRIÖT ---
+        {
+            id: "CardiacArrest01", label: "Elvytys", specialty: "Päivystys",
+            oxygen: "Palje, 100 % happi", difficulty: 3,
+            context: "66v mies meni elottomaksi kotona. Maallikkoelvytys alkoi noin kuuden minuutin viiveellä. Näyte otettu 20 minuutin elvytyksen jälkeen, potilasta ventiloidaan palkeella 100 % hapella.",
+            values: { age: 66, pH: 7.02, pCO2_kPa: 8.5, HCO3: 16, PaO2_kPa: 7.2, BE: -13, Na: 141, Cl: 101, Lac: 12.0, K: 6.0, Temp: 35.4, Hb: 140, MetHb: 1.2, COHb: 1.0, Ca2: 1.10, Glu: 12.0},
+            correctPrimary: texts.mixedMetAcidRespAcid,
+            correctCompensation: "N/A",
+            explanation: "Kaksi asidoosia yhtä aikaa. pCO2 on korkea, koska hiilidioksidi ei poistu pysähtyneessä verenkierrossa eikä palkeella saada aikaan riittävää ventilaatiota. Samalla HCO3- ja BE ovat matalat ja laktaatti korkea, koska kudokset ovat olleet ilman verenkiertoa. Kumpikaan häiriö ei kompensoi toista, joten pH romahtaa. Korkea kalium on tyypillinen ja on itsessään hoidettava löydös.",
+            treatment: "Hoito on hyvälaatuinen paineluelvytys, defibrillointi ja syyn korjaus - ei bikarbonaatti. Astrup kertoo lähinnä siitä, kuinka kauan verenkierto on ollut poikki. Kun verenkierto palautuu, asidoosi korjaantuu pääosin itsestään.",
+        },
+        {
+            id: "PulmonaryEdema01", label: "Akuutti keuhkopöhö", specialty: "Päivystys",
+            oxygen: "Maski", difficulty: 3,
+            context: "82v nainen heräsi yöllä hengenahdistukseen. Istuu eteenpäin nojaten, ei saa puhuttua lauseita, yskii vaaleaa vaahtoa. Keuhkoissa rahisee laajalti. On alkanut vaikuttaa väsyneeltä ja uneliaalta. Lisähappi maskilla.",
+            values: { age: 82, pH: 7.21, pCO2_kPa: 7.4, HCO3: 22, PaO2_kPa: 6.8, BE: -5, Na: 138, Cl: 98, Lac: 6.5, K: 4.3, Temp: 36.4, Hb: 130, MetHb: 1.0, COHb: 1.0, Ca2: 1.15, Glu: 9.5},
+            correctPrimary: texts.mixedMetAcidRespAcid,
+            correctCompensation: "N/A",
+            explanation: "Ensivaikutelma voi olla pelkkä respiratorinen asidoosi, koska pCO2 on korkea ja HCO3- näyttää normaalilta. Katso kuitenkin BE (-5), anionivaje (18) ja laktaatti (6.5): mukana on myös metabolinen asidoosi. Akuutissa respiratorisessa asidoosissa HCO3- pikemminkin nousisi hieman, joten ”normaali” HCO3- on tässä liian matala. Keuhkoihin kertynyt neste estää happeutumisen, väsyvä potilas ei jaksa poistaa hiilidioksidia ja heikko sydämen pumppaus tuottaa laktaattia. Alkuvaiheessa keuhkopöhöpotilas hyperventiloi, joten pCO2:n kääntyminen nousuun kertoo romahduksen olevan lähellä.",
+            treatment: "Puoli-istuva asento, happi ja ylipainehoito (CPAP tai NIV) - juuri se korjaa sekä happeutumisen että väsymyksen. Lisäksi nitro ja diureetti. Väsyvä keuhkopöhöpotilas on hätätilanne.",
+        },
+        {
+            id: "Hypothermia01", label: "Hypotermia", specialty: "Päivystys",
+            oxygen: "Huoneilma", difficulty: 3,
+            context: "61v mies löydettiin talvella ulkoa lumihangesta. Alkoholin vaikutuksen alainen, tajunta alentunut, ei värise enää. Hengitys on hidasta ja pinnallista. Ruumiinlämpö 29.8 astetta.",
+            values: { age: 61, pH: 7.16, pCO2_kPa: 6.6, HCO3: 17, PaO2_kPa: 8.5, BE: -10, Na: 142, Cl: 107, Lac: 5.0, K: 4.9, Temp: 29.8, Hb: 152, MetHb: 0.9, COHb: 1.2, Ca2: 1.12, Glu: 5.0},
+            correctPrimary: texts.mixedMetAcidRespAcid,
+            correctCompensation: "N/A",
+            explanation: "Sekä hengitys että aineenvaihdunta ovat happaman puolella. pCO2 on korkea, koska kylmä hidastaa hengitystä. Samalla BE on -10, anionivaje 18 ja laktaatti 5.0, koska ääreisverenkierto on supistunut ja lihakset ovat värisseet pitkään. Kumpikaan häiriö ei kompensoi toista. Huomaa myös näytteen otsikko: analysaattori on korjannut arvot potilaan omaan lämpötilaan.",
+            treatment: "Käsittele potilasta varovasti, koska kylmä sydän menee herkästi kammiovärinään. Lämmitä, anna lämmintä nestettä ja happea. Muista sääntö: kukaan ei ole kuollut ennen kuin hän on lämmin ja kuollut.",
+        }
+    ];
+
+    // !!! ON TÄRKEÄÄ, ETTÄ KAIKKI KOMPONENTIT (ScoreDisplay, UnitSelector, ABGDisplay, jne.)
+    // JA ABGQuiz-FUNKTIO OVAT MYÖS TÄYDELLISINÄ VERSIOINA TÄSSÄ SCRIPT-LOHKOSSA !!!
+    // (Kuten edellisessä vastauksessa, jossa annoin koko index.html-tiedoston)
+
+    // --- Käyttöliittymän tekstit ---
+    const ui = {
+        modePractice: "Harjoitus",
+        modeExam: "Koe",
+        blind: "Sokkotila",
+        blindNotice: "Esitiedot piilotettu. Tulkitse pelkät arvot.",
+        showContext: "Näytä esitiedot",
+        answer: "Vastaa",
+        skip: "Ohita",
+        reveal: "Näytä vastaus",
+        retry: "Yritä uudelleen",
+        next: "Seuraava",
+        streak: "Putki",
+        statsButton: "Tilastot",
+        statsTitle: "Osaaminen aihealueittain",
+        statsEmpty: "Ei vielä vastauksia. Tilastot tallentuvat tämän selaimen muistiin.",
+        statsReset: "Tyhjennä tilastot",
+        statsConfirm: "Tyhjennetäänkö kaikki tallennetut tilastot?",
+        statsTotal: "Yhteensä",
+        treatmentToggle: "Hoito",
+        keyValues: "Avainarvot",
+        revealedNote: "Vastaus näytettiin, joten tätä ei lasketa oikeaksi.",
+        examStart: "Aloita koe",
+        examTitle: "Kokeen tulokset",
+        examAgain: "Uusi koe",
+        examBack: "Takaisin harjoitteluun",
+        examAnswered: "Vastattu. Palaute näytetään kokeen lopussa.",
+        yourAnswer: "Vastauksesi",
+        helpHint: "Katkoviivalla alleviivattu nimi avaa ohjeen.",
+        guideButton: "Tulkintaohje",
+        introTitle: "Tervetuloa!",
+        introOpenGuide: "Avaa tulkintaohje",
+        introBack: "Edellinen",
+        introNext: "Seuraava",
+        introDone: "Aloita harjoittelu",
+        introReplay: "Esittely",
+        aboutTitle: "Tietoa sovelluksesta",
+        reviewButton: "Kertaus",
+        reviewEmpty: "Ei kerattavia tapauksia - kaikki väärin menneet on kerrattu!",
+        reviewNotice: "Kertaustila: näet vain aiemmin väärin menneet tapaukset.",
+        guidedLabel: "Ohjattu eteneminen",
+        confidenceAsk: "Kuinka varma olet?",
+        confidenceSure: "Varma",
+        confidenceUnsure: "Epävarma",
+        examByCategory: "Aihealueittain",
+        statsExport: "Vie varmuuskopio",
+        statsImport: "Tuo varmuuskopio",
+        statsConfidentWrong: "Varmana väärin",
+        firstAttemptNote: "Vain ensimmäinen yritys lasketaan pisteisiin.",
+    };
+
+    const EXAM_LENGTH = 10;
+    const STORE_KEY = "astrupvisa.v2";
+
+    const MIXED_TYPES = [texts.mixedMetAcidRespAcid, texts.mixedMetAcidRespAlk, texts.mixedMetAlkRespAcid];
+    const METACID_TYPES = [texts.metabolicAcidosisNAGMA, texts.metabolicAcidosisHAGMA];
+
+    // Kiinteä järjestys: opettaa vaihtoehtojen kartan (3 saraketta työpöydällä)
+    const PRIMARY_OPTIONS = [
+        texts.normal, texts.metabolicAcidosisNAGMA, texts.metabolicAcidosisHAGMA,
+        texts.metabolicAlkalosis, texts.respiratoryAcidosis, texts.respiratoryAlkalosis,
+        texts.mixedMetAcidRespAcid, texts.mixedMetAcidRespAlk, texts.mixedMetAlkRespAcid
+    ];
+    const COMPENSATION_OPTIONS = [texts.compensated, texts.partiallyCompensated, texts.nonCompensated];
+
+    const CATEGORIES = [
+        { key: "normal", label: texts.filterNormalLabel, test: t => t === texts.normal },
+        { key: "metacid", label: texts.filterMetAcidLabel, test: t => METACID_TYPES.includes(t) },
+        { key: "metalk", label: texts.filterMetAlkLabel, test: t => t === texts.metabolicAlkalosis },
+        { key: "respacid", label: texts.filterRespAcidLabel, test: t => t === texts.respiratoryAcidosis },
+        { key: "respalk", label: texts.filterRespAlkLabel, test: t => t === texts.respiratoryAlkalosis },
+        { key: "mixed", label: texts.filterMixedLabel, test: t => MIXED_TYPES.includes(t) },
+    ];
+    function categoryKey(primary) {
+        const c = CATEGORIES.find(c => c.test(primary));
+        return c ? c.key : "other";
+    }
+
+    // --- Tallennus selaimen muistiin (epäonnistuu hiljaa esim. privaattitilassa) ---
+    function loadStore() {
+        try { return JSON.parse(window.localStorage.getItem(STORE_KEY)) || {}; }
+        catch (e) { return {}; }
+    }
+    function saveStore(obj) {
+        try { window.localStorage.setItem(STORE_KEY, JSON.stringify(obj)); }
+        catch (e) { /* tallennus ei käytettävissä */ }
+    }
+
+    // --- Apufunktiot arvojen tulkintaan ---
+    function isAbnormal(value, range) {
+        if (value === null || value === undefined || isNaN(value) || !range) return false;
+        if (range.high !== undefined && range.high !== null && value > range.high) return true;
+        if (range.low !== undefined && range.low !== null && value < range.low) return true;
+        return false;
+    }
+    function arrowFor(value, range) {
+        if (value === null || value === undefined || isNaN(value) || !range) return "";
+        if (range.high !== undefined && range.high !== null && value > range.high) return "\u2191";
+        if (range.low !== undefined && range.low !== null && value < range.low) return "\u2193";
+        return "";
+    }
+    function formatRange(range, unit, decimals) {
+        if (!range) return "";
+        const u = unit ? " " + unit : "";
+        const lo = range.low !== undefined && range.low !== null ? range.low.toFixed(decimals) : null;
+        const hi = range.high !== undefined && range.high !== null ? range.high.toFixed(decimals) : null;
+        if (range === REF_LAC && hi) return "(alle " + hi + u + ")";
+        if (lo && hi) return "(" + lo + "\u2013" + hi + u + ")";
+        if (hi) return "(alle " + hi + u + ")";
+        if (lo) return "(yli " + lo + u + ")";
+        return "";
+    }
+    function anionGapOf(v) {
+        if (!v || v.Na === undefined || v.Cl === undefined || v.HCO3 === undefined) return null;
+        return v.Na - (v.Cl + v.HCO3);
+    }
+    function normalizeCase(c) {
+        return Object.assign({}, c, {
+            type: c.correctPrimary,
+            compensated: c.correctCompensation === undefined ? "N/A" : c.correctCompensation
+        });
+    }
+    function newDeck() { return shuffleArray(patientCases.map((_, i) => i)); }
+
+    const DIFF_LABELS = ["", "Perus", "Jatko", "Vaikea"];
+
+    // Painotettu sekoitus: mitä heikompi aihealue, sitä todennäköisemmin sen
+    // tapaukset tulevat aikaisin. Paino = 1 + 2 x virheosuus (vasta 3+ vastauksen jälkeen).
+    function errWeight(stats, primary) {
+        const s = stats && stats[categoryKey(primary)];
+        if (!s || s.n < 3) return 1;
+        return 1 + 2 * (1 - s.ok / s.n);
+    }
+    function weightedShuffle(indices, stats) {
+        return indices
+            .map(i => ({ i: i, key: Math.random() / errWeight(stats, patientCases[i].correctPrimary) }))
+            .sort((a, b) => a.key - b.key)
+            .map(x => x.i);
+    }
+    function buildDeck(stats, guided, missedIds, review) {
+        const all = patientCases.map((_, i) => i);
+        if (review) {
+            const set = missedIds || [];
+            const idxs = all.filter(i => set.indexOf(patientCases[i].id) >= 0);
+            if (idxs.length) return shuffleArray(idxs);
+        }
+        if (!guided) return weightedShuffle(all, stats);
+        const tiers = [[], [], [], []];
+        all.forEach(i => { tiers[patientCases[i].difficulty || 2].push(i); });
+        return [].concat(
+            weightedShuffle(tiers[1], stats),
+            weightedShuffle(tiers[2], stats),
+            weightedShuffle(tiers[3], stats)
+        );
+    }
+
+    // --- Vihjeet väärään vastaukseen ---
+    function primaryPointer(correctPrimary, v) {
+        const pH = v.pH.toFixed(2), pco2 = v.pCO2_kPa.toFixed(1), hco3 = v.HCO3.toFixed(0);
+        if (correctPrimary === texts.normal) return "Kaikki arvot ovat viitealueilla (pH " + pH + ", pCO2 " + pco2 + " kPa, HCO3- " + hco3 + ").";
+        if (METACID_TYPES.includes(correctPrimary)) return "Matala pH (" + pH + ") yhdessä matalan HCO3-:n (" + hco3 + ") kanssa kertoo metabolisesta asidoosista.";
+        if (correctPrimary === texts.metabolicAlkalosis) return "Korkea pH (" + pH + ") yhdessä korkean HCO3-:n (" + hco3 + ") kanssa kertoo metabolisesta alkaloosista.";
+        if (correctPrimary === texts.respiratoryAcidosis) return "Matala pH (" + pH + ") yhdessä korkean pCO2:n (" + pco2 + " kPa) kanssa kertoo respiratorisesta asidoosista.";
+        if (correctPrimary === texts.respiratoryAlkalosis) return "Korkea pH (" + pH + ") yhdessä matalan pCO2:n (" + pco2 + " kPa) kanssa kertoo respiratorisesta alkaloosista.";
+        return "";
+    }
+    function compensationPointer(scenario) {
+        const v = scenario.values;
+        const isResp = scenario.correctPrimary === texts.respiratoryAcidosis || scenario.correctPrimary === texts.respiratoryAlkalosis;
+        const val = isResp ? v.HCO3 : v.pCO2_kPa;
+        const range = isResp ? REF_HCO3 : REF_PCO2_KPA;
+        const name = isResp ? "HCO3-" : "pCO2";
+        const shown = isResp ? val.toFixed(0) : val.toFixed(1);
+        const phNormal = v.pH >= REF_PH.low && v.pH <= REF_PH.high;
+        const paramNormal = !isAbnormal(val, range);
+        return "pH " + v.pH.toFixed(2) + " on " + (phNormal ? "viitealueella" : "poikkeava") + " ja kompensoiva " +
+            name + " " + shown + " on " + (paramNormal ? "viitealueella" : "poikkeava") + ", joten oikea vastaus on: " + scenario.compensated + ".";
+    }
+
+    // --- Pistenäyttö ja asetukset ---
+    function ScoreDisplay({ score, attempts, streak, animate, position, total, examCount, mode }) {
+        return (
+            <div className="score-display">
+                <span>{texts.scoreLabel} <span className={"score-number" + (animate ? " score-animated" : "")}>{score}</span></span>
+                <span className="score-sep">{texts.attemptsLabel} {attempts}</span>
+                {streak >= 2 ? <span className="streak-badge">{ui.streak} {streak}</span> : null}
+                <span className="progress-badge">
+                    {mode === "koe" ? ui.modeExam + " " + Math.min(examCount + 1, EXAM_LENGTH) + "/" + EXAM_LENGTH
+                                    : "Tapaus " + (position + 1) + "/" + total}
+                </span>
+            </div>
+        );
+    }
+
+    function UnitSelector({ selectedUnit, onUnitChange }) {
+        return (
+            <div className="unit-selector">
+                <span>{texts.selectUnit}</span>
+                <label><input type="radio" name="gasUnit" value="kPa" checked={selectedUnit === "kPa"} onChange={() => onUnitChange("kPa")} /> {texts.kpa}</label>
+                <label><input type="radio" name="gasUnit" value="mmHg" checked={selectedUnit === "mmHg"} onChange={() => onUnitChange("mmHg")} /> {texts.mmhg}</label>
+            </div>
+        );
+    }
+
+    // --- Yksi rivi kuitissa ---
+    function ReceiptRow({ label, raw, display, unit, range, rangeText, help, onOpenHelp }) {
+        const bad = isAbnormal(raw, range);
+        const dir = arrowFor(raw, range);
+        return (
+            <div className="receipt-row">
+                {help
+                    ? <button type="button" className="param-name has-help" onClick={() => onOpenHelp(help)}>{label}</button>
+                    : <span className="param-name">{label}</span>}
+                <span className={"param-value" + (bad ? " abnormal-value" : "")}>{display}</span>
+                <span className={"param-arrow" + (bad ? " abnormal-value" : "")}>{dir}</span>
+                <span className="param-unit">{unit}</span>
+                <span className="param-ref">{rangeText}</span>
+            </div>
+        );
+    }
+
+    // --- Kuitti eli verikaasuanalyysin tuloste ---
+    function ABGDisplay({ scenario, pco2Unit, onOpenHelp }) {
+        const printTime = useMemo(
+            () => new Date().toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" }),
+            [scenario ? scenario.id : null]
+        );
+        if (!scenario || !scenario.values) {
+            return <section className="abg-values error-state"><p>Arvoja ei saatavilla.</p></section>;
+        }
+        const v = scenario.values;
+        const ag = anionGapOf(v);
+        const mmHg = pco2Unit === "mmHg";
+        const gasUnit = mmHg ? "mmHg" : "kPa";
+        const pco2Range = mmHg ? REF_PCO2_MMHG : REF_PCO2_KPA;
+        const po2RangeKpa = getPao2RefKpa(v.age);
+        const po2Range = mmHg
+            ? { low: Math.round(po2RangeKpa.low * KPA_TO_MMHG), high: Math.round(po2RangeKpa.high * KPA_TO_MMHG) }
+            : po2RangeKpa;
+        const gasDec = mmHg ? 0 : 1;
+        const hbRange = getHbRef(v.age);
+
+        return (
+            <div className="receipt-scroll-wrapper">
+                <section className="abg-values">
+                    <div className="receipt-header">
+                        <span>{texts.sampleTypeLabel}: {scenario.sampleType || texts.sampleTypeValue}</span>
+                        <span className={isAbnormal(v.Temp, REF_TEMP) ? "abnormal-value" : ""}>
+                            {arrowFor(v.Temp, REF_TEMP)} {texts.tempLabel}={v.Temp.toFixed(1)}{texts.tempUnit}
+                        </span>
+                    </div>
+                    <div className="receipt-header receipt-subheader">
+                        <span>{texts.oxygenLabel}: {scenario.oxygen || "Huoneilma"}</span>
+                        <span>{texts.ageLabel}: {v.age < 1 ? Math.round(v.age * 12) + " kk" : v.age + " v"}</span>
+                    </div>
+                    <hr className="receipt-separator" />
+
+                    <h4 className="receipt-heading">{texts.headingTempCorrected}</h4>
+                    <ReceiptRow label={texts.phLabel} raw={v.pH} display={v.pH.toFixed(3)} unit=""
+                        range={REF_PH} rangeText={formatRange(REF_PH, "", 2)} help="pH" onOpenHelp={onOpenHelp} />
+                    <ReceiptRow label={<Fragment>pCO<sub>2</sub>(T)</Fragment>} raw={v.pCO2_kPa}
+                        display={(mmHg ? v.pCO2_kPa * KPA_TO_MMHG : v.pCO2_kPa).toFixed(gasDec + 1)} unit={gasUnit}
+                        range={REF_PCO2_KPA} rangeText={formatRange(pco2Range, gasUnit, gasDec)} help="pCO2" onOpenHelp={onOpenHelp} />
+                    <ReceiptRow label={<Fragment>pO<sub>2</sub>(T)</Fragment>} raw={v.PaO2_kPa}
+                        display={(mmHg ? v.PaO2_kPa * KPA_TO_MMHG : v.PaO2_kPa).toFixed(gasDec)} unit={gasUnit}
+                        range={po2RangeKpa} rangeText={formatRange(po2Range, gasUnit, gasDec)} help="PaO2" onOpenHelp={onOpenHelp} />
+
+                    <h4 className="receipt-heading">{texts.headingAcidBase}</h4>
+                    <ReceiptRow label={<Fragment>HCO<sub>3</sub><sup>-</sup></Fragment>} raw={v.HCO3} display={v.HCO3.toFixed(1)}
+                        unit="mmol/L" range={REF_HCO3} rangeText={formatRange(REF_HCO3, "mmol/L", 0)} help="HCO3" onOpenHelp={onOpenHelp} />
+                    <ReceiptRow label={texts.beLabel} raw={v.BE} display={v.BE.toFixed(1)}
+                        unit="mmol/L" range={REF_BE} rangeText={formatRange(REF_BE, "mmol/L", 0)} help="BE" onOpenHelp={onOpenHelp} />
+                    {ag !== null
+                        ? <ReceiptRow label={texts.agLabel} raw={ag} display={ag.toFixed(0)}
+                            unit="mmol/L" range={REF_AG} rangeText={formatRange(REF_AG, "mmol/L", 0)} help="AG" onOpenHelp={onOpenHelp} />
+                        : null}
+
+                    <h4 className="receipt-heading">{texts.headingOxymetry}</h4>
+                    <ReceiptRow label={texts.hbLabel} raw={v.Hb} display={v.Hb.toFixed(0)}
+                        unit="g/L" range={hbRange} rangeText={formatRange(hbRange, "g/L", 0)} />
+                    <ReceiptRow label={texts.methbLabel} raw={v.MetHb} display={v.MetHb.toFixed(1)}
+                        unit="%" range={REF_METHB} rangeText={formatRange(REF_METHB, "%", 1)} help="MetHb" onOpenHelp={onOpenHelp} />
+                    {v.COHb !== undefined && v.COHb !== null
+                        ? <ReceiptRow label={texts.cohbLabel} raw={v.COHb} display={v.COHb.toFixed(1)}
+                            unit="%" range={REF_COHB} rangeText={formatRange(REF_COHB, "%", 1)} help="COHb" onOpenHelp={onOpenHelp} />
+                        : null}
+
+                    <h4 className="receipt-heading">{texts.headingElectrolytes}</h4>
+                    <ReceiptRow label={<Fragment>K<sup>+</sup></Fragment>} raw={v.K} display={v.K.toFixed(1)}
+                        unit="mmol/L" range={REF_K} rangeText={formatRange(REF_K, "mmol/L", 1)} help="K" onOpenHelp={onOpenHelp} />
+                    <ReceiptRow label={<Fragment>Na<sup>+</sup></Fragment>} raw={v.Na} display={v.Na.toFixed(0)}
+                        unit="mmol/L" range={REF_NA} rangeText={formatRange(REF_NA, "mmol/L", 0)} />
+                    <ReceiptRow label={<Fragment>Ca<sup>2+</sup></Fragment>} raw={v.Ca2} display={v.Ca2.toFixed(2)}
+                        unit="mmol/L" range={REF_CA2} rangeText={formatRange(REF_CA2, "mmol/L", 2)} />
+                    <ReceiptRow label={<Fragment>Cl<sup>-</sup></Fragment>} raw={v.Cl} display={v.Cl.toFixed(0)}
+                        unit="mmol/L" range={REF_CL} rangeText={formatRange(REF_CL, "mmol/L", 0)} help="Cl" onOpenHelp={onOpenHelp} />
+
+                    <h4 className="receipt-heading">{texts.headingMetabolites}</h4>
+                    <ReceiptRow label={texts.gluLabel} raw={v.Glu} display={v.Glu.toFixed(1)}
+                        unit="mmol/L" range={REF_GLU} rangeText={formatRange(REF_GLU, "mmol/L", 1)} />
+                    <ReceiptRow label={texts.lacLabel} raw={v.Lac} display={v.Lac.toFixed(1)}
+                        unit="mmol/L" range={REF_LAC} rangeText={formatRange(REF_LAC, "mmol/L", 1)} help="Lac" onOpenHelp={onOpenHelp} />
+
+                    <hr className="receipt-separator" />
+                    <div className="receipt-footer">{texts.footerPrinted} {printTime}</div>
+                </section>
+            </div>
+        );
+    }
+
+    // --- Avainarvot palautteen yhteydessä ---
+    function QuickStrip({ scenario }) {
+        const v = scenario.values;
+        const ag = anionGapOf(v);
+        const items = [
+            { k: "pH", val: v.pH.toFixed(2), bad: isAbnormal(v.pH, REF_PH) },
+            { k: "pCO2", val: v.pCO2_kPa.toFixed(1), bad: isAbnormal(v.pCO2_kPa, REF_PCO2_KPA) },
+            { k: "HCO3-", val: v.HCO3.toFixed(0), bad: isAbnormal(v.HCO3, REF_HCO3) },
+            { k: "BE", val: v.BE.toFixed(1), bad: isAbnormal(v.BE, REF_BE) },
+            { k: "AG", val: ag !== null ? ag.toFixed(0) : "-", bad: isAbnormal(ag, REF_AG) },
+        ];
+        return (
+            <div className="quick-strip" aria-label={ui.keyValues}>
+                {items.map(i => (
+                    <span key={i.k} className={"quick-item" + (i.bad ? " quick-bad" : "")}>
+                        <span className="quick-key">{i.k}</span> {i.val}
+                    </span>
+                ))}
+            </div>
+        );
+    }
+
+    function OptionsGrid({ title, options, selectedValue, onSelect, disabled, type, className }) {
+        const gridClass = type === "primary" ? "options-grid" : "compensation-grid";
+        const buttonClass = type === "primary" ? "option" : "compensation";
+        return (
+            <div className={(gridClass + " " + (className || "")).trim()}>
+                <h2>{title}</h2>
+                {options.map(option => (
+                    <button key={option} type="button"
+                        className={buttonClass + (selectedValue === option ? " selected" : "")}
+                        aria-pressed={selectedValue === option}
+                        onClick={() => onSelect(option)}
+                        disabled={disabled}>
+                        {option}
+                    </button>
+                ))}
+            </div>
+        );
+    }
+
+    // --- Palaute ---
+    function FeedbackDisplay({ isCorrect, revealed, scenario, selectedPrimary, selectedCompensation }) {
+        const [showTreatment, setShowTreatment] = useState(false);
+        if (!scenario || !scenario.values) return null;
+        const v = scenario.values;
+        const ag = anionGapOf(v);
+        const correctPrimary = scenario.correctPrimary;
+        const correctComp = scenario.compensated;
+        const selMixed = MIXED_TYPES.includes(selectedPrimary);
+        const corMixed = MIXED_TYPES.includes(correctPrimary);
+        const selMetAcid = METACID_TYPES.includes(selectedPrimary);
+        const corMetAcid = METACID_TYPES.includes(correctPrimary);
+        const primaryRight = selectedPrimary === correctPrimary;
+
+        const hints = [];
+        if (!isCorrect && !revealed) {
+            if (selMixed && !corMixed) {
+                hints.push("Valitsit sekahäiriön, mutta arvot viittaavat yhteen primäärihäiriöön: " + primaryPointer(correctPrimary, v));
+            } else if (!selMixed && corMixed) {
+                hints.push("Tässä on kaksi samanaikaista primäärihäiriötä (" + correctPrimary + "). Katso poikkeamat SEKÄ pCO2:ssa ETTÄ HCO3-/BE:ssä ja mieti, kumpi selittää pH:n ja mikä anamneesissa selittää toisen.");
+            } else if (selMetAcid && corMetAcid && !primaryRight) {
+                hints.push(correctPrimary === texts.metabolicAcidosisHAGMA
+                    ? "Tunnistit metabolisen asidoosin, mutta anionivaje (" + (ag !== null ? ag.toFixed(0) : "?") + ") on koholla, eli kyseessä on HAGMA."
+                    : "Tunnistit metabolisen asidoosin, mutta anionivaje (" + (ag !== null ? ag.toFixed(0) : "?") + ") on normaali, eli kyseessä on NAGMA.");
+            } else if (!primaryRight) {
+                hints.push("Valitsit: " + selectedPrimary + ". " + primaryPointer(correctPrimary, v));
+            }
+            if (primaryRight && correctComp !== "N/A" && selectedCompensation !== correctComp) {
+                hints.push("Primäärihäiriö oikein. " + compensationPointer(scenario));
+            }
+            if (ag !== null && ag > REF_AG.high && !corMetAcid) {
+                hints.push("Huomaa myös kohonnut anionivaje (" + ag.toFixed(0) + "): mieti mikä mittaamaton anioni sen selittää.");
+            }
+            if (v.K < REF_K.low || v.K > REF_K.high) {
+                hints.push("Huomaa poikkeava kalium (" + v.K.toFixed(1) + " mmol/L). Muista yhteys happo-emästasapainoon.");
+            }
+        }
+
+        return (
+            <div className={"feedback " + (isCorrect ? "correct" : "incorrect")} aria-live="polite">
+                <div className="feedback-summary">
+                    <span>{isCorrect ? "\u2705" : "\u274C"}</span>
+                    {revealed ? ui.revealedNote : (isCorrect ? texts.feedbackCorrect : texts.feedbackIncorrect)}
+                </div>
+
+                <QuickStrip scenario={scenario} />
+
+                {!isCorrect ? (
+                    <div className="feedback-correct-answer">
+                        <p><strong>{texts.feedbackCorrectAnswerIs}</strong></p>
+                        <p><em>{texts.feedbackPrimaryIs}</em> {correctPrimary}</p>
+                        {correctComp !== "N/A" ? <p><em>{texts.feedbackCompensationIs}</em> {correctComp}</p> : null}
+                        {selectedPrimary && !revealed
+                            ? <p className="your-answer"><em>{ui.yourAnswer}:</em> {selectedPrimary}{selectedCompensation ? " + " + selectedCompensation : ""}</p>
+                            : null}
+                    </div>
+                ) : null}
+
+                {hints.length > 0 ? (
+                    <div className="feedback-differential">
+                        <hr className="feedback-divider" />
+                        <p><strong>{texts.feedbackDiffDiagTitle}</strong></p>
+                        <ul>{hints.map((h, i) => <li key={i}>{h}</li>)}</ul>
+                    </div>
+                ) : null}
+
+                <div className="feedback-section">
+                    <hr className="feedback-divider" />
+                    <h4>{texts.explanationTitle}</h4>
+                    <p>{scenario.explanation}</p>
+                </div>
+
+                {scenario.treatment ? (
+                    <div className="feedback-section feedback-treatment">
+                        <button type="button" className="treatment-toggle" aria-expanded={showTreatment}
+                            onClick={() => setShowTreatment(!showTreatment)}>
+                            {showTreatment ? "\u25BE " : "\u25B8 "}{ui.treatmentToggle}
+                        </button>
+                        {showTreatment ? <p>{scenario.treatment}</p> : null}
+                    </div>
+                ) : null}
+            </div>
+        );
+    }
+
+    // --- Modaali (palauttaa fokuksen ja pitää sen sisällään) ---
+    function HelpModal({ isOpen, onClose, title, children }) {
+        const boxRef = React.useRef(null);
+        const openerRef = React.useRef(null);
+        useEffect(() => {
+            if (!isOpen) return undefined;
+            openerRef.current = document.activeElement;
+            document.body.classList.add("no-scroll");
+            const box = boxRef.current;
+            if (box) {
+                const first = box.querySelector("button, a, input");
+                if (first) first.focus();
+            }
+            const onKey = e => {
+                if (e.key === "Escape") { onClose(); return; }
+                if (e.key !== "Tab" || !box) return;
+                const items = box.querySelectorAll("button, a[href], input, [tabindex]:not([tabindex='-1'])");
+                if (!items.length) return;
+                const first = items[0], last = items[items.length - 1];
+                if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+            };
+            document.addEventListener("keydown", onKey);
+            return () => {
+                document.removeEventListener("keydown", onKey);
+                document.body.classList.remove("no-scroll");
+                if (openerRef.current && openerRef.current.focus) openerRef.current.focus();
+            };
+        }, [isOpen, onClose]);
+        if (!isOpen) return null;
+        return createPortal(
+            <div className="modal-overlay visible" onClick={onClose}>
+                <div className="modal-content" ref={boxRef} role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
+                    <h2>{title}</h2>
+                    <div className="modal-body">{children}</div>
+                    <button type="button" className="modal-close-button" onClick={onClose}>{texts.closeButton}</button>
+                </div>
+            </div>,
+            document.getElementById("modal-root")
+        );
+    }
+
+    // --- Tilastot ---
+    function exportStore() {
+        try {
+            const data = JSON.stringify(loadStore(), null, 2);
+            const blob = new Blob([data], { type: "application/json" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "astrup-edistyminen.json";
+            document.body.appendChild(a); a.click();
+            setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+        } catch (e) { window.alert("Vienti epäonnistui."); }
+    }
+    function importStore(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            try {
+                const obj = JSON.parse(reader.result);
+                if (!obj || typeof obj !== "object") throw new Error("muoto");
+                saveStore(obj);
+                window.location.reload();
+            } catch (e) { window.alert("Tiedostoa ei voitu lukea."); }
+        };
+        reader.readAsText(file);
+    }
+
+    function StatsPanel({ stats, onReset }) {
+        const rows = CATEGORIES.map(c => {
+            const s = stats[c.key] || { n: 0, ok: 0 };
+            return { label: c.label, n: s.n, ok: s.ok, pct: s.n ? Math.round(100 * s.ok / s.n) : null };
+        });
+        const total = rows.reduce((a, r) => ({ n: a.n + r.n, ok: a.ok + r.ok }), { n: 0, ok: 0 });
+        if (!total.n) return <p className="stats-empty">{ui.statsEmpty}</p>;
+        return (
+            <div className="stats-panel">
+                {rows.map(r => (
+                    <div key={r.label} className="stats-row">
+                        <span className="stats-label">{r.label}</span>
+                        <span className="stats-bar">
+                            <span className="stats-fill" style={{ width: (r.pct === null ? 0 : r.pct) + "%" }}></span>
+                        </span>
+                        <span className="stats-num">{r.n ? r.ok + "/" + r.n : "\u2013"}</span>
+                    </div>
+                ))}
+                <p className="stats-total">{ui.statsTotal}: {total.ok}/{total.n} ({Math.round(100 * total.ok / total.n)} %)</p>
+                {stats.__cw ? <p className="stats-cw">{ui.statsConfidentWrong}: {stats.__cw} - nämä kannattaa kerrata ensin.</p> : null}
+                <div className="stats-io">
+                    <button type="button" className="secondary-button small" onClick={exportStore}>{ui.statsExport}</button>
+                    <label className="secondary-button small stats-import-label">{ui.statsImport}
+                        <input type="file" accept="application/json,.json" className="visually-hidden"
+                            onChange={e => { if (e.target.files && e.target.files[0]) importStore(e.target.files[0]); }} />
+                    </label>
+                </div>
+                <button type="button" className="stats-reset" onClick={onReset}>{ui.statsReset}</button>
+            </div>
+        );
+    }
+
+    // --- Tapauslista sivupaneelissa ---
+    function CaseListSidebar({ cases, isOpen, onClose, onSelectCase }) {
+        const [filter, setFilter] = useState("All");
+        const [spec, setSpec] = useState("All");
+        const [diff, setDiff] = useState("All");
+        useEffect(() => {
+            if (!isOpen) return undefined;
+            document.body.classList.add("no-scroll");
+            const onKey = e => { if (e.key === "Escape") onClose(); };
+            document.addEventListener("keydown", onKey);
+            return () => { document.removeEventListener("keydown", onKey); document.body.classList.remove("no-scroll"); };
+        }, [isOpen, onClose]);
+        const specialties = useMemo(() => {
+            const seen = [];
+            cases.forEach(c => { if (c.specialty && seen.indexOf(c.specialty) < 0) seen.push(c.specialty); });
+            return seen.sort((a, b) => a.localeCompare(b, "fi"));
+        }, [cases]);
+        const filtered = useMemo(() => {
+            const cat = filter === "All" ? null : CATEGORIES.find(c => c.label === filter);
+            return cases.filter(c =>
+                (!cat || cat.test(c.correctPrimary)) &&
+                (spec === "All" || c.specialty === spec) &&
+                (diff === "All" || String(c.difficulty || 2) === diff));
+        }, [cases, filter, spec, diff]);
+        if (!isOpen) return null;
+        const options = [{ label: texts.filterAllLabel, value: "All" }].concat(CATEGORIES.map(c => ({ label: c.label, value: c.label })));
+        return createPortal(
+            <Fragment>
+                <div className="sidebar-overlay visible" onClick={onClose}></div>
+                <div className="sidebar open">
+                    <div className="sidebar-header">
+                        <h3>{texts.caseListTitle}</h3>
+                        <button type="button" onClick={onClose} className="sidebar-close-button" aria-label="Sulje">&times;</button>
+                    </div>
+                    <div className="sidebar-filter-controls">
+                        {options.map(o => (
+                            <button key={o.value} type="button"
+                                className={"filter-button" + (filter === o.value ? " active" : "")}
+                                onClick={() => setFilter(o.value)}>{o.label}</button>
+                        ))}
+                    </div>
+                    <div className="sidebar-select-row">
+                        <label htmlFor="specialty-filter">{texts.filterSpecialtyLabel}</label>
+                        <select id="specialty-filter" value={spec} onChange={e => setSpec(e.target.value)}>
+                            <option value="All">{texts.filterAllLabel}</option>
+                            {specialties.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                    </div>
+                    <div className="sidebar-select-row">
+                        <label htmlFor="difficulty-filter">Vaikeustaso:</label>
+                        <select id="difficulty-filter" value={diff} onChange={e => setDiff(e.target.value)}>
+                            <option value="All">{texts.filterAllLabel}</option>
+                            <option value="1">{DIFF_LABELS[1]}</option>
+                            <option value="2">{DIFF_LABELS[2]}</option>
+                            <option value="3">{DIFF_LABELS[3]}</option>
+                        </select>
+                    </div>
+                    <div className="sidebar-content">
+                        <p className="sidebar-count">{filtered.length} {texts.caseCountLabel}</p>
+                        {filtered.length === 0 ? <p className="no-cases-message">Ei tapauksia valitulla suodattimella.</p> : null}
+                        <ul>
+                            {filtered.map((c, i) => (
+                                <li key={c.id || i}>
+                                    <button type="button" className="sidebar-case-button" onClick={() => onSelectCase(c.id)}>
+                                        <span className="sidebar-case-title">{(cases.indexOf(c) + 1) + ". " + (c.label || "")}</span>
+                                        {c.specialty ? <span className="sidebar-case-spec">{c.specialty}</span> : null}
+                                        <span className={"sidebar-case-diff diff-" + (c.difficulty || 2)}
+                                            title={DIFF_LABELS[c.difficulty || 2]} aria-label={DIFF_LABELS[c.difficulty || 2]}>
+                                            {"\u25CF".repeat(c.difficulty || 2)}</span>
+                                        <span className="sidebar-case-context">{c.context}</span>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </Fragment>,
+            document.body
+        );
+    }
+
+    // --- Kokeen tulokset ---
+    function ExamReport({ log, onRestart, onBack, onOpenCase }) {
+        const right = log.filter(r => r.ok).length;
+        const byCat = [];
+        log.forEach(r => {
+            const label = r.cat ? r.cat.label : "Muu";
+            let row = byCat.find(x => x.label === label);
+            if (!row) { row = { label: label, n: 0, ok: 0 }; byCat.push(row); }
+            row.n += 1; row.ok += r.ok ? 1 : 0;
+        });
+        return (
+            <div className="exam-report">
+                <h2>{ui.examTitle}</h2>
+                <p className="exam-score">{right} / {log.length}</p>
+                <div className="exam-breakdown">
+                    <h3>{ui.examByCategory}</h3>
+                    {byCat.map(row => (
+                        <div key={row.label} className={"exam-cat" + (row.ok < row.n ? " exam-cat-weak" : "")}>
+                            <span className="exam-cat-label">{row.label}</span>
+                            <span className="exam-cat-num">{row.ok}/{row.n}</span>
+                        </div>
+                    ))}
+                </div>
+                <ol className="exam-list">
+                    {log.map((r, i) => (
+                        <li key={i} className={r.ok ? "exam-ok" : "exam-fail"}>
+                            <span className="exam-mark">{r.ok ? "\u2705" : "\u274C"}</span>
+                            <span className="exam-case">{r.context}</span>
+                            {!r.ok ? <span className="exam-detail">{ui.yourAnswer}: {r.chosen} | Oikein: {r.right}</span> : null}
+                            {!r.ok && r.id && onOpenCase
+                                ? <button type="button" className="secondary-button small exam-open" onClick={() => onOpenCase(r.id)}>Avaa tapaus</button>
+                                : null}
+                        </li>
+                    ))}
+                </ol>
+                <div className="action-bar">
+                    <button type="button" className="new-question" onClick={onRestart}>{ui.examAgain}</button>
+                    <button type="button" className="secondary-button" onClick={onBack}>{ui.examBack}</button>
+                </div>
+            </div>
+        );
+    }
+
+    // --- Esittelykierros ensikäynnille ---
+    function IntroTour({ open, step, setStep, onFinish, onOpenGuide }) {
+        if (!open) return null;
+        const steps = [
+            {
+                title: "Tervetuloa Laurin astrup-arvoituksiin!",
+                body: (
+                    <Fragment>
+                        <p>Tämä sovellus opettaa verikaasuanalyysin (astrupin) tulkintaa oikeilla potilastarinoilla. Kuitti näyttää samalta kuin analysaattorin tuloste osastolla.</p>
+                        <ul>
+                            <li>Lue esitiedot ja kuitti, ja vastaa kahteen kysymykseen: <strong>mikä on ensisijainen häiriö</strong> ja <strong>onko se kompensoitunut</strong>.</li>
+                            <li>Saat heti perustelut, avainarvot ja hoitolinjat - myös silloin, kun vastasit oikein.</li>
+                            <li>Tapauksia on {patientCases.length} kaikilta erikoisaloilta päivystyksestä synnytyssaliin.</li>
+                        </ul>
+                    </Fragment>
+                )
+            },
+            {
+                title: "Näin tulkitset - viisi askelta",
+                body: (
+                    <Fragment>
+                        <ol className="intro-steps-list">
+                            <li>Onko <strong>pH</strong> poikkeava?</li>
+                            <li>Kumpi selittää sen, <strong>pCO2 vai HCO3-</strong>?</li>
+                            <li>Yrittääkö <strong>toinen arvo</strong> korjata tilannetta?</li>
+                            <li>Metabolisessa asidoosissa: katso <strong>anionivaje</strong>.</li>
+                            <li>Arvioi <strong>happeutuminen</strong> ja sovita kliiniseen kuvaan.</li>
+                        </ol>
+                        <p>Koko menetelmä taulukoineen on aina saatavilla sinisestä <strong>{ui.guideButton}</strong>-napista sivun yläreunasta - kannattaa lukea kerran ajatuksella.</p>
+                        <button type="button" className="new-question intro-guide-open" onClick={onOpenGuide}>{ui.introOpenGuide}</button>
+                    </Fragment>
+                )
+            },
+            {
+                title: "Harjoittelutavat",
+                body: (
+                    <Fragment>
+                        <ul>
+                            <li><strong>{ui.guidedLabel}</strong> on oletuksena päällä: tapaukset etenevät perustasolta vaikeisiin, ja väärin menneet aihealueet painottuvat.</li>
+                            <li><strong>{ui.reviewButton}</strong>-nappi näyttää vain aiemmin väärin menneet tapaukset, kunnes osaat ne.</li>
+                            <li><strong>{ui.blind}</strong> piilottaa esitiedot - tulkitse pelkät arvot. Kokeile, kun perusteet ovat hallussa.</li>
+                            <li><strong>{ui.examStart}</strong> antaa 10 tapausta ilman välitöntä palautetta ja lopuksi erittelyn aihealueittain.</li>
+                            <li>Sivupalkista voit selata ja suodattaa kaikkia tapauksia. Osaamisesi tallentuu tämän selaimen muistiin.</li>
+                        </ul>
+                    </Fragment>
+                )
+            },
+            {
+                title: "Hyvä tietää",
+                body: (
+                    <Fragment>
+                        <ul>
+                            <li>Katso kuitista aina ensin <strong>{texts.sampleTypeLabel.toLowerCase()}</strong> ja <strong>{ui ? texts.oxygenLabel.toLowerCase() : ""}</strong> - ne muuttavat koko tulkinnan.</li>
+                            <li>Katkoviivalla alleviivattu arvon nimi (esim. <span className="intro-underline">BE</span>) avaa lyhyen ohjeen juuri siitä arvosta.</li>
+                            <li>Pikanäppäimet: <strong>1-9</strong> valitsevat vastauksen, <strong>Enter</strong> vastaa ja siirtyy eteenpäin, <strong>Esc</strong> sulkee ikkunat.</li>
+                            <li>Osoiterivin linkki osoittaa aina nykyiseen tapaukseen - voit jakaa sen suoraan kaverille.</li>
+                        </ul>
+                        <p>Tämän esittelyn saa auki uudestaan Tietoa-ikkunasta ({"\u24D8"}).</p>
+                    </Fragment>
+                )
+            }
+        ];
+        const cur = steps[step] || steps[0];
+        const last = step >= steps.length - 1;
+        return (
+            <HelpModal isOpen={true} onClose={onFinish} title={cur.title + "  (" + (step + 1) + "/" + steps.length + ")"}>
+                <div className="intro-body">{cur.body}</div>
+                <div className="intro-nav">
+                    {step > 0
+                        ? <button type="button" className="secondary-button" onClick={() => setStep(step - 1)}>{ui.introBack}</button>
+                        : <span></span>}
+                    {last
+                        ? <button type="button" className="new-question" onClick={onFinish}>{ui.introDone}</button>
+                        : <button type="button" className="new-question" onClick={() => setStep(step + 1)}>{ui.introNext}</button>}
+                </div>
+            </HelpModal>
+        );
+    }
+
+    // --- Tietoa sovelluksesta ---
+    function AboutPanel({ onReplayIntro }) {
+        return (
+            <div className="about-panel">
+                <p><strong>Laurin astrup-arvoitukset</strong> - versio 9 (elokuu 2026). Itseopiskelutyökalu verikaasuanalyysin tulkintaan lääketieteen opiskelijoille (C3-C6).</p>
+                <p className="about-disclaimer">Vain opetuskäyttöön. Tapaukset ovat keksittyjä eikä sovellusta saa käyttää kliinisen päätöksenteon tukena.</p>
+                <ul>
+                    <li>Viitearvot: yleisesti suomalaisissa laboratorioissa käytetyt aikuisten viitevälit; pO2 ja Hb ikäkorjattuina. Yksittäisen laboratorion viitevälit voivat poiketa näistä.</li>
+                    <li>Arvojen sisäinen johdonmukaisuus (pH, pCO2, HCO3-, BE, anionivaje) on tarkistettu laskennallisesti jokaisessa tapauksessa.</li>
+                    <li>Pikanäppäimet: 1-9 valinta, Enter vastaa / seuraava, Esc sulkee.</li>
+                    <li>Edistyminen tallentuu vain tämän selaimen muistiin - varmuuskopion voi viedä ja tuoda Tilastot-ikkunasta.</li>
+                    <li>Osoiterivin #tapaus-linkillä voi jakaa yksittäisen tapauksen.</li>
+                </ul>
+                <button type="button" className="secondary-button" onClick={onReplayIntro}>{ui.introReplay}</button>
+            </div>
+        );
+    }
+
+    // === PÄÄKOMPONENTTI ===
+    function ABGQuiz() {
+        const store = useMemo(loadStore, []);
+        const [pco2Unit, setPco2Unit] = useState(store.unit === "mmHg" ? "mmHg" : "kPa");
+        const [blind, setBlind] = useState(store.blind === true);
+        const [stats, setStats] = useState(store.stats || {});
+        const [mode, setMode] = useState("harjoitus");
+
+        const [session, setSession] = useState(() => {
+            const d = buildDeck(store.stats || {}, store.guided !== false, store.missed || [], false);
+            const m = /#tapaus=([A-Za-z0-9_]+)/.exec(window.location.hash || "");
+            const idx = m ? patientCases.findIndex(c => c.id === m[1]) : -1;
+            const start = idx >= 0 ? idx : d[0];
+            return { deck: d, pos: Math.max(0, d.indexOf(start)), scenario: normalizeCase(patientCases[start]) };
+        });
+        const [primary, setPrimary] = useState(null);
+        const [comp, setComp] = useState(null);
+        const [submitted, setSubmitted] = useState(false);
+        const [correct, setCorrect] = useState(null);
+        const [revealed, setRevealed] = useState(false);
+        const [counted, setCounted] = useState(false);
+        const [contextShown, setContextShown] = useState(false);
+
+        const [score, setScore] = useState(0);
+        const [attempts, setAttempts] = useState(0);
+        const [streak, setStreak] = useState(0);
+        const [animateScore, setAnimateScore] = useState(false);
+        const [examLog, setExamLog] = useState([]);
+
+        const [modal, setModal] = useState(null); // 'help' | 'stats' | 'about'
+        const [modalContent, setModalContent] = useState({ title: "", content: null });
+        const [sidebarOpen, setSidebarOpen] = useState(false);
+        const [introSeen, setIntroSeen] = useState(store.introSeen === true);
+        const [introOpen, setIntroOpen] = useState(store.introSeen !== true);
+        const [introStep, setIntroStep] = useState(0);
+        const [guideOpened, setGuideOpened] = useState(store.guideOpened === true);
+        const [missed, setMissed] = useState(Array.isArray(store.missed) ? store.missed : []);
+        const [guided, setGuided] = useState(store.guided !== false);
+        const [reviewMode, setReviewMode] = useState(false);
+        const [sure, setSure] = useState(null); // 'sure' | 'unsure' | null
+
+        const scenario = session.scenario;
+
+        useEffect(() => { saveStore({ unit: pco2Unit, blind: blind, stats: stats, introSeen: introSeen, guideOpened: guideOpened, missed: missed, guided: guided }); }, [pco2Unit, blind, stats, introSeen, guideOpened, missed, guided]);
+        useEffect(() => {
+            try { window.history.replaceState(null, "", "#tapaus=" + scenario.id); } catch (e) { /* file:// voi estää */ }
+        }, [scenario.id]);
+        useEffect(() => {
+            if (!animateScore) return undefined;
+            const t = setTimeout(() => setAnimateScore(false), 600);
+            return () => clearTimeout(t);
+        }, [animateScore]);
+
+        const resetAnswer = useCallback(() => {
+            setPrimary(null); setComp(null); setSubmitted(false); setCorrect(null);
+            setRevealed(false); setCounted(false); setContextShown(false); setSure(null);
+        }, []);
+
+        const goTo = useCallback((pos, deckArr) => {
+            let d = deckArr || session.deck, p = pos;
+            if (p >= d.length) { d = buildDeck(stats, guided, missed, reviewMode); p = 0; }
+            setSession({ deck: d, pos: p, scenario: normalizeCase(patientCases[d[p]]) });
+            resetAnswer();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }, [session.deck, resetAnswer, stats, guided, missed, reviewMode]);
+
+        const loadSpecificCase = useCallback(id => {
+            const idx = patientCases.findIndex(c => c.id === id);
+            if (idx < 0) return;
+            const pos = session.deck.indexOf(idx);
+            setSession({ deck: session.deck, pos: pos >= 0 ? pos : session.pos, scenario: normalizeCase(patientCases[idx]) });
+            resetAnswer();
+            setSidebarOpen(false);
+        }, [session.deck, session.pos, resetAnswer]);
+
+        const needsCompensation = primary !== null && primary !== texts.normal && !MIXED_TYPES.includes(primary);
+        const canSubmit = primary !== null && (!needsCompensation || comp !== null);
+
+        const evaluate = () => {
+            const corMixed = MIXED_TYPES.includes(scenario.correctPrimary);
+            if (scenario.correctPrimary === texts.normal || corMixed) return primary === scenario.correctPrimary;
+            if (MIXED_TYPES.includes(primary) || primary === texts.normal) return false;
+            return primary === scenario.correctPrimary && comp === scenario.compensated;
+        };
+
+        const record = (ok) => {
+            setStats(prev => {
+                const key = categoryKey(scenario.correctPrimary);
+                const cur = prev[key] || { n: 0, ok: 0 };
+                return Object.assign({}, prev, { [key]: { n: cur.n + 1, ok: cur.ok + (ok ? 1 : 0) } });
+            });
+            setMissed(prev => {
+                const has = prev.indexOf(scenario.id) >= 0;
+                if (!ok && !has) return prev.concat([scenario.id]);
+                if (ok && has) return prev.filter(x => x !== scenario.id);
+                return prev;
+            });
+            if (!ok && sure === "sure") {
+                setStats(prev => Object.assign({}, prev, { __cw: (prev.__cw || 0) + 1 }));
+            }
+        };
+
+        const celebrate = (newStreak) => {
+            if (newStreak < 3) return;
+            if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+            if (typeof confetti === "function") confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+        };
+
+        const submit = () => {
+            if (submitted || !canSubmit) return;
+            const ok = evaluate();
+            setCorrect(ok); setSubmitted(true); setContextShown(true);
+            if (!counted) {
+                setCounted(true);
+                setAttempts(a => a + 1);
+                record(ok);
+                if (ok) { setScore(s => s + 1); setAnimateScore(true); }
+                const ns = ok ? streak + 1 : 0;
+                setStreak(ns);
+                if (ok) celebrate(ns);
+            }
+            if (mode === "koe") {
+                setExamLog(l => l.concat([{
+                    context: scenario.context, ok: ok, id: scenario.id,
+                    cat: CATEGORIES.find(c => c.test(scenario.correctPrimary)),
+                    chosen: primary + (comp ? " + " + comp : ""),
+                    right: scenario.correctPrimary + (scenario.compensated !== "N/A" ? " + " + scenario.compensated : "")
+                }]));
+            }
+        };
+
+        const reveal = () => {
+            if (submitted) return;
+            setRevealed(true); setSubmitted(true); setCorrect(false); setContextShown(true); setStreak(0);
+            if (!counted) { setCounted(true); setAttempts(a => a + 1); record(false); }
+        };
+
+        const retry = () => { setPrimary(null); setComp(null); setSubmitted(false); setCorrect(null); setRevealed(false); };
+
+        const openHelp = useCallback(topic => {
+            const map = {
+                pH: [texts.helpTitlePH, texts.helpContentPH],
+                pCO2: [texts.helpTitlePCO2, texts.helpContentPCO2(pco2Unit)],
+                HCO3: [texts.helpTitleHCO3, texts.helpContentHCO3],
+                PaO2: [texts.helpTitlePaO2, texts.helpContentPaO2(pco2Unit)],
+                BE: [texts.helpTitleBE, texts.helpContentBE],
+                AG: [texts.helpTitleAG, texts.helpContentAG],
+                Lac: [texts.helpTitleLac, texts.helpContentLac],
+                K: [texts.helpTitleK, texts.helpContentK],
+                Cl: [texts.helpTitleCl, texts.helpContentCl],
+                MetHb: [texts.helpTitleMetHb, texts.helpContentMetHb],
+                COHb: [texts.helpTitleCOHb, texts.helpContentCOHb]
+            };
+            const found = map[topic] || [texts.helpTitleGeneral, texts.helpContentGeneral];
+            setModalContent({ title: found[0], content: found[1] });
+            setModal("help");
+            if (topic === "general") setGuideOpened(true);
+        }, [pco2Unit]);
+
+        const startExam = () => { setMode("koe"); setReviewMode(false); setExamLog([]); goTo(0, newDeck()); };
+        const startReview = () => {
+            if (!missed.length) return;
+            setReviewMode(true);
+            goTo(0, buildDeck(stats, guided, missed, true));
+        };
+        const stopReview = () => { setReviewMode(false); goTo(0, buildDeck(stats, guided, missed, false)); };
+        useEffect(() => {
+            if (reviewMode && missed.length === 0) { setReviewMode(false); }
+        }, [reviewMode, missed]);
+        const backToPractice = () => { setMode("harjoitus"); setExamLog([]); goTo(session.pos + 1); };
+
+        useEffect(() => {
+            const onKey = e => {
+                if (modal !== null || introOpen || sidebarOpen || examFinished) return;
+                const t = e.target;
+                if (t && (t.tagName === "INPUT" || t.tagName === "SELECT" || t.tagName === "TEXTAREA")) return;
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (submitted) goTo(session.pos + 1);
+                    else if (canSubmit) submit();
+                    return;
+                }
+                const num = parseInt(e.key, 10);
+                if (!isNaN(num) && num >= 1 && !submitted) {
+                    if (primary === null && num <= PRIMARY_OPTIONS.length) { setPrimary(PRIMARY_OPTIONS[num - 1]); e.preventDefault(); }
+                    else if (primary !== null && needsCompensation && comp === null && num <= COMPENSATION_OPTIONS.length) { setComp(COMPENSATION_OPTIONS[num - 1]); e.preventDefault(); }
+                }
+            };
+            window.addEventListener("keydown", onKey);
+            return () => window.removeEventListener("keydown", onKey);
+        });
+
+        const examFinished = mode === "koe" && examLog.length >= EXAM_LENGTH;
+        const showCompensationGrid = needsCompensation;
+        const showFeedback = submitted && mode !== "koe";
+
+        return (
+            <Fragment>
+                {createPortal(
+                    <Fragment>
+                        <ScoreDisplay score={score} attempts={attempts} streak={streak} animate={animateScore}
+                            position={session.pos} total={session.deck.length} examCount={examLog.length} mode={mode} />
+                        <UnitSelector selectedUnit={pco2Unit} onUnitChange={setPco2Unit} />
+                    </Fragment>,
+                    document.getElementById("score-root")
+                )}
+
+                <div className="container">
+                    <h1>{texts.title}</h1>
+                    <button type="button" onClick={() => openHelp("general")} className="help-button-general" aria-label="Avaa yleisohje">?</button>
+
+                    <div className="toolbar">
+                        <button type="button" className={"toolbar-button guide-button" + (guideOpened ? "" : " pulse")}
+                            onClick={() => openHelp("general")}>{"\uD83D\uDCD6 " + ui.guideButton}</button>
+                        <label className="switch">
+                            <input type="checkbox" checked={blind} onChange={e => setBlind(e.target.checked)} />
+                            <span>{ui.blind}</span>
+                        </label>
+                        <label className="switch" title="Tapaukset etenevät perustasolta vaikeisiin ja heikot aihealueesi painottuvat">
+                            <input type="checkbox" checked={guided} onChange={e => setGuided(e.target.checked)} />
+                            <span>{ui.guidedLabel}</span>
+                        </label>
+                        {mode === "harjoitus"
+                            ? <button type="button" className={"toolbar-button" + (reviewMode ? " active-mode" : "")}
+                                disabled={!missed.length && !reviewMode}
+                                onClick={reviewMode ? stopReview : startReview}>
+                                {ui.reviewButton}{missed.length ? " (" + missed.length + ")" : ""}</button>
+                            : null}
+                        <button type="button" className="toolbar-button" onClick={() => setModal("stats")}>{ui.statsButton}</button>
+                        <button type="button" className="toolbar-button" onClick={() => setSidebarOpen(true)}>{texts.showCasesButton}</button>
+                        {mode === "harjoitus"
+                            ? <button type="button" className="toolbar-button" onClick={startExam}>{ui.examStart}</button>
+                            : <button type="button" className="toolbar-button" onClick={() => { setMode("harjoitus"); setExamLog([]); }}>{ui.examBack}</button>}
+                        <button type="button" className="toolbar-button toolbar-about" onClick={() => setModal("about")} aria-label={ui.aboutTitle}>{"\u24D8"}</button>
+                    </div>
+
+                    {examFinished ? (
+                        <ExamReport log={examLog} onRestart={startExam}
+                            onOpenCase={id => { setMode("harjoitus"); setExamLog([]); loadSpecificCase(id); }}
+                            onBack={() => { setMode("harjoitus"); setExamLog([]); goTo(session.pos + 1); }} />
+                    ) : (
+                        <Fragment>
+                            {reviewMode ? <p className="review-notice">{ui.reviewNotice}</p> : null}
+                            {(!blind || contextShown) ? (
+                                <div className="case-context">
+                                    <p><strong>{texts.caseLabel}</strong> {scenario.context}</p>
+                                </div>
+                            ) : (
+                                <div className="case-context blind-notice">
+                                    <p>{ui.blindNotice}</p>
+                                    <button type="button" className="secondary-button small" onClick={() => setContextShown(true)}>{ui.showContext}</button>
+                                </div>
+                            )}
+
+                            <ABGDisplay scenario={scenario} pco2Unit={pco2Unit} onOpenHelp={openHelp} />
+                            <p className="help-hint">{ui.helpHint}</p>
+                            <hr />
+
+                            <OptionsGrid title={texts.selectPrimary} options={PRIMARY_OPTIONS} selectedValue={primary}
+                                onSelect={setPrimary} disabled={submitted} type="primary" />
+
+                            {showCompensationGrid ? (
+                                <Fragment>
+                                    <hr />
+                                    <OptionsGrid className="fade-in-effect" title={texts.selectCompensation}
+                                        options={COMPENSATION_OPTIONS} selectedValue={comp} onSelect={setComp}
+                                        disabled={submitted} type="compensation" />
+                                </Fragment>
+                            ) : null}
+
+                            {showFeedback ? (
+                                <FeedbackDisplay isCorrect={correct} revealed={revealed} scenario={scenario}
+                                    selectedPrimary={primary} selectedCompensation={comp} />
+                            ) : null}
+
+                            {submitted && mode === "koe" ? <p className="exam-answered">{ui.examAnswered}</p> : null}
+
+                            {!submitted && canSubmit ? (
+                                <div className="confidence-row" role="group" aria-label={ui.confidenceAsk}>
+                                    <span className="confidence-ask">{ui.confidenceAsk}</span>
+                                    <button type="button" className={"confidence-btn" + (sure === "sure" ? " selected" : "")}
+                                        onClick={() => setSure(sure === "sure" ? null : "sure")}>{ui.confidenceSure}</button>
+                                    <button type="button" className={"confidence-btn" + (sure === "unsure" ? " selected" : "")}
+                                        onClick={() => setSure(sure === "unsure" ? null : "unsure")}>{ui.confidenceUnsure}</button>
+                                </div>
+                            ) : null}
+                            <div className="action-bar">
+                                {!submitted ? (
+                                    <Fragment>
+                                        <button type="button" className="new-question" onClick={submit} disabled={!canSubmit}>{ui.answer}</button>
+                                        <button type="button" className="secondary-button" onClick={() => goTo(session.pos + 1)}>{ui.skip}</button>
+                                        {mode === "harjoitus"
+                                            ? <button type="button" className="secondary-button" onClick={reveal}>{ui.reveal}</button>
+                                            : null}
+                                    </Fragment>
+                                ) : (
+                                    <Fragment>
+                                        <button type="button" className="new-question" onClick={() => goTo(session.pos + 1)}>
+                                            {mode === "koe" ? ui.next : texts.newQuestion}
+                                        </button>
+                                        {mode === "harjoitus" && !correct
+                                            ? <button type="button" className="secondary-button" onClick={retry}>{ui.retry}</button>
+                                            : null}
+                                    </Fragment>
+                                )}
+                            </div>
+                        </Fragment>
+                    )}
+                </div>
+
+                <HelpModal isOpen={modal === "help"} onClose={() => setModal(null)} title={modalContent.title}>
+                    {modalContent.content}
+                </HelpModal>
+                <IntroTour open={introOpen} step={introStep} setStep={setIntroStep}
+                    onFinish={() => { setIntroOpen(false); setIntroSeen(true); }}
+                    onOpenGuide={() => { setIntroOpen(false); setIntroSeen(true); openHelp("general"); }} />
+                <HelpModal isOpen={modal === "about"} onClose={() => setModal(null)} title={ui.aboutTitle}>
+                    <AboutPanel onReplayIntro={() => { setModal(null); setIntroStep(0); setIntroOpen(true); }} />
+                </HelpModal>
+                <HelpModal isOpen={modal === "stats"} onClose={() => setModal(null)} title={ui.statsTitle}>
+                    <StatsPanel stats={stats} onReset={() => { if (window.confirm(ui.statsConfirm)) setStats({}); }} />
+                    <p className="stats-note">{ui.firstAttemptNote}</p>
+                </HelpModal>
+                <CaseListSidebar cases={patientCases} isOpen={sidebarOpen}
+                    onClose={() => setSidebarOpen(false)} onSelectCase={loadSpecificCase} />
+            </Fragment>
+        );
+    }
+
+    function App() { return <ABGQuiz />; }
+    ReactDOM.render(<App />, document.getElementById('root'));
+
+    </script> 
+</body>
+</html>
