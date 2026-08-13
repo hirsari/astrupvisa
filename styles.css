@@ -449,3 +449,24 @@ button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--button-focus-s
     .help-table { font-size: 0.85em; }
     .help-table td:first-child { white-space: normal; }
 }
+
+/* === Sivupaneelin tapauslista (v7) === */
+.sidebar-filter-controls { border-bottom: none; padding-bottom: 6px; }
+.sidebar-select-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 15px 12px; border-bottom: 1px solid var(--border-color);
+}
+.sidebar-select-row label { font-size: 0.85em; color: var(--text-muted); white-space: nowrap; }
+.sidebar-select-row select {
+    flex: 1; min-width: 0; background-color: var(--button-bg); color: var(--button-text);
+    border: 1px solid var(--button-border); border-radius: 15px;
+    padding: 5px 10px; font-family: inherit; font-size: 0.85em; cursor: pointer;
+}
+.sidebar-count { padding: 12px 4px 4px; margin: 0; font-size: 0.8em; color: var(--text-muted); }
+.sidebar-case-title { display: block; font-weight: 600; color: var(--text-color); }
+.sidebar-case-spec {
+    display: inline-block; margin: 4px 0 5px; padding: 1px 9px;
+    border: 1px solid var(--border-color); border-radius: 10px;
+    font-size: 0.78em; color: var(--text-muted);
+}
+.sidebar-case-context { display: block; }
