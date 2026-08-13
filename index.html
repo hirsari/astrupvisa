@@ -927,16 +927,16 @@ const getAbnormalDirection = (value, ref) => {
             }
              else if (!primaryCorrectExact && (isSelectedMetAcid && isCorrectMetAcid) && !compensationCorrect && selectedCompensation) { // Primääri väärin (mutta oikea tyyppi), kompensaatio väärin
                    let compFeedback = "";
-                    if (correctCompensation === texts.compensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) on normaali -> <strong>{texts.compensated}</strong>.</>; }
-                    else if (correctCompensation === texts.partiallyCompensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) poikkeava ja {compensatingParamName} {isCompensatingParamNormal ? 'normaali' : 'poikkeava'} -> <strong>{texts.partiallyCompensated}</strong>.</>; }
-                    else if (correctCompensation === texts.nonCompensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) poikkeava ja {compensatingParamName} normaali -> <strong>{texts.nonCompensated}</strong>.</>; }
+                    if (correctCompensation === texts.compensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) on normaali → <strong>{texts.compensated}</strong>.</>; }
+                    else if (correctCompensation === texts.partiallyCompensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) poikkeava ja {compensatingParamName} {isCompensatingParamNormal ? 'normaali' : 'poikkeava'} → <strong>{texts.partiallyCompensated}</strong>.</>; }
+                    else if (correctCompensation === texts.nonCompensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) poikkeava ja {compensatingParamName} normaali → <strong>{texts.nonCompensated}</strong>.</>; }
                    return compFeedback;
              }
              else if (!primaryCorrectExact && !isCorrectMixed && !isSelectedMixed && selectedPrimary && !compensationCorrect && selectedCompensation) { // Primääri väärin (eri tyyppi), kompensaatio väärin
                  let compFeedback = "";
-                 if (correctCompensation === texts.compensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) on normaali -> <strong>{texts.compensated}</strong>.</>; }
-                 else if (correctCompensation === texts.partiallyCompensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) poikkeava ja {compensatingParamName} {isCompensatingParamNormal ? 'normaali' : 'poikkeava'} -> <strong>{texts.partiallyCompensated}</strong>.</>; }
-                 else if (correctCompensation === texts.nonCompensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) poikkeava ja {compensatingParamName} normaali -> <strong>{texts.nonCompensated}</strong>.</>; }
+                 if (correctCompensation === texts.compensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) on normaali → <strong>{texts.compensated}</strong>.</>; }
+                 else if (correctCompensation === texts.partiallyCompensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) poikkeava ja {compensatingParamName} {isCompensatingParamNormal ? 'normaali' : 'poikkeava'} → <strong>{texts.partiallyCompensated}</strong>.</>; }
+                 else if (correctCompensation === texts.nonCompensated) { compFeedback = <>Lisäksi kompensaatio väärin: pH ({pHValue?.toFixed(2)}) poikkeava ja {compensatingParamName} normaali → <strong>{texts.nonCompensated}</strong>.</>; }
                  return compFeedback;
              }
             return null; // Muissa tapauksissa ei anneta erillistä kompensaatiopalautetta tässä
