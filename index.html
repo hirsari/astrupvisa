@@ -1794,7 +1794,7 @@ const texts = {
   helpTitleCOHb: "Häkähemoglobiini (COHb)",
   helpContentGeneral: React.createElement(Fragment, null, React.createElement("p", {
     className: "help-lead"
-  }, "Viisi kysymystä aina samassa järjestyksessä. Käy ne läpi ennen kuin katsot tapauskertomusta – niin opit lukemaan arvoja etkä arvaamaan diagnoosia."), React.createElement("h4", null, "1. Onko pH poikkeava?"), React.createElement("p", null, "Alle 7.35 on asidemia, yli 7.45 alkalemia. Normaali pH ei sulje pois häiriötä: se voi olla täysin kompensoitu, tai kaksi vastakkaista häiriötä voi kumota toisensa."), React.createElement("h4", null, "2. Kumpi selittää pH:n, pCO2 vai HCO3-?"), React.createElement("p", null, "Ensisijainen häiriö on se arvo, joka on muuttunut ", React.createElement("em", null, "samaan suuntaan"), " kuin pH-poikkeama."), React.createElement("table", {
+  }, "Viisi kysymystä aina samassa järjestyksessä. Käy ne läpi ennen kuin katsot tapauskertomusta, niin opit lukemaan arvoja etkä arvaamaan diagnoosia."), React.createElement("h4", null, "1. Onko pH poikkeava?"), React.createElement("p", null, "Alle 7.35 on asidemia, yli 7.45 alkalemia. Normaali pH ei sulje pois häiriötä: se voi olla täysin kompensoitu, tai kaksi vastakkaista häiriötä voi kumota toisensa."), React.createElement("h4", null, "2. Kumpi selittää pH:n, pCO2 vai HCO3-?"), React.createElement("p", null, "Ensisijainen häiriö on se arvo, joka on muuttunut ", React.createElement("em", null, "samaan suuntaan"), " kuin pH-poikkeama."), React.createElement("table", {
     className: "help-table"
   }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, "Löydös"), React.createElement("th", null, "Ensisijainen häiriö"))), React.createElement("tbody", null, React.createElement("tr", null, React.createElement("td", null, "pH matala + pCO2 korkea"), React.createElement("td", null, "Respiratorinen asidoosi")), React.createElement("tr", null, React.createElement("td", null, "pH matala + HCO3- matala"), React.createElement("td", null, "Metabolinen asidoosi")), React.createElement("tr", null, React.createElement("td", null, "pH korkea + pCO2 matala"), React.createElement("td", null, "Respiratorinen alkaloosi")), React.createElement("tr", null, React.createElement("td", null, "pH korkea + HCO3- korkea"), React.createElement("td", null, "Metabolinen alkaloosi")))), React.createElement("h4", null, "3. Yrittääkö toinen arvo korjata tilannetta?"), React.createElement("p", null, "Katso nyt sitä arvoa, joka ", React.createElement("em", null, "ei"), " ole ensisijainen häiriö. Kompensaation aste luetaan suoraan arvoista – laskukaavoja ei tarvita."), React.createElement("table", {
     className: "help-table"
@@ -1810,7 +1810,7 @@ const texts = {
   }, "Hoida syy, älä lukua. Bikarbonaatin antaminen korjaa numeron mutta ei kudosten hapensaantia, ja hyöty siitä on harvinaista.")),
   helpContentPCO2: unit => React.createElement(Fragment, null, React.createElement("p", {
     className: "help-lead"
-  }, "Viitearvo ", unit === "mmHg" ? "34–45 mmHg" : "4.5–6.0 kPa", ". Mittaa sitä, kuinka hyvin potilas ventiloi – ei mitään muuta."), React.createElement("ul", null, React.createElement("li", null, React.createElement("strong", null, "Korkea pCO2"), " tarkoittaa, että potilas hengittää liian vähän. Syitä: hengityskeskuksen lama (opioidit, rauhoittavat lääkkeet, päihteet), hengityslihasten heikkous tai väsyminen, ahtauttava keuhkosairaus, kipu ja väärin säädetty hengityskone."), React.createElement("li", null, React.createElement("strong", null, "Matala pCO2"), " tarkoittaa, että potilas hengittää tavallista enemmän. Syitä: kipu, jännitys, kuume, infektio, keuhkoembolia, astma, raskaus – tai metabolisen asidoosin kompensaatio."), React.createElement("li", null, "Nukutetulla ja hengityskoneessa olevalla potilaalla pCO2 on käytännössä se, minkä kone määrää.")), React.createElement("div", {
+  }, "Viitearvo ", unit === "mmHg" ? "34–45 mmHg" : "4.5–6.0 kPa", ". Mittaa sitä, kuinka hyvin potilas ventiloi, ei mitään muuta."), React.createElement("ul", null, React.createElement("li", null, React.createElement("strong", null, "Korkea pCO2"), " tarkoittaa, että potilas hengittää liian vähän. Syitä: hengityskeskuksen lama (opioidit, rauhoittavat lääkkeet, päihteet), hengityslihasten heikkous tai väsyminen, ahtauttava keuhkosairaus, kipu ja väärin säädetty hengityskone."), React.createElement("li", null, React.createElement("strong", null, "Matala pCO2"), " tarkoittaa, että potilas hengittää tavallista enemmän. Syitä: kipu, jännitys, kuume, infektio, keuhkoembolia, astma, raskaus – tai metabolisen asidoosin kompensaatio."), React.createElement("li", null, "Nukutetulla ja hengityskoneessa olevalla potilaalla pCO2 on käytännössä se, minkä kone määrää.")), React.createElement("div", {
     className: "help-tip"
   }, React.createElement("strong", null, "Vaarallisin löydös on normaali pCO2 väsyvällä, tiheään hengittävällä potilaalla."), " Astmakohtauksessa tai vaikeassa metabolisessa asidoosissa pCO2:n kuuluisi olla matala. Nousu viitealueelle kertoo, etteivät hengityslihakset enää jaksa, ja ennakoi hengityksen pysähtymistä."), React.createElement("p", {
     className: "help-note"
@@ -1834,7 +1834,7 @@ const texts = {
   }, "Viitearvo −3…+3 mmol/l. Selkein yksittäinen mittari aineenvaihdunnan osalta."), React.createElement("ul", null, React.createElement("li", null, "BE kertoo, kuinka paljon happoa tai emästä tarvittaisiin palauttamaan pH normaaliksi. Hengityksen osuus on vakioitu pois, ja juuri se tekee BE:stä käyttökelpoisen."), React.createElement("li", null, "Negatiivinen BE tarkoittaa metabolista asidoosia, positiivinen metabolista alkaloosia. Luvun suuruus kertoo vaikeusasteen."), React.createElement("li", null, React.createElement("strong", null, "BE ei juuri muutu tuoreessa respiratorisessa häiriössä."), " Jos pCO2 on korkea mutta BE normaali, tilanne on akuutti. Jos BE on selvästi positiivinen, munuaiset ovat kompensoineet päiväkausia. Tämä on nopein tapa erottaa akuutti ja krooninen hiilidioksidin kertyminen."), React.createElement("li", null, "Vammapotilaalla selvästi negatiivinen BE kertoo vuodon määrästä ja huonosta kudosverenkierrosta."), React.createElement("li", null, "BE ei kerro syytä. Erottelu tehdään anionivajeen, laktaatin ja kliinisen kuvan avulla."))),
   helpContentAG: React.createElement(Fragment, null, React.createElement("p", {
     className: "help-lead"
-  }, "Viitearvo n. 8–12 mmol/l. Analysaattori laskee anionivajeen valmiiksi natriumista, kloridista ja bikarbonaatista – sinun tehtäväsi on tulkita se."), React.createElement("p", null, "Anionivaje kuvaa niitä anioneja, joita ei rutiinisti mitata. Metabolisessa asidoosissa kysymys on aina sama: ", React.createElement("strong", null, "onko vereen kertynyt jotain tuntematonta anionia/happoa vai onko emästä menetetty?")), React.createElement("h4", null, "Anionivaje koholla – happoa on kertynyt"), React.createElement("ul", null, React.createElement("li", null, React.createElement("strong", null, "Laktaatti:"), " sokki, verenvuoto, sepsis, suolen tai raajan verenkiertohäiriö, kouristuskohtaus, kova rasitus"), React.createElement("li", null, React.createElement("strong", null, "Ketoaineet:"), " diabeettinen ketoasidoosi, alkoholi ja nälkiintyminen"), React.createElement("li", null, React.createElement("strong", null, "Munuaisten vajaatoiminta:"), " happamat kuona-aineet jäävät elimistöön"), React.createElement("li", null, React.createElement("strong", null, "Myrkytykset:"), " metanoli, etyleeniglykoli, salisylaatti")), React.createElement("h4", null, "Anionivaje normaali – emästä on menetetty"), React.createElement("p", null, "Bikarbonaattia menetetään ja kloridi jää sen tilalle, joten kloridi on tyypillisesti koholla. Tavallisimmat syyt ovat ripuli, runsaseritteinen avanne ja suuret määrät 0.9 % keittosuolaliuosta. Harvinaisempana munuaistubulusten toimintahäiriö."), React.createElement("div", {
+  }, "Viitearvo n. 8–12 mmol/l. Analysaattori laskee anionivajeen valmiiksi natriumista, kloridista ja bikarbonaatista, sinun tehtäväsi on tulkita se."), React.createElement("p", null, "Anionivaje kuvaa niitä anioneja, joita ei rutiinisti mitata. Metabolisessa asidoosissa kysymys on aina sama: ", React.createElement("strong", null, "onko vereen kertynyt jotain tuntematonta anionia/happoa vai onko emästä menetetty?")), React.createElement("h4", null, "Anionivaje koholla – happoa on kertynyt"), React.createElement("ul", null, React.createElement("li", null, React.createElement("strong", null, "Laktaatti:"), " sokki, verenvuoto, sepsis, suolen tai raajan verenkiertohäiriö, kouristuskohtaus, kova rasitus"), React.createElement("li", null, React.createElement("strong", null, "Ketoaineet:"), " diabeettinen ketoasidoosi, alkoholi ja nälkiintyminen"), React.createElement("li", null, React.createElement("strong", null, "Munuaisten vajaatoiminta:"), " happamat kuona-aineet jäävät elimistöön"), React.createElement("li", null, React.createElement("strong", null, "Myrkytykset:"), " metanoli, etyleeniglykoli, salisylaatti")), React.createElement("h4", null, "Anionivaje normaali – emästä on menetetty"), React.createElement("p", null, "Bikarbonaattia menetetään ja kloridi jää sen tilalle, joten kloridi on tyypillisesti koholla. Tavallisimmat syyt ovat ripuli, runsaseritteinen avanne ja suuret määrät 0.9 % keittosuolaliuosta. Harvinaisempana munuaistubulusten toimintahäiriö."), React.createElement("div", {
     className: "help-tip"
   }, "Muista, että anionivaje kannattaa katsoa myös silloin, kun pH on normaali. Kohonnut anionivaje kertoo happokuormasta, vaikka jokin toinen häiriö peittäisi sen vaikutuksen pH:hon.")),
   helpContentLac: React.createElement(Fragment, null, React.createElement("p", {
@@ -2114,7 +2114,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAcidosisNAGMA,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Metabolinen asidoosi (matala pH, HCO3- 14, BE -11), jota hengitys kompensoi osittain. Tässä anionivaje on kuitenkin normaali (8) ja kloridi korkea (115). Ripulissa menetetään bikarbonaattia suoraan suolistosta, ja sen tilalle elimistöön jää kloridia. Tämä on tyypillinen normaalin anionivajeen asidoosi. Kalium on matala, koska sitäkin menetetään ulosteeseen.",
-  treatment: "Nesteytys balansoidulla liuoksella (esim. Ringer) ja kaliumin korvaus. Runsas keittosuolaliuos voi pahentaa asidoosia."
+  treatment: "Nesteytys balansoidulla liuoksella (esim. Ringer) ja kaliumin korvaus. Runsas keittosuolaliuos voi pahentaa asidoosia koska se sisältää paljon kloridia."
 }, {
   id: "Salicylate01",
   label: "Salisylaattimyrkytys",
@@ -2143,7 +2143,7 @@ const patientCases = [{
   correctPrimary: texts.mixedMetAcidRespAlk,
   correctCompensation: "N/A",
   explanation: "Tässä on kaksi häiriötä yhtä aikaa. pCO2 on hyvin matala: salisylaatti kiihdyttää hengityskeskusta, mistä seuraa respiratorinen alkaloosi. Samalla HCO3- ja BE ovat matalat ja anionivaje korkea (24), eli mukana on metabolinen asidoosi. pH on lievästi alkalinen, joten hengityksen vaikutus on voimakkaampi. Tiheä hengitys ja tinnitus yhdessä ovat klassinen vihje.",
-  treatment: "Päivystyshoito: nesteytys, bikarbonaatti ja vaikeissa myrkytyksissä dialyysi. Jos potilas joudutaan nukuttamaan, hengitystä on jatkettava tiheänä, muuten pH romahtaa."
+  treatment: "Päivystyshoito: nesteytys, bikarbonaatti ja vaikeissa myrkytyksissä dialyysi. Jos potilas joudutaan nukuttamaan, hengitystä on jatkettava ventiloimalla nopeataajuisena, muuten pH romahtaa."
 }, {
   id: "Vomiting01",
   label: "Pitkittynyt oksentelu",
@@ -2172,7 +2172,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAlkalosis,
   correctCompensation: texts.partiallyCompensated,
   explanation: "pH on korkea eli alkaloosi. HCO3- (38) ja BE (+14) ovat korkeat, joten häiriö on metabolinen: oksentaessa menetetään mahahappoa. Hengitys kompensoi hidastumalla, joten pCO2 on koholla, mutta pH ei ole vielä normaali. Tyypilliset seuralaiset ovat matala kloridi (85), matala kalium (3.0) ja kuivuminen.",
-  treatment: "Nesteytys keittosuolaliuoksella sekä kaliumin ja kloridin korvaus. Oksentelun syy selvitetään."
+  treatment: "Nesteytys keittosuolaliuoksella sekä kaliumin ja kloridin korvaus. Oksentelun syy kuuluu selvittää."
 }, {
   id: "Diuretics01",
   label: "Diureettihoito",
@@ -2201,14 +2201,14 @@ const patientCases = [{
   correctPrimary: texts.metabolicAlkalosis,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Metabolinen alkaloosi: korkea pH, korkea HCO3- (35) ja positiivinen BE. Hengitys kompensoi hidastumalla (pCO2 koholla), mutta osittain. Nesteenpoistolääke lisää hapon ja kaliumin eritystä virtsaan. Matala kalium (3.0) selittää lihasoireet, ja matala kloridi kertoo, mitä hoidossa pitää korvata.",
-  treatment: "Diureetin annoksen säätö sekä kaliumin ja kloridin korvaus. Tarkista myös magnesium."
+  treatment: "Diureetin annoksen säätö sekä kaliumin ja kloridin korvaus."
 }, {
   id: "RespAcidChronic01",
   label: "COPD, vakaa vaihe",
   specialty: "Sisätaudit",
   oxygen: "Kotihappi 1 l/min",
   difficulty: 2,
-  context: "65v mies, vaikea COPD vakaassa vaiheessa. Kotihappi käytössä.",
+  context: "65v mies, vaikea COPD vakaassa vaiheessa. Happirikastin kotona käytössä.",
   values: {
     age: 65,
     pH: 7.37,
@@ -2230,7 +2230,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAcidosis,
   correctCompensation: texts.compensated,
   explanation: "pH on viitealueella, mutta sekä pCO2 (7.7) että HCO3- (33) ovat koholla. Se tarkoittaa täysin kompensoitua häiriötä. Kumpi on ensisijainen? pH on alle 7.40 eli asidoosin puolella, ja sen selittää korkea pCO2: keuhkot eivät saa hiilidioksidia ulos. Munuaiset ovat vastanneet pidättämällä bikarbonaattia, mikä vie päiviä, joten tilanne on krooninen. Tämä on potilaan oma normaalitaso. Koholla oleva COHb ja korkea hemoglobiini sopivat tupakointiin.",
-  treatment: "COPD:n perushoito ja tupakoinnin lopetus. Happihoidossa tavoitesaturaatio on matalampi (88-92 %). Tätä pCO2-arvoa ei pidä yrittää korjata normaaliksi."
+  treatment: "COPD:n perushoito ja tupakoinnin lopetus. Happihoidossa tavoitesaturaatio on matalampi (88-92 %). Tätä pCO2-arvoa ei pidä yrittää korjata normaaliksi, sillä se aiheuttaa potilaalle hengityslaman."
 }, {
   id: "RespAcidAcuteExac01",
   label: "COPD, pahenemisvaihe",
@@ -2317,7 +2317,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAlkalosis,
   correctCompensation: texts.nonCompensated,
   explanation: "Korkea pH ja matala pCO2 (3.5) eli respiratorinen alkaloosi: hyperventilaatio puhaltaa hiilidioksidia ulos. HCO3- ja BE ovat normaalit, joten kompensaatiota ei ole ehtinyt tulla ja tilanne on akuutti. Pistely sormissa ja suun ympärillä johtuu ionisoidun kalsiumin laskusta, joka on alkaloosin suora seuraus.",
-  treatment: "Rauhoittelu ja hengityksen ohjaus. Paperipussiin hengittämistä ei käytetä. Varmista ensin, ettei tiheän hengityksen taustalla ole esimerkiksi keuhkoemboliaa tai astmaa."
+  treatment: "Rauhoittelu ja hengityksen ohjaus. Paperipussiin hengittämistä ei käytetä."
 }, {
   id: "RespAlkChronicCirrhosis01",
   label: "Maksakirroosi",
@@ -2375,7 +2375,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAlkalosis,
   correctCompensation: texts.nonCompensated,
   explanation: "Korkea pH ja matala pCO2 eli akuutti respiratorinen alkaloosi (HCO3- ja BE normaalit). Tärkein löydös on kuitenkin yhdistelmä: potilas hengittää tiheästi JA happiarvo on silti matala. Terveillä keuhkoilla tiheä hengitys nostaisi happiarvoa, joten kaasujenvaihdossa on jotain vikaa. Äkillinen hengenahdistus pitkän lennon jälkeen tekee keuhkoemboliasta todennäköisen. Muista, että normaali astrup ei sulje pois keuhkoemboliaa.",
-  treatment: "Happihoito ja antikoagulaatio. Jos potilas on verenkierrollisesti epävakaa, liuotushoito."
+  treatment: "Happihoito ja antikoagulaatio. Jos potilas on hemodynaamisesti epävakaa, liuotushoito."
 }, {
   id: "Normal01",
   label: "Terve verrokki",
@@ -2462,7 +2462,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAcidosis,
   correctCompensation: texts.nonCompensated,
   explanation: "Matala pH ja korkea pCO2 (9.0) eli respiratorinen asidoosi. HCO3- ja BE ovat normaalit, joten kompensaatiota ei ole: tilanne on akuutti. Syynä on opioidin aiheuttama liian hidas hengitys. Heräämön tärkein oppi: lisähapen kanssa pulssioksimetri voi näyttää kohtalaista lukemaa, vaikka potilaalle kertyy hiilidioksidia. Saturaatio ei kerro ventilaatiosta.",
-  treatment: "Herättely, happi ja hengityksen avustaminen, tarvittaessa naloksoni pieninä annoksina. Potilasta seurataan, koska väsymys voi uusia."
+  treatment: "Herättely, happi ja hengityksen avustaminen, tarvittaessa naloksoni pieninä annoksina. Potilasta seurataan, koska tilanne voi uusia."
 }, {
   id: "AnxietyHypervent01",
   label: "Leikkausjännitys",
@@ -2491,7 +2491,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAlkalosis,
   correctCompensation: texts.nonCompensated,
   explanation: "Korkea pH ja matala pCO2 eli respiratorinen alkaloosi. HCO3- ja BE ovat normaalit, joten tilanne on akuutti ja kompensoitumaton. Matala ionisoitu kalsium (1.08) selittää pistelyn: alkaloosissa kalsium sitoutuu tiukemmin valkuaisaineisiin, jolloin vapaan kalsiumin määrä laskee.",
-  treatment: "Rauhoittelu ja hengityksen ohjaus, tarvittaessa kevyt esilääkitys. Varmista, ettei taustalla ole kipua tai hapenpuutetta."
+  treatment: "Rauhoittelu ja hengityksen ohjaus, tarvittaessa kevyt esilääkitys."
 }, {
   id: "ESRDpreOp01",
   label: "Väliin jäänyt dialyysi",
@@ -2607,7 +2607,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAlkalosis,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Korkea pH sekä korkea HCO3- (39) ja BE (+15) eli metabolinen alkaloosi. Hengitys kompensoi hidastumalla (pCO2 koholla), mutta osittain. Syitä on kaksi samaan suuntaan: mahaletkun imu vie mahahappoa ja furosemidi lisää hapon eritystä virtsaan. Matala kloridi (88) ja matala kalium (3.1) ovat tyypilliset seuralaiset ja kertovat, mitä pitää korvata.",
-  treatment: "Mahaletkun imun tarpeen arviointi, diureetin tauko, keittosuolaliuos sekä kaliumin ja kloridin korvaus."
+  treatment: "Nenämahaletkun imun tarpeen arviointi, diureetin tauko, keittosuolaliuos sekä kaliumin ja kloridin korvaus."
 }, {
   id: "COPD_Vomiting01",
   label: "COPD ja oksentelu",
@@ -2665,7 +2665,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAlkalosis,
   correctCompensation: texts.nonCompensated,
   explanation: "Korkea pH ja matala pCO2 eli respiratorinen alkaloosi: ahdistunut potilas hengittää tiheästi ja puhaltaa hiilidioksidia ulos. HCO3- ja BE ovat normaalit, joten kompensaatiota ei ole ehtinyt tulla ja tilanne on tuore. Tämä on astmakohtauksen odotettu ja rauhoittava löydös. Happiarvo on silti hieman matala, koska ahtautuneet keuhkoputket sotkevat ilman ja verenkierron kohtaamista. Seuraa pCO2:ta: jos se alkaa nousta kohti viitealuetta, potilas ei ole paranemassa vaan väsymässä.",
-  treatment: "Avaava lääke sumuttimella, kortisoni ja happi. Astrup ei ohjaa hoitoa tässä vaiheessa, vaan potilaan vointi ja PEF."
+  treatment: "Avaava lääke (salbutamoli) inhaloiden, kortisoni ja happi. Astrup ei ohjaa hoitoa tässä vaiheessa, vaan potilaan vointi."
 }, {
   id: "AsthmaTiring01",
   label: "Astmakohtaus, väsyvä potilas",
@@ -2723,7 +2723,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAcidosis,
   correctCompensation: texts.nonCompensated,
   explanation: "Matala pH ja korkea pCO2 eli respiratorinen asidoosi. HCO3- ja BE ovat normaalit, joten tilanne on akuutti ja kompensoitumaton. Tässä näkyy kohtauksen koko kaari samalla potilaalla: alussa pCO2 oli matala, väsyessä ”normaali” ja nyt korkea - suunta ratkaisee, ei yksittäinen luku. Korkea pCO2 kertoo hengityslihasten uupumisesta ja on hengenvaarallinen löydös, ja hiljentyneet hengitysäänet sopivat samaan kuvaan. Matala kalium ja lievä laktaatin nousu selittyvät salbutamolilla ja hengitystyöllä.",
-  treatment: "Hätätilanne: tehostettu avaava lääkitys, kortisoni ja välitön valmius hengityksen tukemiseen. Anestesialääkäri paikalle ajoissa."
+  treatment: "Hätätilanne: tehostettu avaava lääkitys, kortisoni ja välitön valmius hengityksen tukemiseen vaikka ventiloimalla. Anestesialääkäri paikalle ajoissa."
 }, {
   id: "Pneumonia01",
   label: "Vaikea keuhkokuume",
@@ -2781,7 +2781,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAlkalosis,
   correctCompensation: texts.nonCompensated,
   explanation: "Korkea pH ja matala pCO2 eli akuutti respiratorinen alkaloosi. HCO3- ja BE ovat normaalit, joten kompensaatiota ei ole. Tiheä hengitys on infektiossa varhainen ja helposti ohitettu merkki, ja se näkyy astrupissa ennen kuin verenpaine laskee. Happeutuminen on ikään nähden normaali, joten kyse ei ole keuhko-ongelmasta. Laktaatti 2.3 on lievästi koholla ja ansaitsee kontrollin.",
-  treatment: "Virtsanäytteet ja veriviljelyt, mikrobilääke ja nesteytys. Ota laktaatti uudelleen: nouseva laktaatti tai laskeva verenpaine tarkoittaa erikoissairaanhoitoa."
+  treatment: "Virtsanäytteet ja veriviljelyt, mikrobilääke ja nesteytys. Ota laktaatti uudelleen: nouseva laktaatti tai laskeva verenpaine tarkoittaa kiirettä."
 }, {
   id: "Seizure01",
   label: "Kouristuskohtauksen jälkitila",
@@ -2810,7 +2810,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAcidosisHAGMA,
   correctCompensation: texts.nonCompensated,
   explanation: "Metabolinen asidoosi: matala pH, matala HCO3- ja BE -11. pCO2 on vielä viitealueella, joten hengityskompensaatio ei ole ehtinyt käynnistyä - näyte on otettu heti tapahtuman jälkeen. Anionivaje on korkea (25) ja selittyy laktaatilla (9.0): kouristelevat lihakset tuottavat hetkessä suuren määrän maitohappoa. Kaksi opetusta: kompensaatio vie aina aikaa, ja hyvin korkea laktaatti ei aina tarkoita sepsistä tai iskemiaa.",
-  treatment: "Tämä korjaantuu itsestään noin tunnissa, kun lihastyö loppuu. Älä anna bikarbonaattia. Kontrolloi arvo ja keskity kohtauksen syyn selvittämiseen sekä verensokeriin."
+  treatment: "Tämä korjaantuu itsestään noin tunnissa, kun lihastyö loppuu. Älä anna bikarbonaattia. Kontrolloi arvo ja keskity kohtauksen syyn selvittämiseen."
 }, {
   id: "Rhabdo01",
   label: "Rabdomyolyysi",
@@ -2868,7 +2868,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAcidosisHAGMA,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Metabolinen asidoosi, jota hengitys kompensoi osittain. Anionivaje (20) ja laktaatti (5.8) ovat korkeat: verenpaine on romahtanut eivätkä kudokset saa happea. Matala happiarvo selittyy keuhkoputkien supistumisella. Astrup kertoo siis vain sen, kuinka sairas potilas on.",
-  treatment: "Adrenaliini lihakseen reiteen heti, sen jälkeen makuuasento jalat koholla, happi ja runsas nesteytys. Älä odota verikaasuanalyysia - diagnoosi ja hoito perustuvat kliiniseen kuvaan."
+  treatment: "Adrenaliini lihakseen reiteen heti, sen jälkeen makuuasento jalat koholla, happi ja runsas nesteytys. Älä odota verikaasuanalyysia, koska diagnoosi ja hoito perustuvat kliiniseen kuvaan."
 }, {
   id: "GBS01",
   label: "Neuromuskulaarinen hengitysvajaus",
@@ -2897,7 +2897,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAcidosis,
   correctCompensation: texts.nonCompensated,
   explanation: "Matala pH ja korkea pCO2 eli respiratorinen asidoosi. HCO3- ja BE ovat normaalit, joten tilanne on akuutti ja kompensoitumaton. Keuhkot ovat terveet, mutta hengityslihakset ovat halvaantumassa - pumppu pettää, ei kaasujenvaihto. Muista, että astrup muuttuu tässä sairaudessa vasta myöhään: normaali arvo ei riitä rauhoittamaan, jos potilas ei jaksa puhua lausetta loppuun.",
-  treatment: "Tehohoidon arvio kiireellisesti ja valmius hengityskonehoitoon. Seurantaan kuuluu toistuva puhallustesti ja kliininen arvio, ei pelkkä verikaasuanalyysi."
+  treatment: "Tässä on kyseessä Guillain-Barren syndrooma. Tehohoidon arvio kiireellisesti ja valmius hengityskonehoitoon. Seurantaan kuuluu toistuva hengitysfunktion seuranta ja kliininen arvio, ei pelkkä verikaasuanalyysi."
 }, {
   id: "COPDOxygen01",
   label: "COPD ja liiallinen happilisä",
@@ -2926,7 +2926,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAcidosis,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Matala pH ja hyvin korkea pCO2 eli respiratorinen asidoosi. HCO3- (33) ja BE (+6) ovat koholla eli munuaiset ovat kompensoineet jo pitkään: pohjalla on krooninen hiilidioksidin kertyminen, jonka päälle on tullut akuutti paheneminen, ja kompensaatio jää osittaiseksi. Huomaa pO2 22 - reilusti liikaa. Vaikeassa COPD:ssä liiallinen happilisä pahentaa hiilidioksidin kertymistä, ja seurauksena on uneliaisuus eli hiilidioksidinarkoosi. Koholla oleva COHb ja korkea hemoglobiini kertovat tupakoinnista, eivät häkämyrkytyksestä.",
-  treatment: "Vähennä happilisä hallituksi (tavoite SpO2 88-92 %), avaava lääkitys ja pahenemisvaiheen hoito. Jos pH pysyy matalana, maskiventilaatio (NIV)."
+  treatment: "Vähennä happilisä hallituksi (tavoite SpO2 88-92 %), avaava lääkitys ja pahenemisvaiheen hoito. Jos pH pysyy matalana, hengitystukihoito (NIV)."
 }, {
   id: "Normal03",
   label: "Lihasperäinen rintakipu",
@@ -2985,7 +2985,7 @@ const patientCases = [{
   correctPrimary: texts.normal,
   correctCompensation: "N/A",
   explanation: "Katso kuitin ylälaita: näytetyyppi on laskimo. Laskimoveressä pO2 on aina matala eikä kerro keuhkojen toiminnasta mitään - potilaan SpO2 97 % huoneilmalla todistaa, että happeutuminen on kunnossa. Laskimonäytteessä pCO2 on noin 0.5-1 kPa valtimoarvoa korkeampi ja pH noin 0.03 yksikköä matalampi, joten nämäkin lukemat ovat laskimonäytteelle tavanomaiset. Happo-emästilasta (pH, HCO3-, BE) laskimonäyte kertoo kohtalaisen hyvin, mutta hapetusta sillä ei voi arvioida. Punaisena hehkuva pO2 johti tässä melkein turhaan hälytykseen.",
-  treatment: "Ei hoidettavaa. Jos happeutumisesta tarvitaan tieto, ota valtimonäyte - ja katso aina ensin, mitä näytettä analysaattori kertoo mitanneensa."
+  treatment: "Ei hoidettavaa. Jos happeutumisesta tarvitaan tieto, ota valtimonäyte ja katso aina ensin, mitä näytettä analysaattori kertoo mitanneensa."
 }, {
   id: "Bronchiolitis01",
   label: "Bronkioliitti",
@@ -3014,7 +3014,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAcidosis,
   correctCompensation: texts.nonCompensated,
   explanation: "Matala pH ja korkea pCO2 eli respiratorinen asidoosi. HCO3- ja BE ovat normaalit, joten kompensaatiota ei ole ehtinyt tulla. Ahtautuneet pienet ilmatiet estävät hiilidioksidin poistumisen, ja pieni vauva väsyy nopeasti, koska hengitystyö on suurta suhteessa voimavaroihin. Lisähappi on korjannut happiarvon, mutta se ei ratkaise hiilidioksidiongelmaa.",
-  treatment: "Hengitystuki (ylipainehoito tai virtausviikset), imut ja nesteytys sekä tiivis seuranta. Uupuva vauva ja nouseva pCO2 tarkoittavat tehohoidon arviota."
+  treatment: "Hengitystuki (ylipainehoito tai korkeavirtausviikset), imut ja nesteytys sekä tiivis seuranta. Uupuva vauva ja nouseva pCO2=lastenlääkärin ja tehohoidon arvio."
 }, {
   id: "PedGastro01",
   label: "Lapsen gastroenteriitti",
@@ -3043,7 +3043,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAcidosisNAGMA,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Metabolinen asidoosi, jota tiheä hengitys kompensoi osittain. Anionivaje on normaali (10) ja kloridi korkea (114): ripulissa menetetään bikarbonaattia suolen kautta ja kloridi jää sen tilalle. Kalium on matala samasta syystä. Huomaa verensokeri 3.6 - pieni lapsi käyttää sokerivarastonsa nopeasti loppuun, kun syöminen ei onnistu.",
-  treatment: "Nesteytys, ensisijaisesti suun kautta ripulijuomana. Jos lapsi ei juo tai on veltto, suonensisäinen nesteytys sokeripitoisella liuoksella ja kaliumin korvaus."
+  treatment: "Nesteytys, ensisijaisesti suun kautta ripulijuomana. Jos lapsi ei juo tai on veltto, suonensisäinen nesteytys sokeripitoisella liuoksella (aina lasten tapauksessa) ja kaliumin korvaus."
 }, {
   id: "PyloricStenosis01",
   label: "Pylorusstenoosi",
@@ -3072,7 +3072,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAlkalosis,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Korkea pH sekä korkea HCO3- (37) ja BE (+13) eli metabolinen alkaloosi. Hengitys kompensoi hidastumalla, joten pCO2 on koholla, mutta pH ei ole vielä normaali. Mahaportin ahtauma estää ruoan etenemisen, ja oksennuksen mukana menetetään mahahappoa. Matala kloridi (90) ja matala kalium (2.9) täydentävät klassisen kolmikon.",
-  treatment: "Tämä ei ole päivystysleikkaus vaan ensin nestehoito: keittosuolaliuosta ja kaliumia, kunnes kloridi ja happo-emästila ovat korjaantuneet. Alkalinen vauva ei kestä nukutusta, koska hengitys herkästi lamaantuu."
+  treatment: "Tässä hoito ei ole välitön päivystysleikkaus vaan ensin nestehoito: keittosuolaliuosta ja kaliumia, kunnes kloridi ja happo-emästila ovat korjaantuneet. Alkalinen vauva ei kestä nukutusta, koska hengitys herkästi lamaantuu."
 }, {
   id: "MetHb01",
   label: "Methemoglobinemia",
@@ -3101,14 +3101,14 @@ const patientCases = [{
   correctPrimary: texts.normal,
   correctCompensation: "N/A",
   explanation: "Happo-emästila on täysin normaali: pH, pCO2, HCO3- ja BE ovat kaikki viitealueilla. Poikkeava luku löytyy oksimetriasta: MetHb 24 %. Sininen lapsi, jonka happiosapaine on normaali ja jonka saturaatio ei nouse hapella, on methemoglobinemiaa kunnes toisin todistetaan. Puuduttava voide (prilokaiini) on tavallinen aiheuttaja, ja alle 3 kuukauden ikäiset ovat erityisen herkkiä.",
-  treatment: "Lopeta altiste ja anna happea. Oireiselle tai selvästi koholla olevalle pitoisuudelle annetaan metyleenisinistä. Tämä tapaus muistuttaa, että happo-emästila ja happeutuminen ovat kaksi eri asiaa."
+  treatment: "Lopeta altiste ja anna happea. Oireiselle tai selvästi koholla olevalle pitoisuudelle annetaan i.v. metyleenisinistä. Muista että happo-emästila ja happeutuminen ovat kaksi eri asiaa."
 }, {
   id: "NewT1DM01",
   label: "Tuore tyypin 1 diabetes",
   specialty: "Lastentaudit",
   oxygen: "Huoneilma",
   difficulty: 2,
-  context: "15v poika, jota on viikkojen ajan janottanut ja joka on laihtunut. Nyt vatsakipua, oksentelua ja uneliaisuutta. Hengitys on syvää ja huohottavaa, ja siinä on makea haju.",
+  context: "15v poika, jota on viikkojen ajan janottanut ja joka on laihtunut. Nyt vatsakipua, oksentelua ja uneliaisuutta. Hengitys on syvää ja huohottavaa, ja siinä on asetonin haju.",
   values: {
     age: 15,
     pH: 7.11,
@@ -3159,7 +3159,7 @@ const patientCases = [{
   correctPrimary: texts.respiratoryAcidosis,
   correctCompensation: texts.nonCompensated,
   explanation: "Matala pH ja korkea pCO2 eli respiratorinen asidoosi, jossa HCO3- ja BE ovat normaalit eli kompensaatiota ei ole. Syy ei ole keuhkosairaus vaan kipu: potilas ei uskalla hengittää syvään, jolloin ventilaatio jää liian pieneksi. Samasta syystä keuhkon pohjat painuvat kasaan ja happiarvo laskee.",
-  treatment: "Tehokas kivunhoito on tässä hengityshoitoa - puudutus tai epiduraali, säännöllinen kipulääkitys ja hengitysharjoitukset. Ilman sitä seuraa keuhkokuume."
+  treatment: "Tehokas kivunhoito on tässä hengityshoitoa, käytännössä kylkivälihermon puudutus tai epiduraali, säännöllinen kipulääkitys ja hengitysharjoitukset. Ilman sitä voi seurata keuhkokuume, koska keuhkot ovat painuneena kasaan (atelektaasi)."
 }, {
   id: "MesentericIschemia01",
   label: "Suolen verenkiertohäiriö",
@@ -3188,7 +3188,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAcidosisHAGMA,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Metabolinen asidoosi, jota hengitys kompensoi osittain. Anionivaje (21) ja laktaatti (7.2) ovat korkeat, eli jossain elimistössä on hapeton kudos. Kun vatsakipu on kova mutta tunnustelulöydös vähäinen ja laktaatti korkea, kyseessä on suolen verenkiertohäiriö kunnes toisin todistetaan. Eteisvärinä selittää mahdollisen embolian.",
-  treatment: "Kiireellinen varjoainetietokonekuvaus ja kirurgin konsultaatio heti, ei odottavaa linjaa. Nesteytys ja kivunhoito matkalla. Viive maksaa suolen."
+  treatment: "Kiireellinen varjoainetietokonekuvaus ja päivystyksellinen kirurgin konsultaatio heti, ei seurantalinjaa. Nesteytys ja kivunhoito matkalla. Viive maksaa suolen, se on iskemiassa jopa minuuteissa. Iäkkään vatsakipu on aina todennäköisemmin jokin vakava sairaus, kuin vatsatauti."
 }, {
   id: "SalineNAGMA01",
   label: "Runsas keittosuolainfuusio",
@@ -3275,7 +3275,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAlkalosis,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Korkea pH sekä korkea HCO3- ja BE eli metabolinen alkaloosi, jota hengitys kompensoi osittain hidastumalla. Oksentelu ja nenämahaletku vievät mahahappoa, ja matala kloridi (93) sekä matala kalium (3.2) ovat tyypilliset seuralaiset. Korkea hemoglobiini kertoo kuivumisesta - neste on suolen sisällä, ei verenkierrossa.",
-  treatment: "Nesteytys keittosuolaliuoksella, kaliumin korvaus, nenämahaletku ja kirurginen arvio. Seuraa laktaattia: sen nousu on merkki kuroutuvasta suolesta ja päivystysleikkauksesta."
+  treatment: "Nesteytys keittosuolaliuoksella, kaliumin korvaus, nenämahaletku ja kirurgin arvio. Seuraa laktaattia: sen nousu on merkki kureutuvasta suolesta ja päivystysleikkauksesta."
 }, {
   id: "Laparoscopy01",
   label: "Laparoskopian kaasutäyttö",
@@ -3478,7 +3478,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAcidosisHAGMA,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Vaikea metabolinen asidoosi: pH 7.15, HCO3- 8 ja BE -19. Hengitys kompensoi voimakkaasti (pCO2 3.0), mutta ei riitä. Anionivaje on erittäin korkea (30), eikä laktaatti selitä siitä kuin pienen osan - jokin muu happo on kertynyt vereen. Tuntematon alkoholi ja näköoireet ovat yhdessä klassinen yhdistelmä.",
-  treatment: "Soita myrkytystietokeskukseen. Hoitona vastalääke (fomepitsoli tai etanoli), joka estää metanolin muuttumisen myrkylliseksi, sekä dialyysi vaikeissa tapauksissa. Näkövaurio voi jäädä pysyväksi, joten viive ratkaisee."
+  treatment: "Soita myrkytystietokeskukseen. Hoitona vastalääke (fomepitsoli tai etanoli), joka estää metanolin muuttumisen myrkylliseksi, sekä dialyysi vaikeissa tapauksissa. Näkövaurio voi jäädä pysyväksi, joten nopea hoito ratkaisee."
 }, {
   id: "AlcoholKetosis01",
   label: "Alkoholiketoasidoosi",
@@ -3536,7 +3536,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAcidosisHAGMA,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Metabolinen asidoosi, jota hengitys kompensoi osittain. Anionivaje (19) ja laktaatti (6.0) ovat korkeat, vaikka happiosapaine on täysin normaali. Selitys löytyy oksimetriasta: COHb 28 %. Häkä sitoutuu hemoglobiiniin voimakkaammin kuin happi, jolloin veri ei kuljeta happea, vaikka pO2 näyttää hyvältä. Pulssioksimetri ei erota häkähemoglobiinia happihemoglobiinista, joten saturaatiolukema on valheellisen hyvä.",
-  treatment: "100 % happea varaajapussimaskilla heti ja pitkään. Vaikeassa myrkytyksessä ylipainehappihoidon arvio. Tulipalon savussa mieti myös syanidia, jos laktaatti on hyvin korkea."
+  treatment: "100 % happea varaajapussimaskilla heti ja pitkään. Vaikeassa myrkytyksessä ylipainehappihoidon arvio. Tulipalon savussa mieti myös syanidia (vapautuu palavista kalusteista), jos laktaatti on hyvin korkea. Se hoidetaan i.v. B12-vitamiinilla (hydroksikobalamiini)."
 }, {
   id: "Exercise01",
   label: "Maksimaalinen rasitus",
@@ -3565,7 +3565,7 @@ const patientCases = [{
   correctPrimary: texts.metabolicAcidosisHAGMA,
   correctCompensation: texts.partiallyCompensated,
   explanation: "Luvut näyttävät hälyttäviltä: pH 7.24, HCO3- 11, BE -15, anionivaje 23 ja laktaatti 16. Silti potilas on terve ja voi hyvin. Lihakset tuottivat maksimaalisessa suorituksessa valtavasti maitohappoa, ja tiheä hengitys kompensoi tilannetta osittain. Arvot palautuvat itsestään muutamassa kymmenessä minuutissa.",
-  treatment: "Ei mitään. Tämä tapaus on visan tärkein muistutus: älä koskaan hoida lukua, vaan potilasta. Sama laktaattiarvo tarkoittaa aivan eri asiaa vuodeosastolla makaavalla vanhuksella."
+  treatment: "Ei mitään. Tämä tapaus on tärkeä muistutus: älä koskaan hoida lukua, vaan potilasta. Sama laktaattiarvo tarkoittaa aivan eri asiaa vuodeosastolla makaavalla vanhuksella."
 }, {
   id: "CardiacArrest01",
   label: "Elvytys",
@@ -3594,7 +3594,7 @@ const patientCases = [{
   correctPrimary: texts.mixedMetAcidRespAcid,
   correctCompensation: "N/A",
   explanation: "Kaksi asidoosia yhtä aikaa. pCO2 on korkea, koska hiilidioksidi ei poistu pysähtyneessä verenkierrossa eikä palkeella saada aikaan riittävää ventilaatiota. Samalla HCO3- ja BE ovat matalat ja laktaatti korkea, koska kudokset ovat olleet ilman verenkiertoa. Kumpikaan häiriö ei kompensoi toista, joten pH romahtaa. Korkea kalium on tyypillinen ja on itsessään hoidettava löydös.",
-  treatment: "Hoito on hyvälaatuinen paineluelvytys, defibrillointi ja syyn korjaus - ei bikarbonaatti. Astrup kertoo lähinnä siitä, kuinka kauan verenkierto on ollut poikki. Kun verenkierto palautuu, asidoosi korjaantuu pääosin itsestään."
+  treatment: "Hoito on hyvälaatuinen paineluelvytys, defibrillointi ja syyn korjaus, ei bikarbonaatti. Astrup kertoo lähinnä siitä, kuinka kauan verenkierto on ollut pysähtyneenä. Kun verenkierto palautuu, asidoosi korjaantuu pääosin itsestään."
 }, {
   id: "PulmonaryEdema01",
   label: "Akuutti keuhkopöhö",
@@ -3623,7 +3623,7 @@ const patientCases = [{
   correctPrimary: texts.mixedMetAcidRespAcid,
   correctCompensation: "N/A",
   explanation: "Ensivaikutelma voi olla pelkkä respiratorinen asidoosi, koska pCO2 on korkea ja HCO3- näyttää normaalilta. Katso kuitenkin BE (-5), anionivaje (18) ja laktaatti (6.5): mukana on myös metabolinen asidoosi. Akuutissa respiratorisessa asidoosissa HCO3- pikemminkin nousisi hieman, joten ”normaali” HCO3- on tässä liian matala. Keuhkoihin kertynyt neste estää happeutumisen, väsyvä potilas ei jaksa poistaa hiilidioksidia ja heikko sydämen pumppaus tuottaa laktaattia. Alkuvaiheessa keuhkopöhöpotilas hyperventiloi, joten pCO2:n kääntyminen nousuun kertoo romahduksen olevan lähellä.",
-  treatment: "Puoli-istuva asento, happi ja ylipainehoito (CPAP tai NIV) - juuri se korjaa sekä happeutumisen että väsymyksen. Lisäksi nitro ja diureetti. Väsyvä keuhkopöhöpotilas on hätätilanne."
+  treatment: "Puoli-istuva asento, happi ja ylipainehoito (CPAP tai NIV), joka korjaa sekä happeutumisen että väsymyksen. Lisäksi nitro ja diureetti. Väsyvä keuhkopöhöpotilas on hätätilanne."
 }, {
   id: "Hypothermia01",
   label: "Hypotermia",
@@ -3652,7 +3652,7 @@ const patientCases = [{
   correctPrimary: texts.mixedMetAcidRespAcid,
   correctCompensation: "N/A",
   explanation: "Sekä hengitys että aineenvaihdunta ovat happaman puolella. pCO2 on korkea, koska kylmä hidastaa hengitystä. Samalla BE on -10, anionivaje 18 ja laktaatti 5.0, koska ääreisverenkierto on supistunut ja lihakset ovat värisseet pitkään. Kumpikaan häiriö ei kompensoi toista. Huomaa myös näytteen otsikko: analysaattori on korjannut arvot potilaan omaan lämpötilaan.",
-  treatment: "Käsittele potilasta varovasti, koska kylmä sydän menee herkästi kammiovärinään. Lämmitä, anna lämmintä nestettä ja happea. Muista sääntö: kukaan ei ole kuollut ennen kuin hän on lämmin ja kuollut."
+  treatment: "Käsittele kylmettynyttä potilasta aina erittäin varovasti, koska jos kylmä periferian veri pääsee systeemikiertoon, kylmä sydän menee herkästi kammiovärinään. Lämmitä, anna lämmintä nestettä ja happea. Muista sääntö: kukaan ei ole kuollut ennen kuin hän on lämmin ja kuollut."
 }];
 const ui = {
   modePractice: "Harjoitus",
